@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import axios from "axios";
 
@@ -21,7 +20,7 @@ class App extends Component {
     .then(function (response) {
       console.log(response);
       _this.setState({
-        msg: response.data
+        msg: response.data[0].yow
       })
     })
     .catch(function (error) {
@@ -33,7 +32,6 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to Appointments</h1>
         </header>
 
