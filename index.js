@@ -3,8 +3,11 @@ const app = express();
 const knex = require("./models/knex");
 
 app.get('/hi', function (req, res) {
-    res.json({bon: "good"});
+    // res.json({bon: "good"});
     // res.send('Hello, World!');
+    knex.select().table('users2').then(x => {
+      res.json(x);
+    })
   });
 
 
