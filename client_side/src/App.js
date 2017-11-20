@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from "axios";
+import MyCalendar from "./components/MyCalendar"
 
 class App extends Component {
 
@@ -40,6 +41,8 @@ class App extends Component {
         <h2 onClick={this.fetchMsg}>
           Click to axios GET
         </h2>
+
+        <MyCalendar />
       </div>
     );
   }
