@@ -18,8 +18,8 @@
     "pug": "^2.0.0-rc.2"
   },
   "devDependencies": {
-    "faker": "^4.1.0",
-    "pg-promise": "^6.3.6",
-    "nodemon": "^1.12.1"
+    "faker": "4.1.0",
+    "nodemon": "^1.12.1",
+    "pg-promise": "^6.3.6"
   }
 }

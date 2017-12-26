@@ -61,3 +61,5 @@ typings/
 
 #unwanted Mac files
 .DS_Store
+
+test.js

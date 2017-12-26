@@ -6,10 +6,10 @@ module.exports = {
             database: 'clinic_dev'
         },
         migrations: {
-            directory: "./migrations"
+            directory: "./db/migrations"
         },
         seeds: {
-            directory: "./seeds"
+            directory: "./db/seeds"
         }
     },
     production: {
@@ -18,10 +18,10 @@ module.exports = {
             database: process.env.DB_URL
         },
         migrations: {
-            directory: "./migrations"
+            directory: "./db/migrations"
         },
         seeds: {
-            directory: "./seeds"
+            directory: "./db/seeds"
         }
     }
 
