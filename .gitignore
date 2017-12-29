@@ -62,4 +62,6 @@ typings/
 #unwanted Mac files
 .DS_Store
 
+/controllers/tests.js
 test.js
+appkeys.js

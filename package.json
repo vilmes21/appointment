@@ -13,12 +13,14 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
+    "express-session": "1.15.6",
     "knex": "0.13.0",
     "pg": "^7.3.0",
     "pug": "^2.0.0-rc.2"
   },
   "devDependencies": {
     "faker": "4.1.0",
+    "morgan": "1.9.0",
     "nodemon": "^1.12.1",
     "pg-promise": "^6.3.6"
   }
