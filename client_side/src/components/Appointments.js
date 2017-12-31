@@ -2,18 +2,15 @@ import React from 'react';
 // import axios from "axios";
 
 class Appointments extends React.Component {
-  // constructor(){
-  //   super();
-  // }
+  // constructor(){   super(); }
 
-  render(){
+  render() {
     const _this = this;
     return (
-      <div 
-      >
-      <h1>
-Appointments Component here
-      </h1>
+      <div >
+        <h1>
+          Appointments Component here
+        </h1>
       </div>
     );
   }

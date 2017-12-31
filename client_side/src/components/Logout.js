@@ -2,31 +2,33 @@ import React from 'react';
 import axios from "axios";
 
 class Logout extends React.Component {
-  constructor(){
+  constructor() {
     super();
-    this.handleClick = this.handleClick.bind(this);
+    this.handleClick = this
+      .handleClick
+      .bind(this);
   }
 
-  handleClick(){
+  handleClick() {
     axios('/logout')
-    .then(function (response) {
-      console.log(response.data);
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+      .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   }
-  
-  render(){
+
+  render() {
     const _this = this;
     return (
       <div>
-      <button onClick={_this.handleClick}>
-        Log out!
-      </button>
-      <button onClick={_this.props.reactLogOut}>
-        Fake Log out!
-      </button>
+        <button onClick={_this.handleClick}>
+          Log out!
+        </button>
+        <button onClick={_this.props.reactLogOut}>
+          Fake Log out!
+        </button>
       </div>
     );
   }
