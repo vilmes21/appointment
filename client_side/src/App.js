@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import axios from "axios";
+
 // import MyCalendar from "./components/MyCalendar"
-import Login from "./components/Login"
-import Logout from "./components/Logout"
+import Layout from "./components/Layout"
 
 class App extends Component {
 
@@ -18,8 +18,7 @@ class App extends Component {
           <h1 className="App-title">Welcome to Appointments</h1>
         </header>
 
-        <Login />
-        <Logout />
+        <Layout />
       </div>
     );
   }
