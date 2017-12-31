@@ -20,12 +20,13 @@ class Logout extends React.Component {
   render(){
     const _this = this;
     return (
-      <div 
-      onClick={_this.handleClick}      
-      >
-      <h1>
+      <div>
+      <button onClick={_this.handleClick}>
         Log out!
-      </h1>
+      </button>
+      <button onClick={_this.props.reactLogOut}>
+        Fake Log out!
+      </button>
       </div>
     );
   }

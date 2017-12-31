@@ -71,7 +71,7 @@ passport.deserializeUser(function (user_id, done) {
 
 //morgan is a logger for development
 var morgan = require('morgan');
-// const myMorgan = morgan(":method :url :status :res[content-length] - :response-time ms");
+// const myMorgan = morgan("dev");
 // const myMorgan =morgan('combined', {
 //   skip: function (req, res) { return res.statusCode < 400 }
 // })
@@ -86,6 +86,9 @@ app.use('/tests', tests);
 
 var home = require('./controllers/home');
 app.use('/', home);
+
+var users = require('./controllers/users');
+app.use('/users', users);
 
 app.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user_id, info) {

@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from "axios";
-import Logout from "./Logout"
 
 class Login extends React.Component {
   constructor(){
@@ -34,7 +33,7 @@ class Login extends React.Component {
     axios.post('/login', _this.state)
     .then(function (response) {
       console.log(response.data);
-      if (true) {  // TODO: if logged in in backend
+      if (false) {  // TODO: if logged in in backend
         _this.props.reactLogIn();
       }
     })
@@ -75,7 +74,10 @@ class Login extends React.Component {
           </div>
       </form>
 
-      <Logout />
+      <button onClick={_this.props.reactLogIn}>
+        Fake login
+      </button>
+      
     </div>
     );
   }
