@@ -13,6 +13,7 @@ import MyAccount from './MyAccount';
 import Logout from "./Logout"
 import DoctorList from "./DoctorList"
 import TestComp from "./TestComp"
+import Calendar from './Calendar';
 
 
 class Layout extends React.Component {
@@ -93,7 +94,7 @@ class Layout extends React.Component {
           <Router>
           <div>
             <ul>
-              <li><Link to={test1}>test</Link></li>
+              <li><Link to="/testt">test</Link></li>
               <li><Link to="/doctors">Doctors</Link></li>
               <li><Link to="/">Appointments</Link></li>
               {loginAndSignupLink}
@@ -108,6 +109,9 @@ class Layout extends React.Component {
             {loginAndSignupComps}
             {myAccountComp}
 
+            <Route 
+                path="/calendar/:dr_name"
+                component={Calendar} />
       
           </div>
 

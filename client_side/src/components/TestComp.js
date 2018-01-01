@@ -13,10 +13,8 @@ class TestComp extends React.Component {
 
     return (
       <div>
-        I am test Component, prop1: {_this.props.location.param1} <br/>
-        prop2:  {_this.props.location.foo} <br/>
-        pathname: {_this.props.match.pathname} <br/>
-        fei: {_this.props.match.params.fei}
+        dr_name >>> {_this.props.match.params.dr_name} <br/>
+        id:  {_this.props.location.id} <br/>
       </div>
     );
   }

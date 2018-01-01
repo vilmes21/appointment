@@ -4,10 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import axios from "axios";
 
-
-// Setup the localizer by providing the moment (or globalize) Object
-// to the correct localizer.
-BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
+BigCalendar.momentLocalizer(moment);
 
 class Calendar extends Component {
   constructor(){
@@ -22,12 +19,23 @@ class Calendar extends Component {
 
     console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.location.drId);
 
-    axios.get("availabilities/" + _this.props.location.drId)
+    axios.get("/availabilities/" + _this.props.location.drId)
     .then((res) => {
       console.log("axios res.data >>>", res.data);
       if (!res.data){
         return false;
       }
+
+      let clone = [...res.data];
+
+      for (let c of clone){
+        c.start = new Date(c.start);
+        c.end = new Date(c.end);
+      }
+
+      _this.setState({
+        myEventsList: clone
+      })
     })
     .catch((err) => {
       console.log("axios catch block, err >>>", err);
@@ -37,13 +45,32 @@ class Calendar extends Component {
   createAppointment(newAppointment){
     const _this = this;
 
-    axios.post("appointments/create", newAppointment)
+    axios.post("/appointments/create", newAppointment)
     .then((res) => {
       console.log(res.data);
 
       if (!res.data){
         return false;
       }
+
+      //BEGIN visiually add slot:
+      let clone = [..._this.state.myEventsList];
+
+      console.log("clone >>>", clone);
+      
+      clone.push({
+        title: "My new appointment!",
+        start: newAppointment.wish_start_at,
+        end: newAppointment.wish_end_at
+      });
+
+      console.log("before return clone >>>", clone);
+      
+      _this.setState({
+        myEventsList: clone
+      });
+      //END visiually add slot:
+      
     })
     .catch((err) => {
       console.log("axios catch block, err >>>", err);
@@ -55,7 +82,6 @@ class Calendar extends Component {
     
     return (
       <div>
-                costum prop1: {_this.props.location.drId} <br/>
         <BigCalendar
           events={this.state.myEventsList}
           defaultView='week'

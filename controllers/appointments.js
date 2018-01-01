@@ -6,7 +6,7 @@ const constants = require("../config/constants");
 
 router.post('/create', helpers.requireLogin, function (req, res) {
   db("appointments")
-    .where({doctor_id: req.body.doctor_id, user_id: req.session.passport.user, wish_start_at: req.body.wish_start_at, wish_end_at: req.body.wish_end_at, status: constants.DEFAULT_APPOINTMENT_STATUS})
+    .where({doctor_id: req.body.doctor_id, user_id: req.session.passport.user, wish_start_at: req.body.wish_start_at, wish_end_at: req.body.wish_end_at, status: constants.DEFAULT_APPOINTMENT_STATUS}) //TODO: write real one
     .then((existingApms) => {
       console.log("existingApms >>>", existingApms);
       if (existingApms.length > 0) {
@@ -18,11 +18,17 @@ router.post('/create', helpers.requireLogin, function (req, res) {
     })
     .then((shouldContinue) => {
       if (!shouldContinue){   
-        console.log("shouldContinue" >> shouldContinue);
+        console.log("should NOT Continue becuz" >> shouldContinue);
       return; }
 
       db('appointments')
-        .insert({doctor_id: req.body.doctor_id, user_id: req.session.passport.user, wish_start_at: req.body.wish_start_at, wish_end_at: req.body.wish_end_at, status: constants.DEFAULT_APPOINTMENT_STATUS})
+        .insert({
+          doctor_id : req.body.doctor_id,
+          user_id : req.session.passport.user,
+          wish_start_at : req.body.wish_start_at,
+          wish_end_at : req.body.wish_end_at,
+          status : constants.DEFAULT_APPOINTMENT_STATUS
+      })
         .then((x) => {
           res.json({
             success: true,

@@ -6,8 +6,9 @@ function requireLogin(req, res, next) {
     }
     // res.send("pls log in first");
     // req.loggedIn = false;
-    const loginUrl = "http://localhost:3000/sign_up";
-    return res.redirect(loginUrl);
+    // const loginUrl = "http://localhost:3000/sign_up";
+    // return res.redirect(loginUrl);
+    return res.json("func requireLogin. you not logged in.")
 }
 
 const footprint = (x) => {

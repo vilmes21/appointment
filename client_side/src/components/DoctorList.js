@@ -49,7 +49,7 @@ class DoctorList extends React.Component {
           _this.state.drs.map((dr) => {
             const linkData = {
               pathname: "/calendar/Dr_" + dr.lastname,
-              id: dr.id
+              drId: dr.id
             };
 
             return (
@@ -61,10 +61,6 @@ class DoctorList extends React.Component {
             );
           })
         }
-
-                <Route 
-                        path="/calendar/:dr_name"
-                        component={TestComp} />
       </div>
     );
   }
