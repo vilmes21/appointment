@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import myEventsList from "../fake_db/events";
 import axios from "axios";
 
 
@@ -10,14 +9,29 @@ import axios from "axios";
 // to the correct localizer.
 BigCalendar.momentLocalizer(moment); // or globalizeLocalizer
 
-class MyCalendar extends Component {
+class Calendar extends Component {
   constructor(){
     super();
     this.state = {
-      myEventsList: myEventsList,
-      doctor_id: 211, //dr A
-      newAppointment: {}
+      myEventsList: []
     }
+  }
+
+  componentDidMount(){
+    const _this = this;
+
+    console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.location.drId);
+
+    axios.get("availabilities/" + _this.props.location.drId)
+    .then((res) => {
+      console.log("axios res.data >>>", res.data);
+      if (!res.data){
+        return false;
+      }
+    })
+    .catch((err) => {
+      console.log("axios catch block, err >>>", err);
+    })
   }
 
   createAppointment(newAppointment){
@@ -41,6 +55,7 @@ class MyCalendar extends Component {
     
     return (
       <div>
+                costum prop1: {_this.props.location.drId} <br/>
         <BigCalendar
           events={this.state.myEventsList}
           defaultView='week'
@@ -65,17 +80,12 @@ class MyCalendar extends Component {
             }
 
             let newAppointment = {
-              doctor_id : _this.state.doctor_id,
+              doctor_id : _this.props.location.drId,
               wish_start_at : slotInfo.start,
               wish_end_at : wish_end_at
           }
 
           _this.createAppointment(newAppointment);
-
-            
-            // this.setState({
-            //   myEventsList: myEventsList
-            // })
             
           }
         }
@@ -85,4 +95,4 @@ class MyCalendar extends Component {
   }
 }
 
-export default MyCalendar;
+export default Calendar;

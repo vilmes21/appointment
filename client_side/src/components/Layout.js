@@ -11,6 +11,9 @@ import Signup from './Signup';
 import Login from "./Login"
 import MyAccount from './MyAccount';
 import Logout from "./Logout"
+import DoctorList from "./DoctorList"
+import TestComp from "./TestComp"
+
 
 class Layout extends React.Component {
   constructor(){
@@ -77,6 +80,12 @@ class Layout extends React.Component {
                                           reactLogIn={_this.reactLogIn} />  }/>
                 </span> ;
     }
+
+    const test1 = {
+      pathname: "/testt", 
+      param1: "Par12" ,
+      foo: "bar"
+    }
     
     return (
 
@@ -84,6 +93,8 @@ class Layout extends React.Component {
           <Router>
           <div>
             <ul>
+              <li><Link to={test1}>test</Link></li>
+              <li><Link to="/doctors">Doctors</Link></li>
               <li><Link to="/">Appointments</Link></li>
               {loginAndSignupLink}
               {myAccountLink}
@@ -91,7 +102,9 @@ class Layout extends React.Component {
               {may_logout}
             <hr/>
       
+            <Route exact path="/testt" component={TestComp}/>
             <Route exact path="/" component={Appointments}/>
+            <Route exact path="/doctors" component={DoctorList}/>
             {loginAndSignupComps}
             {myAccountComp}
 

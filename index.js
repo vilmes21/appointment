@@ -90,6 +90,15 @@ app.use('/', home);
 var users = require('./controllers/users');
 app.use('/users', users);
 
+var doctors = require('./controllers/doctors');
+app.use('/doctors', doctors);
+
+var appointments = require('./controllers/appointments');
+app.use('/appointments', appointments);
+
+var availabilities = require('./controllers/availabilities');
+app.use('/availabilities', availabilities);
+
 app.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user_id, info) {
     let loginResult = {
