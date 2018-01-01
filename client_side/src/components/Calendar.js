@@ -84,17 +84,35 @@ class Calendar extends Component {
       <div>
         <BigCalendar
           events={this.state.myEventsList}
+          views={['week', 'day', 'agenda']}
           defaultView='week'
           selectable
-          step={5} //slots are 5 minute increments
-          // timeslots={5}
-          // allDayAccessor={() => {return false;}}
-          min={new Date("2017-12-30 09:00:00")}
-          max={moment(new Date()).add(9, "hours").toDate()}
-          // scrollToTime={new Date(2017, 11, 19, 6)}
-          scrollToTime={moment().toDate()}
+          step={5} 
+          //`step` slots are 5 minute increments, but doesn't matter in our case because we only offer inital select start + 5 min
+
+          timeslots={1}
+          //`timeslots` works with `step`. since `step` is 5, meaning for e.g. 8:00 - 8:05, then visually that is only ONE slot.
+          
+          messages={
+            {
+              allDay: "", 
+              agenda: "my appointments"
+            }
+          }
+          
+          min={new Date("2017-12-27 09:00:00")}
+          max={moment(new Date("2017-12-27 09:00:00")).add(9, "hours").toDate()}
+
           defaultDate={moment().toDate()}
+          // date={new Date()}
+          onNavigate={() => {
+            alert(
+              "i am func onNavigate." 
+          );
+          }}
+
           onSelectEvent={event => alert(event.title)}
+
           onSelectSlot={(slotInfo) => {
             console.log(" slotInfo.start >>>", slotInfo.start);
             var wish_end_at = moment(slotInfo.start).add(5, 'minutes').toDate();;

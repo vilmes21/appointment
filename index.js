@@ -82,6 +82,8 @@ app.use(myMorgan);
 //BEGIN testing
 var tests = require('./controllers/tests');
 app.use('/tests', tests);
+
+app.use("/admin", require("./controllers/admin/index"))
 //END testing
 
 var home = require('./controllers/home');
