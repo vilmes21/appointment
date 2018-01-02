@@ -10,7 +10,8 @@ class Calendar extends Component {
   constructor(){
     super();
     this.state = {
-      myEventsList: []
+      myEventsList: [],
+      dayChosen: new Date()
     }
   }
 
@@ -77,6 +78,31 @@ class Calendar extends Component {
     })
   }
 
+  handleNavigate(focusDate, flipUnit, prevOrNext) {
+    //note: `focusDate` param isn't useful.
+    const _this = this;
+      
+      //BEGIN restrict patients to view only this week + next
+      const now = new Date();
+      const nowNum = now.getDate();
+      const nextWeekToday = moment().add(7, "day").toDate();
+      const nextWeekTodayNum = nextWeekToday.getDate();
+      
+      if (prevOrNext === "NEXT" 
+          && _this.state.dayChosen.getDate() === nowNum){
+            _this.setState({
+              dayChosen: nextWeekToday
+            });
+      } else if (prevOrNext === "PREV" 
+      && _this.state.dayChosen.getDate() === nextWeekTodayNum){
+        _this.setState({
+          dayChosen: now
+        });
+      }
+      //END restrict patients to view only this week + next
+      
+    }
+
   render(){
     const _this = this;
     
@@ -84,8 +110,8 @@ class Calendar extends Component {
       <div>
         <BigCalendar
           events={this.state.myEventsList}
-          views={['week', 'day', 'agenda']}
           defaultView='week'
+          views={['week', 'agenda']}
           selectable
           step={5} 
           //`step` slots are 5 minute increments, but doesn't matter in our case because we only offer inital select start + 5 min
@@ -96,19 +122,22 @@ class Calendar extends Component {
           messages={
             {
               allDay: "", 
+              week: "calendar",
               agenda: "my appointments"
             }
           }
           
           min={new Date("2017-12-27 09:00:00")}
-          max={moment(new Date("2017-12-27 09:00:00")).add(9, "hours").toDate()}
+          max={
+            moment(new Date("2017-12-27 09:00:00")).add(9, "hours").toDate()
+          }
 
-          defaultDate={moment().toDate()}
-          // date={new Date()}
-          onNavigate={() => {
-            alert(
-              "i am func onNavigate." 
-          );
+          // defaultDate={moment().toDate()}
+
+          date={_this.state.dayChosen}
+
+          onNavigate={(focusDate, flipUnit, prevOrNext) => {
+            _this.handleNavigate(focusDate, flipUnit, prevOrNext);
           }}
 
           onSelectEvent={event => alert(event.title)}
