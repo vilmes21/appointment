@@ -1,5 +1,5 @@
 import React from 'react';
-// import axios from "axios";
+import axios from "axios";
 import {
   BrowserRouter as Router,
   Route,
@@ -32,6 +32,33 @@ class Layout extends React.Component {
     this.reactLogIn = this.reactLogIn.bind(this);
     this.reactLogOut = this.reactLogOut.bind(this);
     this.popMsg = this.popMsg.bind(this);
+    this.devLogin = this.devLogin.bind(this);
+  }
+
+  componentDidMount(){
+
+    const _this = this;
+    
+    //BEGIN check auth w/ server whenever this component renders
+    axios.get("/auth/now")
+    .then((res) => {
+      console.log("axios then block, res >>>", res);
+      
+      if (!res.data){
+        return false;
+      }
+
+      _this.setState({
+        authenticated: res.data.auth,
+        msg: "new pg load auth check done"
+      }, () => {
+        console.log("after initial auth check, state >>>", _this.state);
+      });
+    })
+    .catch((err) => {
+      console.log("axios catch block, err >>>", err);
+    })
+    //END check auth w/ server whenever this component renders
   }
 
   popMsg(x){ //currently not used func
@@ -52,9 +79,10 @@ class Layout extends React.Component {
   })
   }
 
-  reactLogOut(){
+  reactLogOut(msg="You've logged out."){
     this.setState({
       authenticated: false,
+      msg: msg
     })
   }
 
@@ -64,6 +92,27 @@ class Layout extends React.Component {
   //     msg: msg
   //   })
   // }
+
+  devLogin(){
+    const _this = this;
+    
+    axios.post("/devlogin")
+    .then((res) => {
+      console.log("axios then block, res.data >>>", res.data);
+      
+      if (!res.data){
+        return false;
+      }
+
+      _this.setState({
+        authenticated: true
+      })
+
+    })
+    .catch((err) => {
+      console.log("axios catch block, err >>>", err);
+    })
+  }
 
   render(){
     const _this = this;
@@ -94,20 +143,20 @@ class Layout extends React.Component {
     return (
 
       <div>
+        <button onClick={_this.devLogin}>DEV login</button>
+        
           <Router>
           <div>
             <ul>
-              <li><Link to="/testt">test</Link></li>
+              {/* <li><Link to="/testt">test</Link></li> */}
               <li><Link to="/doctors">Doctors</Link></li>
-              <li><Link to="/">Appointments</Link></li>
               {loginAndSignupLink}
               {myAccountLink}
             </ul>
               {may_logout}
             <hr/>
       <Switch>
-            <Route exact path="/testt" component={TestComp}/>
-            <Route exact path="/" component={Appointments}/>
+            {/* <Route exact path="/testt" component={TestComp}/> */}
             <Route exact path="/doctors" component={DoctorList}/>
             <Route exact path="/" render={() => (<Redirect to="/login" />)} />
             <Route 
@@ -124,10 +173,14 @@ class Layout extends React.Component {
             <Route path="/my_account" component={MyAccount}/>
 
             <Route 
-                  path="/calendar/:dr_name"
-                  component={ () => (
-                    <Calendar authenticated={_this.state.authenticated}/>)
-                  } />;
+                  path="/calendar/:drUrlName"
+                  render={ (props) => (
+                    <Calendar 
+                        authenticated={_this.state.authenticated}
+                        reactLogOut={_this.reactLogOut}
+                        {...props} />)
+                  } 
+                  />;
             
             <Route path="*" component={NoMatch} /> 
       </Switch>

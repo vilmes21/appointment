@@ -101,6 +101,43 @@ app.use('/appointments', appointments);
 var availabilities = require('./controllers/availabilities');
 app.use('/availabilities', availabilities);
 
+//begin DEV mess
+
+app.post('/devlogin', function (req, res, next) {
+
+  let loginResult = {
+      success: false,
+      msg: "System Error Occured.",
+      other: null
+    }
+
+    req.logIn(338, function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      loginResult.success = req.isAuthenticated(); //should be true by this time
+      loginResult.msg = null;
+
+      res.json(loginResult);
+      res.end();
+    });
+
+  // passport.authenticate('local', function (err, user_id, info) {
+   
+
+  // })(req, res, next);
+});
+
+//end DEV mess
+
+app.get("/auth/now", (req, res) => {
+  res.json({
+    auth: req.isAuthenticated()
+  });
+  res.end();
+})
+
 app.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user_id, info) {
     let loginResult = {

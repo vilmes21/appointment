@@ -47,17 +47,14 @@ class DoctorList extends React.Component {
       <div>
         {
           _this.state.drs.map((dr) => {
-            const linkData = {
-              pathname: "/calendar/Dr_" + dr.lastname,
-              drId: dr.id
-            };
-
             return (
-              <DrCalendar
-                    key={dr.id}        
-                    linkData={linkData}
-                    dr={dr}
-                        />
+              <div key={dr.id}>
+                <Link 
+                    to={"/calendar/" + dr.lastname} >
+                  {dr.firstname} {dr.lastname} | Bio: {dr.bio}
+                </Link>
+                <hr/>
+              </div>
             );
           })
         }

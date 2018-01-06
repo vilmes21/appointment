@@ -8,7 +8,9 @@ function requireLogin(req, res, next) {
     // req.loggedIn = false;
     // const loginUrl = "http://localhost:3000/sign_up";
     // return res.redirect(loginUrl);
-    return res.json("func requireLogin. you not logged in.")
+    return res.json({
+        serverBadAuth: true
+    })
 }
 
 const footprint = (x) => {

@@ -1,3 +1,21 @@
+////BEGIN testing
+// import React, { Component } from 'react';
+
+// const Calender = (all) => {
+//   console.log("all>>>>", all);
+//   return (
+//     <h1>
+//       Fine, drUrlName >>> {all.match.params.drUrlName}
+//     </h1>
+//   )
+// }
+
+// export default Calender
+////END testing
+
+
+
+
 import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
@@ -21,14 +39,17 @@ class Calendar extends Component {
   componentDidMount(){
     const _this = this;
 
-    if (!_this.props.location || !_this.props.location.drId){
-      console.log("je retour tot");
+    console.log("in Calendar compDidMoun, props >>>", _this.props);
+    console.log("in Calendar compDidMoun, props.match >>>", _this.props.match);
+
+    if (!_this.props.authenticated){
+      console.log("je retour tot bcuz not auth");
       return;
     }
 
-    console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.location.drId);
+    console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.match.params.drUrlName);
 
-    axios.get("/availabilities/" + _this.props.location.drId)
+    axios.get("/availabilities/" + _this.props.match.params.drUrlName)
     .then((res) => {
       console.log("axios res.data >>>", res.data);
       if (!res.data){
@@ -53,12 +74,26 @@ class Calendar extends Component {
 
   createAppointment(newAppointment){
     const _this = this;
-
+    
+    console.log("in func createAppm, newAppointment >>>", newAppointment);
+    
     axios.post("/appointments/create", newAppointment)
     .then((res) => {
       console.log(res.data);
+      window.alert(res.data.msg);
 
       if (!res.data){
+        window.alert("Internal server err");
+      }
+
+      if (res.data.serverBadAuth){
+        window.alert("Please log in!");
+        _this.props.reactLogOut("Log in first! Server saw that you're not logged in.");
+        return;
+      }
+
+      if (!res.data.success){
+        console.log("ajax good, but performance failed");
         return false;
       }
 
@@ -78,6 +113,7 @@ class Calendar extends Component {
       _this.setState({
         myEventsList: clone
       });
+
       //END visiually add slot:
       
     })
@@ -111,7 +147,28 @@ class Calendar extends Component {
       
     }
 
-  render(){
+    handleOnSelectSlot(slotInfo){
+      const _this = this;
+
+        console.log(" slotInfo.start >>>", slotInfo.start);
+        var wish_end_at = moment(slotInfo.start).add(5, 'minutes').toDate();;
+
+        const confirmMsg = "Continue to book appointment? \n" + "start: " + slotInfo.start.toLocaleString() + "\nend: " + wish_end_at.toLocaleString();
+
+        if (!window.confirm(confirmMsg)){
+          return;
+        }
+
+        let newAppointment = {
+          doctor_id : _this.props.location.drId,
+          wish_start_at : slotInfo.start,
+          wish_end_at : wish_end_at
+      }
+
+      _this.createAppointment(newAppointment);
+    }
+  
+    render(){
     const _this = this;
 
     console.log("Calendar render func, _this.props >>>", _this.props);
@@ -123,6 +180,10 @@ class Calendar extends Component {
 
     return (
       <div>
+        <h1>
+          Dr. {_this.props.match.params.drUrlName} Calendar
+        </h1>
+        
         <BigCalendar
           events={this.state.myEventsList}
           defaultView='week'
@@ -158,25 +219,8 @@ class Calendar extends Component {
           onSelectEvent={event => alert(event.title)}
 
           onSelectSlot={(slotInfo) => {
-            console.log(" slotInfo.start >>>", slotInfo.start);
-            var wish_end_at = moment(slotInfo.start).add(5, 'minutes').toDate();;
-
-            const confirmMsg = "Continue to book appointment? \n" + "start: " + slotInfo.start.toLocaleString() + "\nend: " + wish_end_at.toLocaleString();
-
-            if (!window.confirm(confirmMsg)){
-              return;
-            }
-
-            let newAppointment = {
-              doctor_id : _this.props.location.drId,
-              wish_start_at : slotInfo.start,
-              wish_end_at : wish_end_at
-          }
-
-          _this.createAppointment(newAppointment);
-            
-          }
-        }
+            _this.handleOnSelectSlot(slotInfo);
+          }}
         />
       </div>
     );

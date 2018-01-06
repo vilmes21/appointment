@@ -13,7 +13,7 @@ class TestComp extends React.Component {
 
     return (
       <div>
-        dr_name >>> {_this.props.match.params.dr_name} <br/>
+        :drUrlName >>> {_this.props.match.params.drUrlName} <br/>
         id:  {_this.props.location.id} <br/>
       </div>
     );
