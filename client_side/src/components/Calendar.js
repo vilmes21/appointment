@@ -3,6 +3,9 @@ import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import axios from "axios";
+import {
+  Redirect
+} from 'react-router-dom'
 
 BigCalendar.momentLocalizer(moment);
 
@@ -17,6 +20,11 @@ class Calendar extends Component {
 
   componentDidMount(){
     const _this = this;
+
+    if (!_this.props.location || !_this.props.location.drId){
+      console.log("je retour tot");
+      return;
+    }
 
     console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.location.drId);
 
@@ -105,7 +113,14 @@ class Calendar extends Component {
 
   render(){
     const _this = this;
-    
+
+    console.log("Calendar render func, _this.props >>>", _this.props);
+
+    if (!_this.props.authenticated){
+      console.log("in Calendar render func. gonna Redirect comop")
+      return <Redirect to="/login" />;
+    }
+
     return (
       <div>
         <BigCalendar

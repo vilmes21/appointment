@@ -3,8 +3,12 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
-  Link
-} from 'react-router-dom'
+  Link,
+  Redirect,
+  Switch
+} from 'react-router-dom';
+// import { Switch } from 'react-router';
+
 
 import Appointments from './Appointments';
 import Signup from './Signup';
@@ -14,6 +18,7 @@ import Logout from "./Logout"
 import DoctorList from "./DoctorList"
 import TestComp from "./TestComp"
 import Calendar from './Calendar';
+import NoMatch from './NoMatch';
 
 
 class Layout extends React.Component {
@@ -36,10 +41,15 @@ class Layout extends React.Component {
   }
 
   reactLogIn(msg="Welcome back!"){
+    const _this = this;
+
     this.setState({
       authenticated: true,
       msg: msg
-    })
+    }, 
+  () => {
+    console.log("in Layout, state >>>", _this.state);
+  })
   }
 
   reactLogOut(){
@@ -48,18 +58,24 @@ class Layout extends React.Component {
     })
   }
 
+  // forceLogin(msg){
+  //   this.setState({
+  //     authenticated: false,
+  //     msg: msg
+  //   })
+  // }
+
   render(){
     const _this = this;
 
+    console.log("inside Layout render func, _this.state >>>", _this.state);
+
     let myAccountLink = null;
-    let myAccountComp = null;
     let loginAndSignupLink = null;
-    let loginAndSignupComps = null;
     let may_logout = null;
 
     if (_this.state.authenticated){
       myAccountLink = <li><Link to="/my_account">MyAccount</Link></li>;
-      myAccountComp = <Route path="/my_account" component={MyAccount}/>;
       may_logout = <Logout reactLogOut={_this.reactLogOut} />;
     } else {
       loginAndSignupLink = 
@@ -67,19 +83,6 @@ class Layout extends React.Component {
           <li><Link to="/sign_up">Signup</Link></li>
           <li><Link to="/login">Login</Link></li>
         </span>;
-
-      loginAndSignupComps =
-                <span>
-                  <Route 
-                        path="/sign_up" 
-                        render={
-                          ()=> <Signup reactLogIn={_this.reactLogIn} popMsg={_this.popMsg} />
-                        } />
-                  <Route 
-                        path="/login" 
-                        render={  () => <Login 
-                                          reactLogIn={_this.reactLogIn} />  }/>
-                </span> ;
     }
 
     const test1 = {
@@ -102,17 +105,32 @@ class Layout extends React.Component {
             </ul>
               {may_logout}
             <hr/>
-      
+      <Switch>
             <Route exact path="/testt" component={TestComp}/>
             <Route exact path="/" component={Appointments}/>
             <Route exact path="/doctors" component={DoctorList}/>
-            {loginAndSignupComps}
-            {myAccountComp}
+            <Route exact path="/" render={() => (<Redirect to="/login" />)} />
+            <Route 
+                  path="/sign_up" 
+                  render={
+                    ()=> <Signup reactLogIn={_this.reactLogIn} popMsg={_this.popMsg} />
+                  } />
 
             <Route 
-                path="/calendar/:dr_name"
-                component={Calendar} />
-      
+                  path="/login" 
+                  render={  () => <Login 
+                                    reactLogIn={_this.reactLogIn} />  }/>
+
+            <Route path="/my_account" component={MyAccount}/>
+
+            <Route 
+                  path="/calendar/:dr_name"
+                  component={ () => (
+                    <Calendar authenticated={_this.state.authenticated}/>)
+                  } />;
+            
+            <Route path="*" component={NoMatch} /> 
+      </Switch>
           </div>
 
        

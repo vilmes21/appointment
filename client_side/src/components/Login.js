@@ -37,7 +37,7 @@ class Login extends React.Component {
       .post('/login', _this.state)
       .then(function (response) {
         console.log(response.data);
-        if (false) {
+        if (response.data.success) {
           // TODO: if logged in in backend
           _this
             .props
