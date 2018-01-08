@@ -45,12 +45,17 @@ router.get('/:id', findDrId, function (req, res) {
       let arrOut = [];
       // for (let i = 0; i < bookedOnes.length; i++){
       for (let apmt of bookedOnes){
+        const isMine = apmt.user_id === req.session.passport.user;
 
+        let title = "";
+        if (isMine) {title = "My appm here"}
+        
         arrOut.push({
-          'title': 'not telling  du',
+          'title': title,
           'start': apmt.wish_start_at,
           'end': apmt.wish_end_at,
-          'patient': apmt.user_id
+          'patient': apmt.user_id,
+          isMine: isMine
         });
       }
       

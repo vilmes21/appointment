@@ -25,20 +25,41 @@ router.post('/create', helpers.requireLogin, function (req, res) {
         console.log("should NOT Continue becuz" >> shouldContinue);
       return; }
 
-      db('appointments')
-        .insert({
-          doctor_id : req.body.doctor_id,
-          user_id : req.session.passport.user,
-          wish_start_at : req.body.wish_start_at,
-          wish_end_at : req.body.wish_end_at,
-          status : constants.DEFAULT_APPOINTMENT_STATUS
+      db("doctors").where({
+        url_name: req.body.drUrlName //TODO: change into new column
       })
-        .then((x) => {
-          res.json({
-            success: true,
-            msg: "Appointment Booked!"
-          })
+      .select('id')
+      .then((drIds) => {
+        console.log("drIds with that urlname (should be only 1 if db set up good) >>>", drIds);
+        if (drIds.length !== 1){
+          console.log("DB PROBLEM! drIds.length !== 1 >>>", drIds.length !== 1);
+          return -1;
+        }
+        return drIds[0].id;
+      })
+      .then((drId) => {
+        if (drId === -1){   
+          return; 
+      }
+  
+      console.log("now in another block, drId >>>", drId);
+  
+        db('appointments')
+          .insert({
+            doctor_id : drId,
+            user_id : req.session.passport.user,
+            wish_start_at : req.body.wish_start_at,
+            wish_end_at : req.body.wish_end_at,
+            status : constants.DEFAULT_APPOINTMENT_STATUS
         })
+          .then((x) => {
+            res.json({
+              success: true,
+              msg: "Appointment Booked!"
+            })
+          })
+      })
+
     })
     .catch((err) => {
       console.log(err)

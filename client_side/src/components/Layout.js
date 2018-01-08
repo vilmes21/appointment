@@ -19,6 +19,7 @@ import DoctorList from "./DoctorList"
 import TestComp from "./TestComp"
 import Calendar from './Calendar';
 import NoMatch from './NoMatch';
+import Spinner from './Spinner';
 
 
 class Layout extends React.Component {
@@ -26,7 +27,8 @@ class Layout extends React.Component {
     super();
     this.state = {
       authenticated: false,
-      msg: ""
+      msg: "",
+      isLoading: true
     }
 
     this.reactLogIn = this.reactLogIn.bind(this);
@@ -50,7 +52,8 @@ class Layout extends React.Component {
 
       _this.setState({
         authenticated: res.data.auth,
-        msg: "new pg load auth check done"
+        msg: "new pg load auth check done",
+        isLoading: false
       }, () => {
         console.log("after initial auth check, state >>>", _this.state);
       });
@@ -119,78 +122,86 @@ class Layout extends React.Component {
 
     console.log("inside Layout render func, _this.state >>>", _this.state);
 
-    let myAccountLink = null;
-    let loginAndSignupLink = null;
-    let may_logout = null;
-
-    if (_this.state.authenticated){
-      myAccountLink = <li><Link to="/my_account">MyAccount</Link></li>;
-      may_logout = <Logout reactLogOut={_this.reactLogOut} />;
+    let comp;
+    if (_this.state.isLoading){
+      comp = <Spinner />;
     } else {
-      loginAndSignupLink = 
-        <span>
-          <li><Link to="/sign_up">Signup</Link></li>
-          <li><Link to="/login">Login</Link></li>
-        </span>;
-    }
+      let myAccountLink = null;
+      let loginAndSignupLink = null;
+      let may_logout = null;
+  
+      if (_this.state.authenticated){
+        myAccountLink = <li><Link to="/my_account">MyAccount</Link></li>;
+        may_logout = <Logout reactLogOut={_this.reactLogOut} />;
+      } else {
+        loginAndSignupLink = 
+          <span>
+            <li><Link to="/sign_up">Signup</Link></li>
+            <li><Link to="/login">Login</Link></li>
+          </span>;
+      }
+  
+      const test1 = {
+        pathname: "/testt", 
+        param1: "Par12" ,
+        foo: "bar"
+      }
+      
+      comp =      
+      <div>
+      <button onClick={_this.devLogin}>DEV login</button>
+      
+        <Router>
+        <div>
+          <ul>
+            {/* <li><Link to="/testt">test</Link></li> */}
+            <li><Link to="/doctors">Doctors</Link></li>
+            {loginAndSignupLink}
+            {myAccountLink}
+          </ul>
+            {may_logout}
+          <hr/>
+    <Switch>
+          {/* <Route exact path="/testt" component={TestComp}/> */}
+          <Route exact path="/doctors" component={DoctorList}/>
+          <Route exact path="/" render={() => (<Redirect to="/login" />)} />
+          <Route 
+                path="/sign_up" 
+                render={
+                  ()=> <Signup reactLogIn={_this.reactLogIn} popMsg={_this.popMsg} />
+                } />
 
-    const test1 = {
-      pathname: "/testt", 
-      param1: "Par12" ,
-      foo: "bar"
+          <Route 
+                path="/login" 
+                render={  () => <Login 
+                                  reactLogIn={_this.reactLogIn} />  }/>
+
+          <Route path="/my_account" component={MyAccount}/>
+
+          <Route 
+                path="/calendar/:drUrlName"
+                render={ (props) => (
+                  <Calendar 
+                      authenticated={_this.state.authenticated}
+                      reactLogOut={_this.reactLogOut}
+                      {...props} />)
+                } 
+                />;
+          
+          <Route path="*" component={NoMatch} /> 
+    </Switch>
+        </div>
+
+     
+      </Router>
+
+    </div>;
     }
     
     return (
-
       <div>
-        <button onClick={_this.devLogin}>DEV login</button>
-        
-          <Router>
-          <div>
-            <ul>
-              {/* <li><Link to="/testt">test</Link></li> */}
-              <li><Link to="/doctors">Doctors</Link></li>
-              {loginAndSignupLink}
-              {myAccountLink}
-            </ul>
-              {may_logout}
-            <hr/>
-      <Switch>
-            {/* <Route exact path="/testt" component={TestComp}/> */}
-            <Route exact path="/doctors" component={DoctorList}/>
-            <Route exact path="/" render={() => (<Redirect to="/login" />)} />
-            <Route 
-                  path="/sign_up" 
-                  render={
-                    ()=> <Signup reactLogIn={_this.reactLogIn} popMsg={_this.popMsg} />
-                  } />
-
-            <Route 
-                  path="/login" 
-                  render={  () => <Login 
-                                    reactLogIn={_this.reactLogIn} />  }/>
-
-            <Route path="/my_account" component={MyAccount}/>
-
-            <Route 
-                  path="/calendar/:drUrlName"
-                  render={ (props) => (
-                    <Calendar 
-                        authenticated={_this.state.authenticated}
-                        reactLogOut={_this.reactLogOut}
-                        {...props} />)
-                  } 
-                  />;
-            
-            <Route path="*" component={NoMatch} /> 
-      </Switch>
-          </div>
-
-       
-        </Router>
-
+        {comp}
       </div>
-      
     );
   }
 }

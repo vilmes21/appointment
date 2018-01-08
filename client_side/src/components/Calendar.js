@@ -34,6 +34,11 @@ class Calendar extends Component {
       myEventsList: [],
       dayChosen: new Date()
     }
+
+    this.createAppointment = this.createAppointment.bind(this);
+    this.handleNavigate = this.handleNavigate.bind(this);
+    this.handleOnSelectSlot = this.handleOnSelectSlot.bind(this);
+    this.eventStyleGetter = this.eventStyleGetter.bind(this);
   }
 
   componentDidMount(){
@@ -105,7 +110,8 @@ class Calendar extends Component {
       clone.push({
         title: "My new appointment!",
         start: newAppointment.wish_start_at,
-        end: newAppointment.wish_end_at
+        end: newAppointment.wish_end_at,
+        isMine: true
       });
 
       console.log("before return clone >>>", clone);
@@ -160,13 +166,42 @@ class Calendar extends Component {
         }
 
         let newAppointment = {
-          doctor_id : _this.props.location.drId,
+          drUrlName : _this.props.match.params.drUrlName,
           wish_start_at : slotInfo.start,
           wish_end_at : wish_end_at
       }
 
       _this.createAppointment(newAppointment);
     }
+
+    eventStyleGetter(event, start, end, isSelected) {
+      // console.log("what params?");
+      // console.log(
+      //   "\nevent >>>\n",
+      //   event,
+      //   "\nstart >>>\n",
+      //   start,
+      //   "\nend >>>\n",
+      //   end,
+      //   "\nisSelected >>>\n",
+      //   isSelected
+      // );
+
+      // // var backgroundColor = '#' + event.hexColor;
+      // var newStyle = {
+      //     backgroundColor: "yellow",
+      //     color: 'black'
+      // };
+
+      // const style1 = {
+      //   className: "testing-ac",
+      //   style: newStyle
+      // }
+
+      // console.log("gonna return style obj >>>", style1);
+      // // return style1;
+      // return {};
+  }
   
     render(){
     const _this = this;
@@ -216,11 +251,62 @@ class Calendar extends Component {
             _this.handleNavigate(focusDate, flipUnit, prevOrNext);
           }}
 
-          onSelectEvent={event => alert(event.title)}
-
           onSelectSlot={(slotInfo) => {
             _this.handleOnSelectSlot(slotInfo);
           }}
+
+          // eventPropGetter={(event, start, end, isSelected) => {_this.eventStyleGetter(event, start, end, isSelected)}}
+
+          eventPropGetter = {(event, start, end, isSelected)=>{
+            // console.log("what params?");
+            // console.log(
+            //   "\nevent >>>\n",
+            //   event,
+            //   "\nstart >>>\n",
+            //   start,
+            //   "\nend >>>\n",
+            //   end,
+            //   "\nisSelected >>>\n",
+            //   isSelected
+            // );
+            
+            let newStyle = {
+              backgroundColor: "lightgrey",
+              color: 'black',
+              borderRadius: "0px",
+              border: "none"
+          };
+
+            if (event.isMine){
+              newStyle.backgroundColor = "lightgreen"
+            }
+      
+            return {
+              className: "",
+              style: newStyle
+            };
+          }}
+
+          onSelectEvent={event => {
+            console.log("event params onSleectEvent >>>", event);
+            if (!event.isMine) {
+              alert("Slot already taken");
+              return;
+            }
+            alert("my apm: " + event.title);
+          }}
+
+          formats={
+            {
+              eventTimeRangeFormat: () => {
+                return ""
+              },
+              foo: "bar"
+            }
+          }
+          
+
+          
         />
       </div>
     );
