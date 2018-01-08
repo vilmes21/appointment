@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const db = require("./db/knex");
+const helpers = require("./helpers");
 const session = require('express-session');
 var bodyParser = require('body-parser');
 // parse application/x-www-form-urlencoded
@@ -80,10 +81,9 @@ app.use(myMorgan);
 
 
 //BEGIN testing
-var tests = require('./controllers/tests');
-app.use('/tests', tests);
+// var tests = require('./controllers/tests');
+// app.use('/tests', tests);
 
-app.use("/admin", require("./controllers/admin/index"))
 //END testing
 
 var home = require('./controllers/home');
@@ -101,7 +101,37 @@ app.use('/appointments', appointments);
 var availabilities = require('./controllers/availabilities');
 app.use('/availabilities', availabilities);
 
+app.use("/admin", require("./controllers/admin/index"))
+
 //begin DEV mess
+
+//simply a copy of .post devlogin - for browser direct dev requests
+app.get('/devlogin', function (req, res, next) {
+
+  let loginResult = {
+      success: false,
+      msg: "System Error Occured.",
+      other: null
+    }
+
+    //338 is test@test.com
+    req.logIn(338, function (err) {
+      if (err) {
+        return next(err);
+      }
+
+      loginResult.success = req.isAuthenticated(); //should be true by this time
+      loginResult.msg = null;
+
+      res.json(loginResult);
+      res.end();
+    });
+
+  // passport.authenticate('local', function (err, user_id, info) {
+   
+
+  // })(req, res, next);
+});
 
 app.post('/devlogin', function (req, res, next) {
 
@@ -133,10 +163,17 @@ app.post('/devlogin', function (req, res, next) {
 //end DEV mess
 
 app.get("/auth/now", (req, res) => {
-  res.json({
-    auth: req.isAuthenticated()
-  });
-  res.end();
+  let data = {
+    auth: false,
+    isAdmin: false
+  }
+
+  if (req.isAuthenticated()){
+    data.auth = true;
+    data.isAdmin = helpers.isAdmin(req);
+  }
+  
+  res.json(data);
 })
 
 app.post('/login', function (req, res, next) {

@@ -9,7 +9,6 @@ import {
 } from 'react-router-dom';
 // import { Switch } from 'react-router';
 
-
 import Appointments from './Appointments';
 import Signup from './Signup';
 import Login from "./Login"
@@ -21,12 +20,16 @@ import Calendar from './Calendar';
 import NoMatch from './NoMatch';
 import Spinner from './Spinner';
 
+//BEGIN admin imports
+import AdminDoctorList from "./admin/DoctorList"
+//END admin imports
 
 class Layout extends React.Component {
   constructor(){
     super();
     this.state = {
       authenticated: false,
+      isAdmin: true,
       msg: "",
       isLoading: true
     }
@@ -52,6 +55,7 @@ class Layout extends React.Component {
 
       _this.setState({
         authenticated: res.data.auth,
+        // isAdmin: res.data.isAdmin, //TODO: to set
         msg: "new pg load auth check done",
         isLoading: false
       }, () => {
@@ -124,21 +128,47 @@ class Layout extends React.Component {
 
     let comp;
     if (_this.state.isLoading){
+
       comp = <Spinner />;
+
     } else {
+
       let myAccountLink = null;
       let loginAndSignupLink = null;
       let may_logout = null;
+
+      //BEGIN for admin
+      let may_adminDrListLink = null;
+      let may_adminDrList = null;
+      
+      if (_this.state.authenticated && _this.state.isAdmin){
+
+        may_adminDrListLink = <li><Link to="/admin/doctors">admin-View Doctors</Link></li>;
+
+        may_adminDrList = 
+                          <Route 
+                          exact
+                          path="/admin/doctors"
+                          render={ (props) => (<AdminDoctorList />)
+                          } 
+                          />;
+        
+      }
+      //END for admin
   
       if (_this.state.authenticated){
+
         myAccountLink = <li><Link to="/my_account">MyAccount</Link></li>;
         may_logout = <Logout reactLogOut={_this.reactLogOut} />;
+
       } else {
+
         loginAndSignupLink = 
           <span>
             <li><Link to="/sign_up">Signup</Link></li>
             <li><Link to="/login">Login</Link></li>
           </span>;
+
       }
   
       const test1 = {
@@ -154,7 +184,7 @@ class Layout extends React.Component {
         <Router>
         <div>
           <ul>
-            {/* <li><Link to="/testt">test</Link></li> */}
+            {may_adminDrListLink}
             <li><Link to="/doctors">Doctors</Link></li>
             {loginAndSignupLink}
             {myAccountLink}
@@ -187,7 +217,15 @@ class Layout extends React.Component {
                       {...props} />)
                 } 
                 />;
-          
+
+          {/* {may_adminDrList} */}
+
+          <Route 
+                          path="/admin/doctors"
+                          render={ (props) => (<AdminDoctorList />)
+                          } 
+                          />
+
           <Route path="*" component={NoMatch} /> 
     </Switch>
         </div>

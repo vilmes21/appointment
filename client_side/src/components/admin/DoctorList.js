@@ -6,8 +6,6 @@ import {
   Link
 } from 'react-router-dom'
 
-import Calendar from "./Calendar"
-
 class DoctorList extends React.Component {
   constructor(){
     super();
@@ -19,9 +17,9 @@ class DoctorList extends React.Component {
   componentDidMount(){
     const _this = this;
     
-    console.log("did mount fun of DocList comp");
+    console.log("did mount fun of admin-DocList comp");
 
-    axios.get("doctors/index")
+    axios.get("/admin/doctors")
     .then((res) => {
       if (!res.data){
         return false;
@@ -41,15 +39,24 @@ class DoctorList extends React.Component {
   
   render(){
     const _this = this;
+
     return (
       <div>
         {
           _this.state.drs.map((dr) => {
+
+            let may_public = null;
+            if (!dr.is_public){
+              may_public = <strong>(Not visible to public)</strong>;
+            }
+
+            console.log("is this dr public? >>>", dr.is_public);
+            
             return (
               <div key={dr.id}>
                 <Link 
-                    to={"/calendar/" + dr.lastname} >
-                  {dr.firstname} {dr.lastname} | Bio: {dr.bio}
+                    to={"/admin/availability/" + dr.lastname} >
+                  {dr.firstname} {dr.lastname} {may_public}
                 </Link>
                 <hr/>
               </div>
