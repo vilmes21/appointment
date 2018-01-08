@@ -3,14 +3,16 @@ import axios from "axios";
 import {
   BrowserRouter as Router,
   Route,
-  Link
+  Link,
+  Redirect
 } from 'react-router-dom'
 
-class DoctorList extends React.Component {
+export default class DoctorList extends React.Component {
   constructor(){
     super();
     this.state = {
-      drs: []
+      drs: [],
+      blockNonAdminAuth: false
     }
   }
 
@@ -26,6 +28,24 @@ class DoctorList extends React.Component {
       }
       console.log(res.data);
 
+      if (res.data.nonAdminAuth){
+        _this.setState({
+          blockNonAdminAuth: true
+        })
+        return;
+      }
+
+      if (res.data.serverBadAuth){
+        _this.props.reactLogOut("yow admin pg asks you to log in");
+        return;
+      } 
+      //TODO: re-arrange logic considering:
+      /*
+      auth false;
+      auth true, but admin false;
+      auth true, admin true;
+      */
+
       _this.setState({
         drs: res.data
       })
@@ -40,9 +60,18 @@ class DoctorList extends React.Component {
   render(){
     const _this = this;
 
-    return (
-      <div>
-        {
+    let comp;
+
+    let may_list = null;
+
+    if (_this.state.blockNonAdminAuth){
+      window.alert("You are logged in but not admin");
+      comp = <Redirect to="/my_account" />;
+    } else {
+
+        if (_this.state.drs.length > 0){
+          
+          may_list = 
           _this.state.drs.map((dr) => {
 
             let may_public = null;
@@ -61,11 +90,15 @@ class DoctorList extends React.Component {
                 <hr/>
               </div>
             );
-          })
+          }); //closing map
         }
+      
+    }
+
+    return (
+      <div>
+        {comp}
       </div>
     );
   }
 }
-
-export default DoctorList;

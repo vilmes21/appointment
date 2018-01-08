@@ -149,7 +149,10 @@ class Layout extends React.Component {
                           <Route 
                           exact
                           path="/admin/doctors"
-                          render={ (props) => (<AdminDoctorList />)
+                          render={ (props) => (
+                            <AdminDoctorList 
+                              reactLogOut={_this.reactLogOut}/>
+                          )
                           } 
                           />;
         
@@ -218,13 +221,7 @@ class Layout extends React.Component {
                 } 
                 />;
 
-          {/* {may_adminDrList} */}
-
-          <Route 
-                          path="/admin/doctors"
-                          render={ (props) => (<AdminDoctorList />)
-                          } 
-                          />
+          {may_adminDrList}
 
           <Route path="*" component={NoMatch} /> 
     </Switch>

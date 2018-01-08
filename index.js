@@ -163,14 +163,22 @@ app.post('/devlogin', function (req, res, next) {
 //end DEV mess
 
 app.get("/auth/now", (req, res) => {
-  let data = {
-    auth: false,
-    isAdmin: false
-  }
+  // let data = {
+  //   auth: false,
+  //   isAdmin: false
+  // }
 
-  if (req.isAuthenticated()){
-    data.auth = true;
-    data.isAdmin = helpers.isAdmin(req);
+
+
+  // if (req.isAuthenticated()){
+  //   data.auth = true;
+  //   data.isAdmin = helpers.isAdmin(req);
+  // }
+
+  //fake all true. TODO: change
+  let data = {
+    auth: true,
+    isAdmin: true
   }
   
   res.json(data);
