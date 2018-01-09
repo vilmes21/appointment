@@ -1,21 +1,3 @@
-////BEGIN testing
-// import React, { Component } from 'react';
-
-// const Calender = (all) => {
-//   console.log("all>>>>", all);
-//   return (
-//     <h1>
-//       Fine, drUrlName >>> {all.match.params.drUrlName}
-//     </h1>
-//   )
-// }
-
-// export default Calender
-////END testing
-
-
-
-
 import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';

@@ -5,37 +5,7 @@ const helpers = require("../helpers");
 const constants = require("../config/constants");
 const moment = require("moment");
 
-findDrId = (req, res, next) => {
-  console.log("req.params.id >>>", req.params.id, "of type >>>", typeof(req.params.id));
-  console.log("parseInt(req.params.id) >>>", parseInt(req.params.id), "of type >>>", typeof(parseInt(req.params.id)));
-  
-  if (req.params.id == parseInt(req.params.id)) {// then it's int already
-    helpers.footprint(33);
-    console.log("YES, req.params.id == parseInt(req.params.id)")
-    next();
-    return;
-  }
-
-  const drs = { //TODO: go into db grab and then cache in session
-    Hermann: 205,
-    A_last: 211,
-    B_last: 212,
-    Wang: 210
-  };
-
-  if (!drs[req.params.id]){
-    res.json("yow bad url, no such dr");
-    return;
-    // res.end();
-  }
-
-  console.log("parsed Dr id from fake obj, next to >>>", drs[req.params.id]);
-  
-  req.params.id= drs[req.params.id];
-  next();
-}
-
-router.get('/:id', findDrId, function (req, res) {
+router.get('/:id', helpers.findDrId, function (req, res) {
   db("appointments")
   .where({doctor_id: req.params.id})
   .whereBetween("wish_start_at", [moment().toDate(), moment().add("14", "days").toDate()])

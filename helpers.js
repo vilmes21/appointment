@@ -24,34 +24,37 @@ const footprint = (x) => {
   }
 
 const requireAdmin = (req, res, next) => {
-    if (!req.isAuthenticated()) {
-        return res.json({
-            serverBadAuth: true
-        })
-    }
+    //TODO change fake :
+    return next();
+    
+    // if (!req.isAuthenticated()) {
+    //     return res.json({
+    //         serverBadAuth: true
+    //     })
+    // }
    
-    db("user_roles")
-    .where({
-        role_id: constants.ROLE_ADMIN
-    })
-    .select("user_id")
-    .then((admins) => {
-        footprint(55);
-        console.log("admins >>>>", admins);
-        let _admins = [];
+    // db("user_roles")
+    // .where({
+    //     role_id: constants.ROLE_ADMIN
+    // })
+    // .select("user_id")
+    // .then((admins) => {
+    //     footprint(55);
+    //     console.log("admins >>>>", admins);
+    //     let _admins = [];
 
-        for (let admin of admins){
-            _admins.push(admin.user_id);
-        }
+    //     for (let admin of admins){
+    //         _admins.push(admin.user_id);
+    //     }
 
-        if (_admins.includes(req.session.passport.user)) {
-            //TODO: fetched admin id array and save it in session for quick lookup
-            return next();
-        }      
-        return res.json({
-            nonAdminAuth: true
-        })
-    })
+    //     if (_admins.includes(req.session.passport.user)) {
+    //         //TODO: fetched admin id array and save it in session for quick lookup
+    //         return next();
+    //     }      
+    //     return res.json({
+    //         nonAdminAuth: true
+    //     })
+    // })
 }
 
 // const cacheUserAdmins = (req) => {
@@ -91,9 +94,35 @@ const isAdmin = (req) => {
     // isAdmin(req);
 }
 
+const findDrId = (req, res, next) => {
+  
+    if (req.params.id == parseInt(req.params.id)) {
+      // then it's int already
+      next();
+      return;
+    }
+  
+    const drs = { //TODO: go into db grab and then cache in session
+      Hermann: 205,
+      A_last: 211,
+      B_last: 212,
+      Wang: 210
+    };
+  
+    if (!drs[req.params.id]){
+      res.json("yow bad url, no such dr");
+      return;
+      // res.end();
+    }
+    
+    req.params.id= drs[req.params.id];
+    next();
+  }
+
 module.exports = {
     requireLogin: requireLogin,
     requireAdmin: requireAdmin,
     isAdmin: isAdmin,
-    footprint: footprint
+    footprint: footprint,
+    findDrId: findDrId
 }

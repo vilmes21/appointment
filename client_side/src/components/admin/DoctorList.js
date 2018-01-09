@@ -28,12 +28,12 @@ export default class DoctorList extends React.Component {
       }
       console.log(res.data);
 
-      if (res.data.nonAdminAuth){
-        _this.setState({
-          blockNonAdminAuth: true
-        })
-        return;
-      }
+      // if (res.data.nonAdminAuth){
+      //   _this.setState({
+      //     blockNonAdminAuth: true
+      //   })
+      //   return;
+      // }
 
       if (res.data.serverBadAuth){
         _this.props.reactLogOut("yow admin pg asks you to log in");
@@ -93,7 +93,12 @@ export default class DoctorList extends React.Component {
           }); //closing map
         }
       
-    }
+        comp = 
+          <div>
+            <h2>admin, Set availability for </h2>
+            {may_list}
+          </div>
+    } //closing else
 
     return (
       <div>
