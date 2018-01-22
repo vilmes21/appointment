@@ -119,10 +119,80 @@ const findDrId = (req, res, next) => {
     next();
   }
 
+
+const isSlotInPast = (slot) => {
+    return slot.start_at < new Date();
+}
+
+  
+//(array, obj)
+const isDuringDrHour = (goodHours, want) => {
+    for (var good of goodHours){
+        if (
+            want.start_at >= good.start_at
+            && want.end_at <= good.end_at
+        ){
+            return true;
+        }
+    }
+    return false;
+}
+
+  //(array, obj)
+const isSlotOpen = (slotsTaken, want) => {
+    /* logic:
+    if `start_at` is before the start of a booked slot, and `end_at` is after the end of the booked slot: not OK;
+    if `start_at` is in the middle a booked slot: not OK;
+    if `end_at` is in the middle of a booked slot: not OK.
+    */
+
+    for (var bad of slotsTaken){
+        if (want.start_at < bad.start_at
+            && want.end_at > bad.end_at
+        ){
+            return false;
+        }
+
+        if (want.start_at >= bad.start_at
+            && want.start_at < bad.end_at
+        ){
+            return false;
+        }
+
+        if (want.end_at > bad.start_at
+            && want.end_at <= bad.end_at
+        ){
+            return false;
+        }
+    }
+    return true;
+}
+
+//(array, array, obj)
+const isSlotValid = (goodHours, slotsTaken, want) => {
+    return isDuringDrHour(goodHours, want) && isSlotOpen(slotsTaken, want);
+}
+
+const turnStringToDate = (arrayOfObj) => {
+    let converted = [];
+    for (var slot of arrayOfObj){
+        slot.start_at = new Date(slot.start_at);
+        slot.end_at = new Date(slot.end_at);
+
+        converted.push(slot)
+      }
+      return converted;
+}
+
 module.exports = {
     requireLogin: requireLogin,
     requireAdmin: requireAdmin,
     isAdmin: isAdmin,
     footprint: footprint,
-    findDrId: findDrId
+    findDrId: findDrId,
+    isDuringDrHour: isDuringDrHour,
+    isSlotOpen: isSlotOpen,
+    isSlotValid: isSlotValid,
+    isSlotInPast: isSlotInPast,
+    turnStringToDate: turnStringToDate
 }
