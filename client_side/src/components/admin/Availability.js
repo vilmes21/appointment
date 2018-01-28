@@ -59,10 +59,14 @@ export default class Availability extends Component {
     axios.post("/admin/availabilities/create", newAvailability)
     .then((res) => {
       console.log(res.data);
-      window.alert(res.data.msg);
 
       if (!res.data){
         window.alert("Internal server err");
+      }
+
+      if (!res.data.success){
+        window.alert("Failed db insert. Server msg:" + res.data.msg);
+        return;
       }
 
       // if (res.data.serverBadAuth){
@@ -100,27 +104,27 @@ export default class Availability extends Component {
 
   handleNavigate(focusDate, flipUnit, prevOrNext) {
     //note: `focusDate` param isn't useful.
-    // const _this = this;
+    const _this = this;
 
-    console.log("/admin/availability comp handleNavigate func. Right now do nothing.")
+    // console.log("/admin/availability comp handleNavigate func. Right now do nothing.")
       
       // //BEGIN restrict patients to view only this week + next
-      // const now = new Date();
-      // const nowNum = now.getDate();
-      // const nextWeekToday = moment().add(7, "day").toDate();
-      // const nextWeekTodayNum = nextWeekToday.getDate();
+      const now = new Date();
+      const nowNum = now.getDate();
+      const nextWeekToday = moment().add(7, "day").toDate();
+      const nextWeekTodayNum = nextWeekToday.getDate();
       
-      // if (prevOrNext === "NEXT" 
-      //     && _this.state.dayChosen.getDate() === nowNum){
-      //       _this.setState({
-      //         dayChosen: nextWeekToday
-      //       });
-      // } else if (prevOrNext === "PREV" 
-      // && _this.state.dayChosen.getDate() === nextWeekTodayNum){
-      //   _this.setState({
-      //     dayChosen: now
-      //   });
-      // }
+      if (prevOrNext === "NEXT" 
+          && _this.state.dayChosen.getDate() === nowNum){
+            _this.setState({
+              dayChosen: nextWeekToday
+            });
+      } else if (prevOrNext === "PREV" 
+      && _this.state.dayChosen.getDate() === nextWeekTodayNum){
+        _this.setState({
+          dayChosen: now
+        });
+      }
       // //END restrict patients to view only this week + next
       
     }

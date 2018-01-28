@@ -94,6 +94,16 @@ const isAdmin = (req) => {
     // isAdmin(req);
 }
 
+const findDrIdByUrlName = (urlName) => {
+    const drs = { //TODO: go into db grab and then cache in session
+        Hermann: 205,
+        A_last: 211,
+        B_last: 212,
+        Wang: 210
+      };
+    return drs[urlName]; //may return undefined
+} 
+
 const findDrId = (req, res, next) => {
   
     if (req.params.id == parseInt(req.params.id)) {
@@ -116,12 +126,13 @@ const findDrId = (req, res, next) => {
     }
     
     req.params.id= drs[req.params.id];
+    req.params.drId= drs[req.params.id]; //should use this. Later on remove previous line and take care of its old references
     next();
   }
 
-
+// params slot is object, must have properties start_at  and end_at of type Date
 const isSlotInPast = (slot) => {
-    return slot.start_at < new Date();
+    return slot.start_at < new Date() || slot.end_at < new Date();
 }
 
   
@@ -184,15 +195,22 @@ const turnStringToDate = (arrayOfObj) => {
       return converted;
 }
 
+const isWithinOneDay = (want) => {
+    console.log("In fn helpers.isWithinOneDay ", "want.start_at >>> ", want.start_at, "want.end_at >>> ", want.end_at, "want.start_at.getDate() >>> ", want.start_at.getDate());
+    return want.start_at.getDate() === want.end_at.getDate();
+}
+
 module.exports = {
     requireLogin: requireLogin,
     requireAdmin: requireAdmin,
     isAdmin: isAdmin,
     footprint: footprint,
     findDrId: findDrId,
+    findDrIdByUrlName: findDrIdByUrlName,
     isDuringDrHour: isDuringDrHour,
     isSlotOpen: isSlotOpen,
     isSlotValid: isSlotValid,
     isSlotInPast: isSlotInPast,
-    turnStringToDate: turnStringToDate
+    turnStringToDate: turnStringToDate,
+    isWithinOneDay: isWithinOneDay
 }
