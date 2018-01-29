@@ -12,14 +12,33 @@ router.get('/:id', helpers.findDrId, function (req, res) {
   .whereBetween("start_at", [moment().toDate(), moment().add("28", "days").toDate()])
     .then((openSlots) => {
 
-      let arrOut = [];
-      
-      for (let slot of openSlots){
-        arrOut.push({
-          'title': "Dr works during this time slot",
-          'start': slot.start_at,
-          'end': slot.end_at
-        });
+      //openSlots are like: [{start_at: 3, end_at: 5}, {start_at: 5, end_at: 6}, {start_at: 7, end_at: 9}] so should simply the overlapping parts such as 5.
+
+      const collect = [];
+
+      for (const slot of openSlots){
+          collect.push(slot.start_at);
+          collect.push(slot.end_at);
+      }
+
+      const cleaned = helpers.keepUniqueElems(collect);
+
+      const cleanedCount = cleaned.length;
+      if (cleanedCount % 2 !== 0) { //i.e if count is odd, then db has bad data
+        return Promise.reject("db has bad data. Count is odd; expected even.");
+      }
+
+      const arrOut = [];
+      const cleanSlot = {};
+      cleanSlot.title = "Dr works now";
+
+      for (let i = 0; i < cleanedCount; i++){
+        if (i % 2 === 0){ //ie. even index, then be start_at
+          cleanSlot.start = cleaned[i];
+        } else { //ie. odd index, then be end_at
+          cleanSlot.end = cleaned[i];
+          arrOut.push(cleanSlot);
+        }
       }
       
       return res.json(arrOut);

@@ -200,6 +200,29 @@ const isWithinOneDay = (want) => {
     return want.start_at.getDate() === want.end_at.getDate();
 }
 
+const keepUniqueElems = (arr) => {
+    const dict = {};
+
+    for (let item of arr){
+        if (dict[item]){
+            dict[item] += 1;
+        } else {
+            dict[item] = 1;
+        }
+    }
+    
+    const uniques = [];
+    
+    for (let key in dict){
+        if (dict[key] === 1){
+            uniques.push(key);
+        }
+    }
+    
+    return uniques;
+}
+
+
 module.exports = {
     requireLogin: requireLogin,
     requireAdmin: requireAdmin,
@@ -212,5 +235,6 @@ module.exports = {
     isSlotValid: isSlotValid,
     isSlotInPast: isSlotInPast,
     turnStringToDate: turnStringToDate,
-    isWithinOneDay: isWithinOneDay
+    isWithinOneDay: isWithinOneDay,
+    keepUniqueElems: keepUniqueElems
 }
