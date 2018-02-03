@@ -22,15 +22,19 @@ export default class Availability extends Component {
     this.handleOnSelectSlot = this.handleOnSelectSlot.bind(this);
     this.eventStyleGetter = this.eventStyleGetter.bind(this);
   }
+  
+//====================================================================================
 
   componentDidMount(){
     const _this = this;
 
-    console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.match.params.drUrlName);
+    console.log("func componentDidMount of Calendar comp, gonna GET " + "/admin/availabilities/" + _this.props.match.params.drUrlName);
 
-    axios.get("/admin/availabilities/" + _this.props.match.params.drUrlName)
+    const getUrl = "/admin/availabilities/" + _this.props.match.params.drUrlName;
+
+    axios.get(getUrl)
     .then((res) => {
-      console.log("axios res.data >>>", res.data);
+      console.log(getUrl + " axios res.data >>>", res.data);
       if (!res.data){
         return false;
       }
@@ -42,6 +46,8 @@ export default class Availability extends Component {
         c.end = new Date(c.end);
       }
 
+      console.log("compo did mount fn. clone >>> ", clone);
+
       _this.setState({
         openSlots: clone
       })
@@ -51,6 +57,8 @@ export default class Availability extends Component {
     })
   }
 
+//====================================================================================
+  
   createAvailability(newAvailability){
     const _this = this;
     
@@ -102,6 +110,8 @@ export default class Availability extends Component {
     })
   }
 
+//====================================================================================
+
   handleNavigate(focusDate, flipUnit, prevOrNext) {
     //note: `focusDate` param isn't useful.
     const _this = this;
@@ -129,6 +139,8 @@ export default class Availability extends Component {
       
     }
 
+//====================================================================================
+
     handleOnSelectSlot(slotInfo){
       const _this = this;
 
@@ -152,6 +164,8 @@ export default class Availability extends Component {
     eventStyleGetter(event, start, end, isSelected) {
        console.log("faire rien func eventStyleGetter");
   }
+
+//====================================================================================
   
     render(){
     const _this = this;

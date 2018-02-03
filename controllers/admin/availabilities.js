@@ -5,6 +5,8 @@ const helpers = require("../../helpers");
 const constants = require("../../config/constants");
 const moment = require("moment");
 
+//================================================================================================
+
 // url: /admin/availablity/wang
 router.get('/:id', helpers.findDrId, function (req, res) {
   db("availabilities")
@@ -17,16 +19,25 @@ router.get('/:id', helpers.findDrId, function (req, res) {
       const collect = [];
 
       for (const slot of openSlots){
-          collect.push(slot.start_at);
-          collect.push(slot.end_at);
+          collect.push(slot.start_at.toISOString());
+          collect.push(slot.end_at.toISOString());
       }
 
-      const cleaned = helpers.keepUniqueElems(collect);
+      let cleaned = helpers.keepUniqueElems(collect);
 
       const cleanedCount = cleaned.length;
       if (cleanedCount % 2 !== 0) { //i.e if count is odd, then db has bad data
         return Promise.reject("db has bad data. Count is odd; expected even.");
       }
+
+      const cleanedDates = [];
+      for (let c of cleaned){
+        cleanedDates.push(new Date(c));
+      }
+
+      cleaned = cleanedDates.sort((a, b) => {
+        return a - b;
+      })
 
       const arrOut = [];
       const cleanSlot = {};
@@ -37,7 +48,8 @@ router.get('/:id', helpers.findDrId, function (req, res) {
           cleanSlot.start = cleaned[i];
         } else { //ie. odd index, then be end_at
           cleanSlot.end = cleaned[i];
-          arrOut.push(cleanSlot);
+          const cloneForPush = Object.assign({}, cleanSlot);
+          arrOut.push(cloneForPush);
         }
       }
       
@@ -48,6 +60,8 @@ router.get('/:id', helpers.findDrId, function (req, res) {
     })
 
 });
+
+//================================================================================================
 
 router.post('/create', helpers.requireAdmin, function (req, res) {
 
