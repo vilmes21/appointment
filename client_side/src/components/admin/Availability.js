@@ -7,6 +7,8 @@ import {
   Redirect
 } from 'react-router-dom'
 
+import helpers from '../../helpers'
+
 BigCalendar.momentLocalizer(moment);
 
 export default class Availability extends Component {
@@ -46,7 +48,7 @@ export default class Availability extends Component {
         c.end = new Date(c.end);
       }
 
-      console.log("compo did mount fn. clone >>> ", clone);
+      // console.log("compo did mount fn. clone >>> ", clone);
 
       _this.setState({
         openSlots: clone
@@ -144,7 +146,19 @@ export default class Availability extends Component {
     handleOnSelectSlot(slotInfo){
       const _this = this;
 
-        console.log(" slotInfo.start >>>", slotInfo.start);
+        console.log(" slotInfo >>>", slotInfo);
+
+        var want = {
+          start_at: new Date(slotInfo.start),
+          end_at: new Date(slotInfo.end)
+        };
+
+        // console.log("_this.state.openSlots >>> ", _this.state.openSlots, "want >>> ", want)
+
+        if (!helpers.isSlotOpen(_this.state.openSlots, want)){
+          alert("BE helper in FE found it overlapped. so halt");
+          return;
+        }
       
         const confirmMsg = "Continue to book appointment? \n" + "start: " + slotInfo.start.toLocaleString() + "\nend: " + slotInfo.end.toLocaleString();
 
