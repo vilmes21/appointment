@@ -156,7 +156,7 @@ export default class Availability extends Component {
         // console.log("_this.state.openSlots >>> ", _this.state.openSlots, "want >>> ", want)
 
         if (!helpers.isSlotOpen(_this.state.openSlots, want)){
-          alert("BE helper in FE found it overlapped. so halt");
+          alert("New proposal must not overlap with existing ones");
           return;
         }
       
@@ -250,12 +250,12 @@ export default class Availability extends Component {
           }}
 
           onSelectEvent={event => {
-            console.log("event params onSleectEvent >>>", event);
-            if (!event.isMine) {
-              alert("Slot already taken");
-              return;
-            }
-            alert("my availablity: " + event.title);
+            // console.log("event params onSleectEvent >>>", event);
+            // if (!event.isMine) {
+            //   alert("Slot already taken");
+            //   return;
+            // }
+            alert("onSelectEvent func. Do nothing.my availablity: " + event.title);
           }}
 
           formats={

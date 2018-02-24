@@ -4,8 +4,9 @@ const db = require("../db/knex");
 const helpers = require("../helpers");
 const constants = require("../config/constants");
 const moment = require("moment");
+//====================================================================================
 
-router.get('/:id', helpers.findDrId, function (req, res) {
+router.get('/:id', helpers.requireLogin, helpers.findDrId, function (req, res) {
 
   /*
   logic:
@@ -18,12 +19,14 @@ router.get('/:id', helpers.findDrId, function (req, res) {
   const nowDate = new Date();
   const twoWeeksLater = moment().add("14", "days").toDate();
 
-  console.log("inside GET/:id for non-admin ava controller");
+  console.log("inside GET/:id for non-admin ava controller. req.params.id >>> ", req.params.id);
 
   db("availabilities")
   .where({doctor_id: req.params.id})
   .whereBetween("start_at", [nowDate, twoWeeksLater])
   .then((availables) => {
+
+    helpers.footprint(1)
 
     if (availables.length === 0){
       res.json([]);
@@ -37,7 +40,23 @@ router.get('/:id', helpers.findDrId, function (req, res) {
         collect.push(ava.end_at);
     }
 
+    helpers.footprint(2)
+    console.log("collect >>> ", collect);
+    
+
     let cleaned = helpers.keepUniqueElems(collect);
+
+    console.log("cleaned >>> ", cleaned);
+    
+    /*
+    cleaned >>>  [ 'Sun Feb 25 2018 07:30:00 GMT-0800 (PST)',
+  'Sun Feb 25 2018 14:00:00 GMT-0800 (PST)',
+  'Sun Feb 25 2018 14:30:00 GMT-0800 (PST)',
+  'Sun Feb 25 2018 17:30:00 GMT-0800 (PST)',
+  'Sun Feb 25 2018 18:00:00 GMT-0800 (PST)',
+  'Sun Feb 25 2018 18:30:00 GMT-0800 (PST)' ]
+    */
+    
 
     // res.json({
     //   beforeClean: collect,
@@ -49,6 +68,9 @@ router.get('/:id', helpers.findDrId, function (req, res) {
     if (cleanedCount % 2 !== 0) { //i.e if count is odd, then db has bad data
       return Promise.reject("db has bad data. Count is odd; expected even.");
     }
+
+    helpers.footprint(3)
+    
 
     const collectByDay = {};
     
@@ -62,14 +84,32 @@ router.get('/:id', helpers.findDrId, function (req, res) {
       }
     }
 
+    helpers.footprint(4)
+
+    console.log("collectByDay >>> ", collectByDay)
+    /* 
+collectByDay >>>  { 'Sun Feb 25 2018': 
+   [ 2018-02-25T22:00:00.000Z,
+     2018-02-25T22:30:00.000Z,
+     2018-02-26T01:30:00.000Z,
+     2018-02-26T02:00:00.000Z,
+     2018-02-26T02:30:00.000Z ] }
+    */
+
     for (let drDay in collectByDay){
       collectByDay[drDay].sort(function(a, b){
         return a-b;
       });
 
-      const lastMidNight = moment(drDay).startOf('day').toDate();
-      const thisMidNight = moment(drDay).endOf('day').toDate();
+    helpers.footprint(8)
+      
+      // as suggested by https://stackoverflow.com/questions/43101278/how-to-handle-deprecation-warning-in-momentjs/43102805, sometimes , might need specify format
+      // const lastMidNight = moment(drDay, moment.ISO_8601).startOf('day').toDate();
+      const lastMidNight = moment(new Date(drDay)).startOf('day').toDate();
+      const thisMidNight = moment(new Date(drDay)).endOf('day').toDate();
 
+    helpers.footprint(9)
+      
       collectByDay[drDay].unshift(lastMidNight);
       collectByDay[drDay].push(thisMidNight);
     }
@@ -79,25 +119,60 @@ router.get('/:id', helpers.findDrId, function (req, res) {
 
     //cleaned looks like [1, 4, 5, 9] meaning 1-4, 5-9 avaialble. If add 2 elems to make it [last-mid-night, 1, 4, 5, 9, this-mid-night]
 
+    helpers.footprint(5)
+    
+    
     const unavailables = [];
-    const unavailable = {
-      title : "Dr does NOT work now",
-      type : constants.slotType.outOfOffice
-    };
+
 
     for (let drDay in collectByDay){
       const eachDayArr = collectByDay[drDay];
       const eachDayArrCount = eachDayArr.length;
-      
-      for (let i = 0; i < eachDayArrCount; i++){
+
+      console.log("PRE loop, eachDayArr >>> ", eachDayArr)
+
+      const unavailable = {
+        title : "Dr does NOT work now",
+        type : constants.slotType.outOfOffice
+      };
+
+      for (let i = 0; i < eachDayArrCount; i++){        
         if (i % 2 === 0){ //ie. even index, then be start_at
           unavailable.start = eachDayArr[i];
+          console.log("unavailable in first if >>> ", unavailable);
+          
         } else { //ie. odd index, then be end_at
           unavailable.end = eachDayArr[i];
-          unavailables.push(unavailable);
+          const fixed = Object.assign({}, unavailable);
+          unavailables.push(fixed);
+
+          console.log("in loop, fixed >>> ", fixed)
+          
         }
+          
       }
     }
+
+    helpers.footprint(6)
+    console.log("unavailables >>>", unavailables);
+    /*
+    unavailables >>> 
+    [ 
+      { title: 'Dr does NOT work now',
+    type: 'OUT_OF_OFFICE',
+    start: 2018-02-25T08:00:00.000Z,
+    end: 2018-02-26T07:59:59.999Z },
+  { title: 'Dr does NOT work now',
+    type: 'OUT_OF_OFFICE',
+    start: 2018-02-25T08:00:00.000Z,
+    end: 2018-02-26T07:59:59.999Z },
+  { title: 'Dr does NOT work now',
+    type: 'OUT_OF_OFFICE',
+    start: 2018-02-25T08:00:00.000Z,
+    end: 2018-02-26T07:59:59.999Z },
+    ]
+    */
+    
 
     return unavailables;
     
@@ -112,7 +187,8 @@ router.get('/:id', helpers.findDrId, function (req, res) {
         let cleanBooked = [];
         
         for (let apmt of booked){
-          const isMine = apmt.user_id === req.session.passport.user;
+          //login is required for this entire action, if this fails, the library is guilty
+          const isMine = apmt.user_id === req.session.passport.user; 
   
           let title = "";
           if (isMine) {title = "My appm here"}
@@ -126,6 +202,9 @@ router.get('/:id', helpers.findDrId, function (req, res) {
             isMine: isMine
           });
         }
+
+    helpers.footprint(7)
+        
   
         const allBadSlots = unavailables.concat(cleanBooked);
         

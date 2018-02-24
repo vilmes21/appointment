@@ -105,6 +105,8 @@ app.use("/admin", require("./controllers/admin/index"))
 
 //begin DEV mess
 
+//====================================================================================
+
 //simply a copy of .post devlogin - for browser direct dev requests
 app.get('/devlogin', function (req, res, next) {
 
@@ -132,6 +134,9 @@ app.get('/devlogin', function (req, res, next) {
 
   // })(req, res, next);
 });
+
+//====================================================================================
+
 
 app.post('/devlogin', function (req, res, next) {
 
@@ -162,27 +167,31 @@ app.post('/devlogin', function (req, res, next) {
 
 //end DEV mess
 
+//====================================================================================
+
+
 app.get("/auth/now", (req, res) => {
-  // let data = {
-  //   auth: false,
-  //   isAdmin: false
-  // }
-
-
-
-  // if (req.isAuthenticated()){
-  //   data.auth = true;
-  //   data.isAdmin = helpers.isAdmin(req);
-  // }
-
-  //fake all true. TODO: change
   let data = {
-    auth: true,
-    isAdmin: true
+    auth: false,
+    isAdmin: false
   }
+
+  if (req.isAuthenticated()){
+    data.auth = true;
+    data.isAdmin = helpers.isAdmin(req);
+  }
+
+  // //fake all true. TODO: change
+  // let data = {
+  //   auth: true,
+  //   isAdmin: true
+  // }
   
   res.json(data);
 })
+
+//====================================================================================
+
 
 app.post('/login', function (req, res, next) {
   passport.authenticate('local', function (err, user_id, info) {
@@ -219,6 +228,8 @@ app.post('/login', function (req, res, next) {
   })(req, res, next);
 });
 
+//====================================================================================
+
 app.get("/logout", (req, res) =>{
   req.logout();
   if (req.session.passport && req.session.passport.user){
@@ -234,6 +245,8 @@ app.get("/logout", (req, res) =>{
   });
 
 })
+
+//====================================================================================
 
 
 const DOMAIN = 'localhost';

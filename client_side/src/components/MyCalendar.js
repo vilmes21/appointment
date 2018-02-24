@@ -19,6 +19,7 @@ class MyCalendar extends Component {
       newAppointment: {}
     }
   }
+//====================================================================================
 
   createAppointment(newAppointment){
     const _this = this;
@@ -35,6 +36,7 @@ class MyCalendar extends Component {
       console.log("axios catch block, err >>>", err);
     })
   }
+//====================================================================================
 
   render(){
     const _this = this;
