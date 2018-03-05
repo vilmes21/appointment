@@ -11,7 +11,7 @@ const moment = require("moment");
 router.get('/:id', helpers.findDrId, function (req, res) {
   db("appointments")
   .join('users', 'appointments.user_id', 'users.id')
-  .select('users.firstname', 'users.lastname', 'appointments.wish_start_at', 'appointments.wish_end_at')
+  .select('users.firstname', 'users.lastname', 'appointments.wish_start_at', 'appointments.wish_end_at', 'appointments.id')
   .where({
     doctor_id: req.params.id,
     status: constants.APPOINTMENT_STATUS_BOOKED
@@ -25,7 +25,8 @@ router.get('/:id', helpers.findDrId, function (req, res) {
         const apm = {
           start: booked[i].wish_start_at,
           end: booked[i].wish_end_at,
-          title: booked[i].firstname + " " + booked[i].lastname
+          title: booked[i].firstname + " " + booked[i].lastname,
+          id: booked[i].id
         };
         out.push(Object.assign({}, apm));
       }

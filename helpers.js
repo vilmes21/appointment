@@ -77,7 +77,7 @@ const requireAdmin = (req, res, next) => {
 // }
 
 const isAdmin = (req) => {
-    footprint(57 + "func helpers.isAdmin: i am being called ")
+    // footprint(57 + "func helpers.isAdmin: i am being called ")
     
     if (!req.isAuthenticated()){
         return false;

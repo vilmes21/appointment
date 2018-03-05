@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 // import axios from "axios";
 
 // import MyCalendar from "./components/MyCalendar"
@@ -13,13 +15,16 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
+      <MuiThemeProvider>
+   <div className="App">
         <header className="App-header">
           <h1 className="App-title">Welcome to Appointments</h1>
         </header>
 
         <Layout />
       </div>
+    </MuiThemeProvider>
+   
     );
   }
 }

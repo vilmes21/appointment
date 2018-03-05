@@ -6,6 +6,7 @@ import axios from "axios";
 import {
   Redirect
 } from 'react-router-dom'
+import Slot from './Slot';
 
 import helpers from '../../helpers'
 
@@ -15,14 +16,19 @@ export default class Availability extends Component {
   constructor(){
     super();
     this.state = {
-      openSlots: [],
-      dayChosen: new Date()
+      booked: [],
+      dayChosen: new Date(),
+      detail: {
+        title: "",
+        start: "",
+        end: "",
+        id: null
+      },
+      detailOpen: false,
     }
 
-    this.createAvailability = this.createAvailability.bind(this);
-    this.handleNavigate = this.handleNavigate.bind(this);
-    this.handleOnSelectSlot = this.handleOnSelectSlot.bind(this);
     this.eventStyleGetter = this.eventStyleGetter.bind(this);
+    this.closeDetail = this.closeDetail.bind(this);
   }
   
 //====================================================================================
@@ -30,9 +36,9 @@ export default class Availability extends Component {
   componentDidMount(){
     const _this = this;
 
-    console.log("func componentDidMount of Calendar comp, gonna GET " + "/admin/availabilities/" + _this.props.match.params.drUrlName);
+    const getUrl = "/admin/appointments/" + _this.props.match.params.drUrlName;
 
-    const getUrl = "/admin/availabilities/" + _this.props.match.params.drUrlName;
+    console.log("func componentDidMount of admin/Appointment comp, gonna GET " + getUrl);
 
     axios.get(getUrl)
     .then((res) => {
@@ -51,7 +57,7 @@ export default class Availability extends Component {
       // console.log("compo did mount fn. clone >>> ", clone);
 
       _this.setState({
-        openSlots: clone
+        booked: clone
       })
     })
     .catch((err) => {
@@ -60,120 +66,34 @@ export default class Availability extends Component {
   }
 
 //====================================================================================
-  
-  createAvailability(newAvailability){
-    const _this = this;
-    
-    console.log("in func createAppm, newAvailability >>>", newAvailability);
-    
-    axios.post("/admin/availabilities/create", newAvailability)
-    .then((res) => {
-      console.log(res.data);
 
-      if (!res.data){
-        window.alert("Internal server err");
-      }
+closeDetail(){
+  this.setState({detailOpen: false});
+}
 
-      if (!res.data.success){
-        window.alert("Failed db insert. Server msg:" + res.data.msg);
-        return;
-      }
+//====================================================================================
 
-      // if (res.data.serverBadAuth){
-      //   window.alert("Please log in!");
-      //   _this.props.reactLogOut("Log in first! Server saw that you're not logged in.");
-      //   return;
-      // }
-
-      // if (!res.data.success){
-      //   console.log("ajax good, but performance failed");
-      //   return false;
-      // }
-
-      //BEGIN visiually add slot
-      let clone = [..._this.state.openSlots];
-
-      clone.push({
-        title: "My new available slot!",
-        start: newAvailability.start_at,
-        end: newAvailability.end_at,
-        isMine: true
-      });
-
-      _this.setState({
-        openSlots: clone
-      });
-
-      //END visiually add slot
-      
-    })
-    .catch((err) => {
-      console.log("axios catch block, err >>>", err);
-    })
+cancelAppointment(id){
+  alert("cancelling appm id >>", id);
+  if (id != parseInt(id)){
+    alert("Appointment id missing. Halt");
+    return;
   }
 
-//====================================================================================
-
-  handleNavigate(focusDate, flipUnit, prevOrNext) {
-    //note: `focusDate` param isn't useful.
-    const _this = this;
-
-    // console.log("/admin/availability comp handleNavigate func. Right now do nothing.")
-      
-      // //BEGIN restrict patients to view only this week + next
-      const now = new Date();
-      const nowNum = now.getDate();
-      const nextWeekToday = moment().add(7, "day").toDate();
-      const nextWeekTodayNum = nextWeekToday.getDate();
-      
-      if (prevOrNext === "NEXT" 
-          && _this.state.dayChosen.getDate() === nowNum){
-            _this.setState({
-              dayChosen: nextWeekToday
-            });
-      } else if (prevOrNext === "PREV" 
-      && _this.state.dayChosen.getDate() === nextWeekTodayNum){
-        _this.setState({
-          dayChosen: now
-        });
-      }
-      // //END restrict patients to view only this week + next
-      
+  axios.post("/appointments/cancel/" + id)
+  .then((res) => {
+    console.log("axios then block, res >>>", res);
+    
+    if (!res.data){
+      return false;
     }
+  })
+  .catch((err) => {
+    console.log("axios catch block, err >>>", err);
+  })
+}
 
 //====================================================================================
-
-    handleOnSelectSlot(slotInfo){
-      const _this = this;
-
-        console.log(" slotInfo >>>", slotInfo);
-
-        var want = {
-          start_at: new Date(slotInfo.start),
-          end_at: new Date(slotInfo.end)
-        };
-
-        // console.log("_this.state.openSlots >>> ", _this.state.openSlots, "want >>> ", want)
-
-        if (!helpers.isSlotOpen(_this.state.openSlots, want)){
-          alert("New proposal must not overlap with existing ones");
-          return;
-        }
-      
-        const confirmMsg = "Continue to book appointment? \n" + "start: " + slotInfo.start.toLocaleString() + "\nend: " + slotInfo.end.toLocaleString();
-
-        if (!window.confirm(confirmMsg)){
-          return;
-        }
-
-        let newAvailability = {
-          drUrlName : _this.props.match.params.drUrlName,
-          start_at : slotInfo.start,
-          end_at : slotInfo.end
-      }
-
-      _this.createAvailability(newAvailability);
-    }
 
     eventStyleGetter(event, start, end, isSelected) {
        console.log("faire rien func eventStyleGetter");
@@ -191,16 +111,22 @@ export default class Availability extends Component {
 
     return (
       <div>
+        <Slot 
+          open={_this.state.detailOpen}
+          closeDetail={_this.closeDetail}
+          detail={_this.state.detail}
+          cancelAppointment={_this.cancelAppointment}
+          />
         <h1>
-          Set available slots for Dr. {_this.props.match.params.drUrlName}
+          Appointments with Dr. {_this.props.match.params.drUrlName}
         </h1>
         
         <BigCalendar
-          events={this.state.openSlots}
+          events={this.state.booked}
           defaultView='week'
           views={['week', 'day']}
           selectable
-          step={30} 
+          step={5} 
 
           timeslots={1}
           
@@ -216,19 +142,7 @@ export default class Availability extends Component {
             moment(new Date("2017-12-27 07:00:00")).add(12, "hours").toDate()
           }
 
-          // defaultDate={moment().toDate()}
-
-          date={_this.state.dayChosen}
-
-          onNavigate={(focusDate, flipUnit, prevOrNext) => {
-            _this.handleNavigate(focusDate, flipUnit, prevOrNext);
-          }}
-
-          onSelectSlot={(slotInfo) => {
-            _this.handleOnSelectSlot(slotInfo);
-          }}
-
-          // eventPropGetter={(event, start, end, isSelected) => {_this.eventStyleGetter(event, start, end, isSelected)}}
+          defaultDate={new Date()}
 
           eventPropGetter = {(event, start, end, isSelected)=>{
             
@@ -239,10 +153,6 @@ export default class Availability extends Component {
               border: "none"
           };
 
-            if (event.isMine){
-              newStyle.backgroundColor = "lightgreen"
-            }
-      
             return {
               className: "",
               style: newStyle
@@ -250,12 +160,19 @@ export default class Availability extends Component {
           }}
 
           onSelectEvent={event => {
-            // console.log("event params onSleectEvent >>>", event);
-            // if (!event.isMine) {
-            //   alert("Slot already taken");
-            //   return;
-            // }
-            alert("onSelectEvent func. Do nothing.my availablity: " + event.title);
+            // alert("start: " + event.start + "\nend: " + event.end + "\n" + event.title);
+
+            _this.setState({
+              detailOpen: true,
+              detail: {
+                title: event.title,
+                start: event.start.toString(), //make sure it's just a string, not Date obj
+                end: event.end.toString(),
+                id: event.id
+              }
+            },
+            ()=> {console.log("sss >>>", _this.state)}
+          );
           }}
 
           formats={
@@ -265,8 +182,6 @@ export default class Availability extends Component {
               }
             }
           }
-          
-
           
         />
       </div>

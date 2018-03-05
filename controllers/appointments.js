@@ -143,4 +143,16 @@ router.post('/create', helpers.requireLogin, function (req, res) {
 
 });
 
+//====================================================================================
+
+router.post('/cancel/:id', helpers.requireLogin, function (req, res) {
+  helpers.footprint(33);
+  console.log("cancel id>>", req.params.id);
+  
+  return res.json({
+    success: true,
+    msg: "testingfake cancel"
+  })
+})
+
 module.exports = router
