@@ -1,5 +1,4 @@
 /* hiding All Day useless row. Must be done with CSS. Cannot be done with library logic. */
 .rbc-time-header > .rbc-row:nth-of-type(2) {
     display: none !important;
-    /* background-color: blue !important; */
 }

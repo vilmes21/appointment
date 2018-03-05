@@ -95,38 +95,50 @@ const isAdmin = (req) => {
 }
 
 const findDrIdByUrlName = (urlName) => {
+    let downcase = null;
+    if (typeof(urlName) === "string"){
+        downcase = urlName.toLowerCase();
+    }
+    
     const drs = { //TODO: go into db grab and then cache in session
-        Hermann: 205,
-        A_last: 211,
-        B_last: 212,
-        Wang: 210
+        hermann: 205,
+        a_last: 211,
+        b_last: 212,
+        wang: 210
       };
-    return drs[urlName]; //may return undefined
+    return drs[downcase]; //may return undefined
 } 
 
 const findDrId = (req, res, next) => {
+    let idGiven = req.params.id;
   
-    if (req.params.id == parseInt(req.params.id)) {
+    if (idGiven == parseInt(idGiven)) {
       // then it's int already
       next();
       return;
     }
-  
+
+    if (typeof(idGiven) === "string"){
+        idGiven = idGiven.toLowerCase();
+    }
+
+    //at this point, it's string like "Jack"
+    
     const drs = { //TODO: go into db grab and then cache in session
-      Hermann: 205,
-      A_last: 211,
-      B_last: 212,
-      Wang: 210
+      hermann: 205,
+      a_last: 211,
+      b_last: 212,
+      wang: 210
     };
   
-    if (!drs[req.params.id]){
+    if (!drs[idGiven]){
       res.json("yow bad url, no such dr");
       return;
       // res.end();
     }
     
-    req.params.id= drs[req.params.id];
-    req.params.drId= drs[req.params.id]; //should use this. Later on remove previous line and take care of its old references
+    req.params.id= drs[idGiven];
+    req.params.drId= drs[idGiven]; //should use this. Later on remove previous line and take care of its old references
     next();
   }
 
@@ -218,20 +230,35 @@ const turnStringToDate = (arrayOfObj) => {
 }
 
 const isWithinOneDay = (want) => {
-    console.log("In fn helpers.isWithinOneDay ", "want.start_at >>> ", want.start_at, "want.end_at >>> ", want.end_at, "want.start_at.getDate() >>> ", want.start_at.getDate());
+    // console.log("In fn helpers.isWithinOneDay ", "want.start_at >>> ", want.start_at, "want.end_at >>> ", want.end_at, "want.start_at.getDate() >>> ", want.start_at.getDate());
     return want.start_at.getDate() === want.end_at.getDate();
 }
 
 const keepUniqueElems = (arr) => {
+    // console.log("fn keepUniqueElems. arr >> ", arr)
+    
     const dict = {};
 
-    for (let item of arr){
+    for (let a of arr){
+        // console.log("fn loop keepUniqueElems. a >> ", a, "of type >>", typeof(a))
+
+        let item;
+        if (typeof(a) === "object"){
+            item = a.toISOString();
+        } else {
+            item = a;
+        }
+
+        // console.log("fn loop keepUniqueElems. item >> ", item, "of type should STRING >>", typeof(item))
+        
         if (dict[item]){
             dict[item] += 1;
         } else {
             dict[item] = 1;
         }
     }
+
+    // console.log("fn keepUniqueElems. dict >> ", dict)
     
     const uniques = [];
     
@@ -240,6 +267,8 @@ const keepUniqueElems = (arr) => {
             uniques.push(key);
         }
     }
+    
+    // console.log("fn keepUniqueElems. uniques >> ", uniques)
     
     return uniques;
 }

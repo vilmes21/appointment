@@ -23,6 +23,7 @@ import Spinner from './Spinner';
 //BEGIN admin imports
 import AdminDoctorList from "./admin/DoctorList"
 import AdminAvailability from "./admin/Availability"
+import AdminAppointment from "./admin/Appointment"
 //END admin imports
 
 class Layout extends React.Component {
@@ -142,6 +143,7 @@ class Layout extends React.Component {
       let may_adminDrListLink = null;
       let may_adminDrList = null;
       let may_adminSetAvailability = null;
+      let may_adminAppointment = null;
       
       if (_this.state.authenticated && _this.state.isAdmin){
 
@@ -163,6 +165,17 @@ class Layout extends React.Component {
                           path="/admin/availability/:drUrlName"
                           render={ (props) => (
                             <AdminAvailability 
+                              reactLogOut={_this.reactLogOut}
+                              {...props} />
+                          )
+                          } 
+                          />;
+
+        may_adminAppointment = 
+                          <Route 
+                          path="/admin/appointment/:drUrlName"
+                          render={ (props) => (
+                            <AdminAppointment
                               reactLogOut={_this.reactLogOut}
                               {...props} />
                           )
@@ -237,6 +250,7 @@ class Layout extends React.Component {
 
           {may_adminDrList}
           {may_adminSetAvailability}
+          {may_adminAppointment}
 
           <Route path="*" component={NoMatch} /> 
     </Switch>

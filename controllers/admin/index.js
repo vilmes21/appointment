@@ -23,5 +23,6 @@ router.get("/doctors", helpers.requireAdmin, (req, res) => {
 })
 
 router.use("/availabilities", require("./availabilities"))
+router.use("/appointments", require("./appointments"))
 
 module.exports = router

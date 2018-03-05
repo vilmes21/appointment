@@ -83,9 +83,15 @@ export default class DoctorList extends React.Component {
             
             return (
               <div key={dr.id}>
+              {dr.firstname} {dr.lastname} {may_public}
+                <Link 
+                    to={"/admin/appointment/" + dr.lastname} >
+                  <button>view bookings</button>
+                </Link>
+
                 <Link 
                     to={"/admin/availability/" + dr.lastname} >
-                  {dr.firstname} {dr.lastname} {may_public}
+                  <button>set availability</button>                  
                 </Link>
                 <hr/>
               </div>

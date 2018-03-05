@@ -16,21 +16,21 @@ router.get('/:id', helpers.requireLogin, helpers.findDrId, function (req, res) {
   -return array collection of objects, including all non-available slots + booked appms
   */
 
-  const nowDate = new Date();
+  const now = new Date();
   const twoWeeksLater = moment().add("14", "days").toDate();
 
-  console.log("inside GET/:id for non-admin ava controller. req.params.id >>> ", req.params.id);
+  // console.log("inside GET/:id for non-admin ava controller. req.params.id >>> ", req.params.id);
 
   db("availabilities")
   .where({doctor_id: req.params.id})
-  .whereBetween("start_at", [nowDate, twoWeeksLater])
+  .whereBetween("start_at", [now, twoWeeksLater])
   .then((availables) => {
 
-    helpers.footprint(1)
+    // helpers.footprint(1)
 
     if (availables.length === 0){
       res.json([]);
-      return Promise.reject("0 doctor avaiablities here. Not to mention patients' bookings. Halt.");
+      return Promise.reject("0 doctor avaiablities. Not to say patient bookings. Halt.");
     }
 
     const collect = [];
@@ -40,21 +40,25 @@ router.get('/:id', helpers.requireLogin, helpers.findDrId, function (req, res) {
         collect.push(ava.end_at);
     }
 
-    helpers.footprint(2)
-    console.log("collect >>> ", collect);
+    // helpers.footprint(2)
+    // console.log("collect >>> ", collect);
+    /*
+    collect >>>  [ 2018-03-04T22:30:00.000Z,
+  2018-03-05T01:00:00.000Z,
+  2018-03-05T20:30:00.000Z,
+  2018-03-05T23:30:00.000Z ]
+    */
     
 
     let cleaned = helpers.keepUniqueElems(collect);
 
-    console.log("cleaned >>> ", cleaned);
+    // console.log("cleaned >>> ", cleaned);
     
     /*
-    cleaned >>>  [ 'Sun Feb 25 2018 07:30:00 GMT-0800 (PST)',
-  'Sun Feb 25 2018 14:00:00 GMT-0800 (PST)',
-  'Sun Feb 25 2018 14:30:00 GMT-0800 (PST)',
-  'Sun Feb 25 2018 17:30:00 GMT-0800 (PST)',
-  'Sun Feb 25 2018 18:00:00 GMT-0800 (PST)',
-  'Sun Feb 25 2018 18:30:00 GMT-0800 (PST)' ]
+cleaned >>>  [ '2018-03-04T22:30:00.000Z',
+  '2018-03-05T01:00:00.000Z',
+  '2018-03-05T20:30:00.000Z',
+  '2018-03-05T23:30:00.000Z' ]
     */
     
 
@@ -69,24 +73,59 @@ router.get('/:id', helpers.requireLogin, helpers.findDrId, function (req, res) {
       return Promise.reject("db has bad data. Count is odd; expected even.");
     }
 
-    helpers.footprint(3)
+    // helpers.footprint(3)
     
 
     const collectByDay = {};
+
+    for (let i = 0; i < 15; i++){
+      // const keyStr = moment().add(i.toString(), "days").toDate().toDateString();
+      const keyStr = moment().add(i.toString(), "days").toDate().toDateString();
+      collectByDay[keyStr] = [];
+    }
+
+    /* 
+    after all initation. collectByDay>> { 'Sun Mar 04 2018': [],
+  'Mon Mar 05 2018': [],
+  'Tue Mar 06 2018': [],
+  'Wed Mar 07 2018': [],
+  'Thu Mar 08 2018': [],
+  'Fri Mar 09 2018': [],
+  'Sat Mar 10 2018': [],
+  'Sun Mar 11 2018': [],
+  'Mon Mar 12 2018': [],
+  'Tue Mar 13 2018': [],
+  'Wed Mar 14 2018': [],
+  'Thu Mar 15 2018': [],
+  'Fri Mar 16 2018': [],
+  'Sat Mar 17 2018': [],
+  'Sun Mar 18 2018': [] }
+     */
     
     for (let j = 0; j < cleanedCount; j++){
       const date = new Date(cleaned[j]);
       const str = date.toDateString();
-      if (collectByDay[str]){
-        collectByDay[str].push(date);
-      } else {
-        collectByDay[str] = [];
-      }
+      /* 
+      str >>>  Sun Mar 04 2018
+str >>>  Sun Mar 04 2018
+str >>>  Mon Mar 05 2018
+str >>>  Mon Mar 05 2018
+       */
+
+       //all keys should be have initiated into [] already. So can just push to it.
+      collectByDay[str].push(date);
+       
+       
+      // if (collectByDay[str]){
+      //   collectByDay[str].push(date);
+      // } else {
+      //   collectByDay[str] = [date];
+      // }
     }
 
-    helpers.footprint(4)
+    // helpers.footprint(4)
 
-    console.log("collectByDay >>> ", collectByDay)
+    // console.log("collectByDay >>> ", collectByDay)
     /* 
 collectByDay >>>  { 'Sun Feb 25 2018': 
    [ 2018-02-25T22:00:00.000Z,
@@ -97,30 +136,51 @@ collectByDay >>>  { 'Sun Feb 25 2018':
     */
 
     for (let drDay in collectByDay){
-      collectByDay[drDay].sort(function(a, b){
-        return a-b;
-      });
+      if (collectByDay[drDay].length > 0){
+        collectByDay[drDay].sort(function(a, b){
+          return a-b;
+        });
+      }
 
-    helpers.footprint(8)
+  //     console.log("Before insert top and bottom. collectByDay[drDay] human readable>>")
+  // for (let b of collectByDay[drDay]){
+  //   console.log("b.start.toString() >>", b.toString())
+  // }
       
       // as suggested by https://stackoverflow.com/questions/43101278/how-to-handle-deprecation-warning-in-momentjs/43102805, sometimes , might need specify format
       // const lastMidNight = moment(drDay, moment.ISO_8601).startOf('day').toDate();
       const lastMidNight = moment(new Date(drDay)).startOf('day').toDate();
       const thisMidNight = moment(new Date(drDay)).endOf('day').toDate();
 
-    helpers.footprint(9)
+      // console.log("lastMidNight >>> ", lastMidNight)
+      // console.log("thisMidNight >>> ", thisMidNight)
+      /* lastMidNight >>>  2018-03-04T08:00:00.000Z
+thisMidNight >>>  2018-03-05T07:59:59.999Z */
+    // helpers.footprint(9)
       
       collectByDay[drDay].unshift(lastMidNight);
       collectByDay[drDay].push(thisMidNight);
+
+      //console.log("collectByDay[drDay] >>> ", collectByDay[drDay])
+      /* collectByDay[drDay] >>>  [ 2018-03-05T08:00:00.000Z,
+  2018-03-05T23:30:00.000Z,
+  2018-03-06T07:59:59.999Z ] */
+
+  // console.log("collectByDay[drDay] human readable>>")
+  // for (let b of collectByDay[drDay]){
+  //   console.log("b.start.toString() >>", b.toString())
+  //   console.log("b.end.toString()   >>", b.toString())
+  // }
+
+  // helpers.footprint(" a");
+
     }
 
-    // res.json(collectByDay);
-    // return Promise.reject("testing1");
+
 
     //cleaned looks like [1, 4, 5, 9] meaning 1-4, 5-9 avaialble. If add 2 elems to make it [last-mid-night, 1, 4, 5, 9, this-mid-night]
 
-    helpers.footprint(5)
-    
+    // helpers.footprint(5)
     
     const unavailables = [];
 
@@ -129,7 +189,7 @@ collectByDay >>>  { 'Sun Feb 25 2018':
       const eachDayArr = collectByDay[drDay];
       const eachDayArrCount = eachDayArr.length;
 
-      console.log("PRE loop, eachDayArr >>> ", eachDayArr)
+      // console.log("PRE loop, eachDayArr >>> ", eachDayArr)
 
       const unavailable = {
         title : "Dr does NOT work now",
@@ -139,22 +199,22 @@ collectByDay >>>  { 'Sun Feb 25 2018':
       for (let i = 0; i < eachDayArrCount; i++){        
         if (i % 2 === 0){ //ie. even index, then be start_at
           unavailable.start = eachDayArr[i];
-          console.log("unavailable in first if >>> ", unavailable);
+          // console.log("unavailable in first if >>> ", unavailable);
           
         } else { //ie. odd index, then be end_at
           unavailable.end = eachDayArr[i];
           const fixed = Object.assign({}, unavailable);
           unavailables.push(fixed);
 
-          console.log("in loop, fixed >>> ", fixed)
+          // console.log("in loop, fixed >>> ", fixed)
           
         }
           
       }
     }
 
-    helpers.footprint(6)
-    console.log("unavailables >>>", unavailables);
+    // helpers.footprint(6)
+    // console.log("unavailables >>>", unavailables);
     /*
     unavailables >>> 
     [ 
@@ -173,6 +233,11 @@ collectByDay >>>  { 'Sun Feb 25 2018':
     ]
     */
     
+  //  console.log("right before return result unavailables human readable>>")
+  //  for (let b in unavailables){
+  //    console.log("unavailables[b].start.toString() >>", unavailables[b].start.toString())
+  //    console.log("unavailables[b].end.toString()   >>", unavailables[b].end.toString())
+  //  }
 
     return unavailables;
     
@@ -181,7 +246,7 @@ collectByDay >>>  { 'Sun Feb 25 2018':
 
     db("appointments")
     .where({doctor_id: req.params.id})
-    .whereBetween("wish_start_at", [nowDate, twoWeeksLater])
+    .whereBetween("wish_start_at", [now, twoWeeksLater])
       .then((booked) => {
   
         let cleanBooked = [];
@@ -203,10 +268,16 @@ collectByDay >>>  { 'Sun Feb 25 2018':
           });
         }
 
-    helpers.footprint(7)
+    // helpers.footprint(7)
         
   
         const allBadSlots = unavailables.concat(cleanBooked);
+
+        console.log("right before return result allBadSlots converted>>")
+        for (let b in allBadSlots){
+          console.log("allBadSlots[b].start.toString() >>", allBadSlots[b].start.toString())
+          console.log("allBadSlots[b].end.toString()   >>", allBadSlots[b].end.toString())
+        }
         
         return res.json(allBadSlots);
       })
