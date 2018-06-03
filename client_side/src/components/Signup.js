@@ -1,23 +1,19 @@
 import React from 'react';
 import axios from "axios";
+import {signup} from '../actions/users'
+import { connect } from 'react-redux';
 
 class Signup extends React.Component {
-  constructor(){
-    super();
-    this.state={
-      mayDisableSubmit: false,
-      firstname: "",
-      lastname: "",
-      email: "",
-      phone: "",
-      password: ""
-    }
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  state={
+    mayDisableSubmit: false,
+    firstname: "",
+    lastname: "",
+    email: "",
+    phone: "",
+    password: ""
   }
 
-  handleChange(ev){
+  handleChange = (ev) => {
     const _this = this;
     const obj = {};
     const _name = ev.target.name;
@@ -37,37 +33,42 @@ class Signup extends React.Component {
     _this.setState(obj);
   }
 
-  handleSubmit(ev){
+  handleSubmit = (ev)=>{
     const _this = this;   
     
     ev.preventDefault();
 
-    console.log("in handleSubit of sign up comp, _this.state >>>", _this.state);
-    
-    axios.post('/users/new', _this.state)
-    .then(function (response) {
-      console.log(response.data);
+    const res = this.props.signup(_this.state);
 
-      if (response.data && response.data.authenticated){
-        _this.props.reactLogIn()
-      }
+    if (res){
+      console.log("res is ture")
+      _this.props.reactLogIn();
+    }
+    
+    // axios.post('/users/new', _this.state)
+    // .then(function (response) {
+    //   console.log(response.data);
+
+    //   if (response.data && response.data.authenticated){
+    //     _this.props.reactLogIn()
+    //   }
       
-      if (false) {  // TODO: if user successfully created and logged in in backend
-        _this.props.reactLogIn();
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+    //   if (false) {  // TODO: if user successfully created and logged in in backend
+    //     _this.props.reactLogIn();
+    //   }
+    // })
+    // .catch(function (error) {
+    //   console.log(error);
+    // });
   }
   
-  render(){
+  render = ()=>{
     const _this = this;
 
     return (
       <div>
       <h1>
-       Singup Component Here
+       Singup
       </h1>
 
       <form 
@@ -124,4 +125,4 @@ class Signup extends React.Component {
   }
 }
 
-export default Signup;
+export default connect(null, {signup})(Signup)

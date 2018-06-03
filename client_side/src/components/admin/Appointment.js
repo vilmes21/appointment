@@ -82,7 +82,6 @@ cancelAppointment(id){
 
   axios.post("/appointments/cancel/" + id)
   .then((res) => {
-    console.log("axios then block, res >>>", res);
     
     if (!res.data){
       return false;

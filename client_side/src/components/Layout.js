@@ -49,7 +49,6 @@ class Layout extends React.Component {
     //BEGIN check auth w/ server whenever this component renders
     axios.get("/auth/now")
     .then((res) => {
-      console.log("axios then block, res >>>", res);
       
       if (!res.data){
         return false;
@@ -60,8 +59,6 @@ class Layout extends React.Component {
         // isAdmin: res.data.isAdmin, //TODO: to set
         msg: "new pg load auth check done",
         isLoading: false
-      }, () => {
-        console.log("after initial auth check, state >>>", _this.state);
       });
     })
     .catch((err) => {
@@ -107,7 +104,6 @@ class Layout extends React.Component {
     
     axios.post("/devlogin")
     .then((res) => {
-      console.log("axios then block, res.data >>>", res.data);
       
       if (!res.data){
         return false;
@@ -125,8 +121,6 @@ class Layout extends React.Component {
 
   render(){
     const _this = this;
-
-    console.log("inside Layout render func, _this.state >>>", _this.state);
 
     let comp;
     if (_this.state.isLoading){
@@ -222,7 +216,6 @@ class Layout extends React.Component {
             {may_logout}
           <hr/>
     <Switch>
-          {/* <Route exact path="/testt" component={TestComp}/> */}
           <Route exact path="/doctors" component={DoctorList}/>
           <Route exact path="/" render={() => (<Redirect to="/login" />)} />
           <Route 
