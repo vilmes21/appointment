@@ -1,10 +1,7 @@
 import React from 'react';
-import axios from "axios";
-import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
-import Calendar from "components/smart/Calendar"
+import {Link} from 'react-router-dom'
 import {getList} from 'actions/doctors'
 import {connect} from 'react-redux';
-//import {bindActionCreators} from 'redux'
 
 class DoctorList extends React.Component {
 

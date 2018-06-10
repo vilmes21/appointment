@@ -1,0 +1,4 @@
+button, input.button {
+    padding: 20px 40px !important; 
+    cursor: pointer;
+}

@@ -1,7 +1,7 @@
 import React from 'react';
-import axios from "axios";
-import {signup} from '../actions/users'
+import {signup} from 'actions/users'
 import { connect } from 'react-redux';
+import { addError } from 'actions/errors';
 
 class Signup extends React.Component {
   state={
@@ -33,15 +33,15 @@ class Signup extends React.Component {
     _this.setState(obj);
   }
 
-  handleSubmit = (ev)=>{
+  handleSubmit = async (ev)=>{
     const _this = this;   
     
     ev.preventDefault();
 
-    const res = this.props.signup(_this.state);
+    const res = await this.props.signup(_this.state);
 
-    if (!res){
-      alert("Failed sign up !")
+    if (!res.success){
+      _this.props.addError(res.msg)
     }
   }
   
@@ -108,4 +108,4 @@ class Signup extends React.Component {
   }
 }
 
-export default connect(null, {signup})(Signup)
+export default connect(null, {signup, addError})(Signup)

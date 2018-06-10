@@ -12,5 +12,8 @@ export const GET_BOOKED = "GET_BOOKED"
 export const GET_DOCTORS = "GET_DOCTORS"
 
 export const SIGNIN_USER = "SIGNIN_USER"
+export const SIGNOUT_USER = "SIGNOUT_USER"
 
 export const NEW_ERROR = "NEW_ERROR"
+export const REMOVE_ERROR = "REMOVE_ERROR"
+

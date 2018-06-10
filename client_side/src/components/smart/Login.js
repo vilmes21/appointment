@@ -1,6 +1,6 @@
 import React from 'react';
-import axios from "axios";
 import {loginVerify} from 'actions/users'
+import {addError} from 'actions/errors'
 import {connect} from 'react-redux';
 
 class Login extends React.Component {
@@ -18,17 +18,12 @@ class Login extends React.Component {
     _this.setState(obj);
   }
 
-  handleSubmit =(ev)=> {
+  handleSubmit = async (ev)=> {
     const _this = this;
-
     ev.preventDefault();
-
-    const res = _this.props.loginVerify(_this.state);
-
-    console.log("hadnle sub, res ???", res)
-
+    const res = await _this.props.loginVerify(_this.state);
     if (!res.success){
-      alert(res.msg);
+      _this.props.addError(res.msg);
     }
   }
 
@@ -60,7 +55,7 @@ class Login extends React.Component {
               name="password"/>
           </div>
           <div>
-            <input type="submit" value="Log In"/>
+            <input className="button" type="submit" value="Log In"/>
           </div>
         </form>
 
@@ -73,4 +68,4 @@ const mapState = (state) => {
   return {authenticated: !!state.currentUser && !!state.currentUser.email};
 }
 
-export default connect(mapState, { loginVerify })(Login);
+export default connect(mapState, { loginVerify, addError })(Login);

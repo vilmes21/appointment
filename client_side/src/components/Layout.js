@@ -9,10 +9,11 @@ import {
 } from 'react-router-dom';
 // import { Switch } from 'react-router';
 
-import Signup from './Signup';
+import Signup from 'components/smart/Signup';
 import Login from "components/smart/Login"
+import TopError from "components/smart/TopError"
 import MyAccount from './MyAccount';
-import Logout from "./Logout"
+import Logout from "components/smart/Logout"
 import DoctorList from "./smart/DoctorList"
 import TestComp from "./TestComp"
 import Calendar from './smart/Calendar';
@@ -101,7 +102,6 @@ state = {
     let comp;
       let myAccountLink = null;
       let loginAndSignupLink = null;
-      let may_logout = null;
 
       //BEGIN for admin
       let may_adminDrListLink = null;
@@ -153,7 +153,7 @@ state = {
       if (_this.state.authenticated){
 
         myAccountLink = <li><Link to="/my_account">MyAccount</Link></li>;
-        may_logout = <Logout reactLogOut={_this.reactLogOut} />;
+        
 
       } else {
 
@@ -167,6 +167,8 @@ state = {
   
       comp =      
       <div>
+        <Logout />
+        <TopError />
       <button onClick={_this.devLogin}>DEV login</button>
       
         <Router>
@@ -177,7 +179,6 @@ state = {
             {loginAndSignupLink}
             {myAccountLink}
           </ul>
-            {may_logout}
           <hr/>
     <Switch>
           <Route exact path="/doctors" component={DoctorList}/>

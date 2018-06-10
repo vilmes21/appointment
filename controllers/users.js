@@ -83,7 +83,8 @@ router.post('/new',
           res.json({
             success: true,
             authenticated: req.isAuthenticated(),
-            msg: "Welcome, new user!"
+            msg: "Welcome, new user!",
+            id: x[0]
           })
         })
         

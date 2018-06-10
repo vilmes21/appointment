@@ -228,7 +228,6 @@ app.post('/login', function (req, res, next) {
         const {email, firstname, lastname, id} = info;
         const userInfo = {email, firstname, lastname, id};
         loginResult = {...loginResult, ...userInfo};
-        console.log("after spread, loginResult >>> ", loginResult);
       }
 
       res.json(loginResult);
@@ -240,20 +239,25 @@ app.post('/login', function (req, res, next) {
 
 //====================================================================================
 
-app.get("/logout", (req, res) =>{
+app.post("/logout", (req, res) =>{
   req.logout();
+
+  const result = {
+    success: false,
+    msg: "",
+    id: -1
+  }
+  
   if (req.session.passport && req.session.passport.user){
-    res.json({
-      loggedOut: false,
-      userId: req.session.passport.user
-    });
-    res.end();
+    result.msg = "Logout failed on server";
+    result.id = req.session.passport.user;
+
+    return res.json(result);
   }
 
-  res.json({
-    loggedOut: true
-  });
+  result.success = true;
 
+  return res.json(result);
 })
 
 //====================================================================================
