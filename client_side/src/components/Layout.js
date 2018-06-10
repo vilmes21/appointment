@@ -9,14 +9,13 @@ import {
 } from 'react-router-dom';
 // import { Switch } from 'react-router';
 
-import Appointments from './Appointments';
 import Signup from './Signup';
-import Login from "./Login"
+import Login from "components/smart/Login"
 import MyAccount from './MyAccount';
 import Logout from "./Logout"
-import DoctorList from "./DoctorList"
+import DoctorList from "./smart/DoctorList"
 import TestComp from "./TestComp"
-import Calendar from './Calendar';
+import Calendar from './smart/Calendar';
 import NoMatch from './NoMatch';
 import Spinner from './Spinner';
 
@@ -27,22 +26,14 @@ import AdminAppointment from "./admin/Appointment"
 //END admin imports
 
 class Layout extends React.Component {
-  constructor(){
-    super();
-    this.state = {
-      authenticated: true,
-      isAdmin: true,
-      msg: "",
-      isLoading: true
-    }
-
-    this.reactLogIn = this.reactLogIn.bind(this);
-    this.reactLogOut = this.reactLogOut.bind(this);
-    this.popMsg = this.popMsg.bind(this);
-    this.devLogin = this.devLogin.bind(this);
+state = {
+    authenticated: true,
+    isAdmin: true,
+    msg: "",
+    isLoading: true
   }
 
-  componentDidMount(){
+  componentDidMount=()=>{
 
     const _this = this;
     
@@ -67,39 +58,20 @@ class Layout extends React.Component {
     //END check auth w/ server whenever this component renders
   }
 
-  popMsg(x){ //currently not used func
+  popMsg =(x)=>{ //currently not used func
     this.setState({
       msg: x 
     })
   }
 
-  reactLogIn(msg="Welcome back!"){
-    const _this = this;
-
-    this.setState({
-      authenticated: true,
-      msg: msg
-    }, 
-  () => {
-    console.log("in Layout, state >>>", _this.state);
-  })
-  }
-
-  reactLogOut(msg="You've logged out."){
+  reactLogOut =(msg="You've logged out.") => {
     this.setState({
       authenticated: false,
       msg: msg
     })
   }
 
-  // forceLogin(msg){
-  //   this.setState({
-  //     authenticated: false,
-  //     msg: msg
-  //   })
-  // }
-
-  devLogin(){
+  devLogin =() => {
     const _this = this;
     
     axios.post("/devlogin")
@@ -119,16 +91,14 @@ class Layout extends React.Component {
     })
   }
 
-  render(){
+  render =() =>{
     const _this = this;
 
-    let comp;
     if (_this.state.isLoading){
+      return <Spinner />;
+    } 
 
-      comp = <Spinner />;
-
-    } else {
-
+    let comp;
       let myAccountLink = null;
       let loginAndSignupLink = null;
       let may_logout = null;
@@ -195,12 +165,6 @@ class Layout extends React.Component {
 
       }
   
-      const test1 = {
-        pathname: "/testt", 
-        param1: "Par12" ,
-        foo: "bar"
-      }
-      
       comp =      
       <div>
       <button onClick={_this.devLogin}>DEV login</button>
@@ -221,13 +185,13 @@ class Layout extends React.Component {
           <Route 
                 path="/sign_up" 
                 render={
-                  ()=> <Signup reactLogIn={_this.reactLogIn} popMsg={_this.popMsg} />
+                  ()=> <Signup  popMsg={_this.popMsg} />
                 } />
 
           <Route 
                 path="/login" 
                 render={  () => <Login 
-                                  reactLogIn={_this.reactLogIn} />  }/>
+                                 />  }/>
 
           <Route path="/my_account" component={MyAccount}/>
 
@@ -253,7 +217,6 @@ class Layout extends React.Component {
       </Router>
 
     </div>;
-    }
     
     return (
       <div>

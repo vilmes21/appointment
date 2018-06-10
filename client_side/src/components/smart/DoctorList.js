@@ -1,10 +1,10 @@
 import React from 'react';
 import axios from "axios";
 import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
-import Calendar from "./Calendar"
+import Calendar from "components/smart/Calendar"
+import {getList} from 'actions/doctors'
 import {connect} from 'react-redux';
-import {getList} from '../actions/doctors'
-import {bindActionCreators} from 'redux'
+//import {bindActionCreators} from 'redux'
 
 class DoctorList extends React.Component {
 
@@ -42,10 +42,11 @@ class DoctorList extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapState = (state) => {
   return {drs: state.doctors};
 }
-
+ 
+export default connect(mapState, { getList })(DoctorList);
 
 ////this may work, but better to use short hand: https://stackoverflow.com/questions/34458261/how-to-get-simple-dispatch-from-this-props-using-connect-w-redux?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 
@@ -56,5 +57,3 @@ const mapStateToProps = (state) => {
 //     getList: bindActionCreators(getList, dispatch)
 //   }
 // }
- 
-export default connect(mapStateToProps, { getList })(DoctorList);

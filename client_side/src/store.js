@@ -9,3 +9,14 @@ store.subscribe(() => {
 })
 
 export default store
+
+/*
+store structure:
+
+{
+    appointments: {},
+    currentUser: {},
+    doctors: [{}, {}]
+}
+
+*/

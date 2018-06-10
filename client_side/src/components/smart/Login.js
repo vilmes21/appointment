@@ -1,23 +1,15 @@
 import React from 'react';
 import axios from "axios";
+import {loginVerify} from 'actions/users'
+import {connect} from 'react-redux';
 
 class Login extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      username: "",
-      password: ""
-    }
-
-    this.handleChange = this
-      .handleChange
-      .bind(this);
-    this.handleSubmit = this
-      .handleSubmit
-      .bind(this);
+  state = {
+    username: "",
+    password: ""
   }
 
-  handleChange(ev) {
+  handleChange = (ev) => {
     const _this = this;
     const obj = {};
     const _name = ev.target.name;
@@ -26,31 +18,27 @@ class Login extends React.Component {
     _this.setState(obj);
   }
 
-  handleSubmit(ev) {
+  handleSubmit =(ev)=> {
     const _this = this;
 
     ev.preventDefault();
 
-    console.log("in handleSubit, _this.state >>>", _this.state);
+    const res = _this.props.loginVerify(_this.state);
 
-    axios
-      .post('/login', _this.state)
-      .then(function (response) {
-        console.log(response.data);
-        if (response.data.success) {
-          // TODO: if logged in in backend
-          _this
-            .props
-            .reactLogIn();
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    console.log("hadnle sub, res ???", res)
+
+    if (!res.success){
+      alert(res.msg);
+    }
   }
 
   render() {
     const _this = this;
+    const {authenticated} = _this.props;
+
+    if (authenticated){
+      return <h2>Already logged in</h2>;
+    }
 
     return (
       <div>
@@ -76,13 +64,13 @@ class Login extends React.Component {
           </div>
         </form>
 
-        <button onClick={_this.props.reactLogIn}>
-          Fake login
-        </button>
-
       </div>
     );
   }
 }
 
-export default Login;
+const mapState = (state) => {
+  return {authenticated: !!state.currentUser && !!state.currentUser.email};
+}
+
+export default connect(mapState, { loginVerify })(Login);

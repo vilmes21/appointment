@@ -40,26 +40,9 @@ class Signup extends React.Component {
 
     const res = this.props.signup(_this.state);
 
-    if (res){
-      console.log("res is ture")
-      _this.props.reactLogIn();
+    if (!res){
+      alert("Failed sign up !")
     }
-    
-    // axios.post('/users/new', _this.state)
-    // .then(function (response) {
-    //   console.log(response.data);
-
-    //   if (response.data && response.data.authenticated){
-    //     _this.props.reactLogIn()
-    //   }
-      
-    //   if (false) {  // TODO: if user successfully created and logged in in backend
-    //     _this.props.reactLogIn();
-    //   }
-    // })
-    // .catch(function (error) {
-    //   console.log(error);
-    // });
   }
   
   render = ()=>{

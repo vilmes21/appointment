@@ -6,111 +6,26 @@ import axios from "axios";
 import {
   Redirect
 } from 'react-router-dom'
+import {getList, createAppointment} from 'actions/appointments'
+import {connect} from 'react-redux';
 
 BigCalendar.momentLocalizer(moment);
 
 class Calendar extends Component {
-  constructor(){
-    super();
-    this.state = {
-      myEventsList: [],
-      dayChosen: new Date()
-    }
-
-    this.createAppointment = this.createAppointment.bind(this);
-    this.handleNavigate = this.handleNavigate.bind(this);
-    this.handleOnSelectSlot = this.handleOnSelectSlot.bind(this);
-    this.eventStyleGetter = this.eventStyleGetter.bind(this);
+  state = {
+    myEventsList: [],
+    dayChosen: new Date()
   }
 
-  componentDidMount(){
-    const _this = this;
+  componentDidMount =() =>{
+    const _this = this;    
 
-    console.log("in Calendar compDidMoun, props >>>", _this.props);
-    console.log("in Calendar compDidMoun, props.match >>>", _this.props.match);
+       console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.match.params.drUrlName);
 
-    if (!_this.props.authenticated){
-      console.log("je retour tot bcuz not auth");
-      return;
-    }
-
-    console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.match.params.drUrlName);
-
-    axios.get("/availabilities/" + _this.props.match.params.drUrlName)
-    .then((res) => {
-      console.log("axios res.data >>>", res.data);
-      if (!res.data){
-        return false;
-      }
-
-      let clone = [...res.data];
-
-      for (let c of clone){
-        c.start = new Date(c.start);
-        c.end = new Date(c.end);
-      }
-
-      _this.setState({
-        myEventsList: clone
-      })
-    })
-    .catch((err) => {
-      console.log("axios catch block, err >>>", err);
-    })
+    _this.props.getList(_this.props.match.params.drUrlName);
   }
 
-  createAppointment(newAppointment){
-    const _this = this;
-    
-    console.log("in func createAppm, newAppointment >>>", newAppointment);
-    
-    axios.post("/appointments/create", newAppointment)
-    .then((res) => {
-      console.log(res.data);
-      window.alert(res.data.msg);
-
-      if (!res.data){
-        window.alert("Internal server err");
-      }
-
-      if (res.data.serverBadAuth){
-        window.alert("Please log in!");
-        _this.props.reactLogOut("Log in first! Server saw that you're not logged in.");
-        return;
-      }
-
-      if (!res.data.success){
-        console.log("ajax good, but performance failed");
-        return false;
-      }
-
-      //BEGIN visiually add slot:
-      let clone = [..._this.state.myEventsList];
-
-      console.log("clone >>>", clone);
-      
-      clone.push({
-        title: "My new appointment!",
-        start: newAppointment.wish_start_at,
-        end: newAppointment.wish_end_at,
-        isMine: true
-      });
-
-      console.log("before return clone >>>", clone);
-      
-      _this.setState({
-        myEventsList: clone
-      });
-
-      //END visiually add slot:
-      
-    })
-    .catch((err) => {
-      console.log("axios catch block, err >>>", err);
-    })
-  }
-
-  handleNavigate(focusDate, flipUnit, prevOrNext) {
+  handleNavigate =(focusDate, flipUnit, prevOrNext) =>{
     //note: `focusDate` param isn't useful.
     const _this = this;
       
@@ -135,7 +50,7 @@ class Calendar extends Component {
       
     }
 
-    handleOnSelectSlot(slotInfo){
+    handleOnSelectSlot =(slotInfo)=>{
       const _this = this;
 
         console.log(" slotInfo.start >>>", slotInfo.start);
@@ -153,10 +68,10 @@ class Calendar extends Component {
           wish_end_at : wish_end_at
       }
 
-      _this.createAppointment(newAppointment);
+      _this.props.createAppointment(newAppointment);
     }
 
-    eventStyleGetter(event, start, end, isSelected) {
+    eventStyleGetter =(event, start, end, isSelected) =>{
       // console.log("what params?");
       // console.log(
       //   "\nevent >>>\n",
@@ -185,12 +100,11 @@ class Calendar extends Component {
       // return {};
   }
   
-    render(){
-    const _this = this;
+    render=() =>{
+      const _this = this;
+    const {authenticated, booked} = this.props;
 
-    console.log("Calendar render func, _this.props >>>", _this.props);
-
-    if (!_this.props.authenticated){
+    if (!authenticated){
       console.log("in Calendar render func. gonna Redirect comop")
       return <Redirect to="/login" />;
     }
@@ -202,7 +116,7 @@ class Calendar extends Component {
         </h1>
         
         <BigCalendar
-          events={this.state.myEventsList}
+          events={booked}
           defaultView='week'
           views={['week', 'agenda']}
           selectable
@@ -286,13 +200,17 @@ class Calendar extends Component {
               foo: "bar"
             }
           }
-          
 
-          
         />
       </div>
     );
   }
 }
 
-export default Calendar;
+const mapState = (state) => {
+  return {
+    authenticated: !!state.currentUser
+  };
+}
+ 
+export default connect(mapState, { getList, createAppointment })(Calendar);

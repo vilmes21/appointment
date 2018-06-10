@@ -48,8 +48,11 @@ passport.use(new LocalStrategy(
             message: 'Incorrect password.'
           });
         }
-
-        return done(null, user.id);
+        
+        const {email, firstname, lastname, id} = user;
+        const userInfo = {email, firstname, lastname, id};
+             
+        return done(null, user.id, userInfo);
       })
       .catch((err) => {
         return done(err);
@@ -220,6 +223,13 @@ app.post('/login', function (req, res, next) {
 
       loginResult.success = req.isAuthenticated(); //should be true by this time
       loginResult.msg = null;
+
+      if (loginResult.success){
+        const {email, firstname, lastname, id} = info;
+        const userInfo = {email, firstname, lastname, id};
+        loginResult = {...loginResult, ...userInfo};
+        console.log("after spread, loginResult >>> ", loginResult);
+      }
 
       res.json(loginResult);
       res.end();
