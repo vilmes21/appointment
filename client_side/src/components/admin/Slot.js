@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 // import BigCalendar from 'react-big-calendar';
 // import moment from 'moment';
 import axios from "axios";
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
-import RaisedButton from 'material-ui/RaisedButton';
-
+import Dialog from '@material-ui/core/Dialog';
+import Button from '@material-ui/core/Button';
 import helpers from '../../helpers'
 
 
@@ -32,14 +30,14 @@ export default class Slot extends React.Component {
     const _detail = this.props.detail;
     
     const actions = [
-      <FlatButton
+      <Button
         label="Cancel Appointment"
         primary={true}
         onClick={()=>{
           _this.props.cancelAppointment(_detail.id);
         }}
       />,
-      <FlatButton
+      <Button
         label="OK"
         primary={true}
         keyboardFocused={true}

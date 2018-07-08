@@ -1,11 +1,12 @@
 import React from 'react';
 import {signup} from 'actions/users'
-import { connect } from 'react-redux';
-import { addError } from 'actions/errors';
+import {connect} from 'react-redux';
+import {addError} from 'actions/errors';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 class Signup extends React.Component {
-  state={
-    mayDisableSubmit: false,
+  state = {
     firstname: "",
     lastname: "",
     email: "",
@@ -19,90 +20,90 @@ class Signup extends React.Component {
     const _name = ev.target.name;
     obj[_name] = ev.target.value;
 
-    ////real code: comment out when ready
-    // if (
-    //   _this.state.firstname.length > 0 
-    //   && _this.state.lastname.length > 0 
-    //   && _this.state.email.length > 0 
-    //   && _this.state.phone.length > 0 
-    //   && _this.state.password.length > 0 
-    // ){
-    //   obj.mayDisableSubmit = false;
-    // }
-
     _this.setState(obj);
   }
 
-  handleSubmit = async (ev)=>{
-    const _this = this;   
-    
+  handleSubmit = async(ev) => {
+    const _this = this;
+
     ev.preventDefault();
 
-    const res = await this.props.signup(_this.state);
+    const res = await this
+      .props
+      .signup(_this.state);
 
-    if (!res.success){
-      _this.props.addError(res.msg)
+    if (!res.success) {
+      _this
+        .props
+        .addError(res.msg)
     }
   }
-  
-  render = ()=>{
+
+  render = () => {
     const _this = this;
 
     return (
       <div>
-      <h1>
-       Singup
-      </h1>
+        <h1>
+          Singup
+        </h1>
 
-      <form 
-    action=""
-    method="post"
-    onSubmit={_this.handleSubmit}>
+        <form action="" method="post" onSubmit={_this.handleSubmit}>
 
-    <input 
-        type="text"
-        name="firstname"
-        placeholder="firstname"
-        onChange={_this.handleChange}
-        value={_this.state.firstname}
-            />
-    <input 
-        type="text"
-        name="lastname"
-        placeholder="lastname"
-        onChange={_this.handleChange}   
-        value={_this.state.lastname}             
-        />
-    <input 
-        type="text"
-        // type="email" ////uncomment when ready
-        name="email"
-        placeholder="email"
-        onChange={_this.handleChange}    
-        value={_this.state.email}            
-        />
+          <div>
+            <TextField
+              required
+              label="First name"
+              name="firstname"
+              onChange={_this.handleChange}
+              value={_this.state.firstname}/>
+          </div>
 
-    <input 
-        type="text"
-        name="phone"
-        placeholder="phone"
-        onChange={_this.handleChange}        
-        value={_this.state.phone}        
-        />
+          <div>
+            <TextField
+              required
+              label="Last name"
+              name="lastname"
+              onChange={_this.handleChange}
+              value={_this.state.lastname}/>
+          </div>
 
-    <input 
-        type="password"
-        name="password"
-        placeholder="create a password"
-        onChange={_this.handleChange}        
-        value={_this.state.password}        
-            />
+          <div>
+            <TextField
+              required
+              type="email"
+              label="Email"
+              name="email"
+              onChange={_this.handleChange}
+              value={_this.state.email}/>
+          </div>
 
-    <input type="submit" 
-            value="Create Account"
-            disabled={_this.state.mayDisableSubmit} />
-      </form>
-      
+          <div>
+            <TextField
+              required
+              label="Phone"
+              name="phone"
+              onChange={_this.handleChange}
+              value={_this.state.phone}/>
+          </div>
+
+          <div>
+            <TextField
+              required
+              label="Create a password"
+              type="password"
+              name="password"
+              onChange={_this.handleChange}
+              value={_this.state.password}/>
+          </div>
+
+          <div>
+            <Button type="submit" variant="raised">
+              Create Account
+            </Button>
+          </div>
+        </form>
+
       </div>
     );
   }

@@ -2,6 +2,8 @@ import React from 'react';
 import {loginVerify} from 'actions/users'
 import {addError} from 'actions/errors'
 import {connect} from 'react-redux';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 
 class Login extends React.Component {
   state = {
@@ -38,25 +40,32 @@ class Login extends React.Component {
     return (
       <div>
         <form onSubmit={_this.handleSubmit} action="/login" method="post">
-          <div>
-            <label>Username:</label>
-            <input
+
+                  <div>
+            <TextField
+              required
+              label="Email"
               value={_this.state.username}
               onChange={_this.handleChange}
-              type="text"
               name="username"/>
           </div>
-          <div>
-            <label>Password:</label>
-            <input
+
+                            <div>
+            <TextField
+              required
+              label="Password"
               value={_this.state.password}
               onChange={_this.handleChange}
               type="password"
               name="password"/>
           </div>
+ 
           <div>
-            <input className="button" type="submit" value="Log In"/>
+            <Button type="submit" variant="raised">
+              Log in
+            </Button>
           </div>
+          
         </form>
 
       </div>

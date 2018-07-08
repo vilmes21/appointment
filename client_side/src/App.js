@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import './App.css';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import store from './store'
 import {Provider} from 'react-redux'
 
@@ -13,7 +12,6 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <MuiThemeProvider>
           <div className="App">
             <header className="App-header">
               <h1 className="App-title">Welcome to Appointments</h1>
@@ -21,7 +19,6 @@ class App extends Component {
 
             <Layout/>
           </div>
-        </MuiThemeProvider>
       </Provider>
 
     );
