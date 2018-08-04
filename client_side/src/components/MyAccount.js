@@ -2,12 +2,9 @@ import React from 'react';
 import axios from "axios";
 
 class MyAccount extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      email: "",
-      phone: ""
-    }
+  state = {
+    email: "",
+    phone: ""
   }
 
   componentDidMount() {

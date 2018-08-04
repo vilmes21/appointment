@@ -64,7 +64,7 @@ export default class Availability extends Component {
   createAvailability(newAvailability){
     const _this = this;
     
-    console.log("in func createAppm, newAvailability >>>", newAvailability);
+    console.log("in func createAvailabi, newAvailability >>>", newAvailability);
     
     axios.post("/admin/availabilities/create", newAvailability)
     .then((res) => {

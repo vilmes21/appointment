@@ -94,8 +94,8 @@ router.post('/create', helpers.requireLogin, function (req, res) {
           doctor_id: drId,
           status: constants.APPOINTMENT_STATUS_BOOKED
         })
-        .andWhere("start_at", ">=", beginningOfWantedDay) //TODO: maybe in the future no need to query all those records for the whole day. Maybe just 2 hours after the `want.end_at`.
-        .andWhere("end_at", "<=", endOfWantedDay)
+        .andWhere("wish_start_at", ">=", beginningOfWantedDay) //TODO: maybe in the future no need to query all those records for the whole day. Maybe just 2 hours after the `want.end_at`.
+        .andWhere("wish_end_at", "<=", endOfWantedDay)
         .then((bookedThatDay) => {
           if (bookedThatDay.length > 0){
             bookedThatDay = helpers.turnStringToDate(bookedThatDay);

@@ -20,9 +20,9 @@ class Calendar extends Component {
   componentDidMount =() =>{
     const _this = this;    
 
-       console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.match.params.drUrlName);
-
-    _this.props.getList(_this.props.match.params.drUrlName);
+     //  console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.match.params.drUrlName, "getList func>>>", _this.props.getList);
+    
+     this.props.getList(this.props.match.params.drUrlName);
   }
 
   handleNavigate =(focusDate, flipUnit, prevOrNext) =>{
@@ -50,7 +50,7 @@ class Calendar extends Component {
       
     }
 
-    handleOnSelectSlot =(slotInfo)=>{
+    handleOnSelectSlot =async (slotInfo)=>{
       const _this = this;
 
         console.log(" slotInfo.start >>>", slotInfo.start);
@@ -66,9 +66,14 @@ class Calendar extends Component {
           drUrlName : _this.props.match.params.drUrlName,
           wish_start_at : slotInfo.start,
           wish_end_at : wish_end_at
+      } 
+
+      const res = await this.props.createAppointment(newAppointment);
+
+      if (!(res && res.success)){
+        alert(res.msg);
       }
 
-      _this.props.createAppointment(newAppointment);
     }
 
     eventStyleGetter =(event, start, end, isSelected) =>{
@@ -209,7 +214,8 @@ class Calendar extends Component {
 
 const mapState = (state) => {
   return {
-    authenticated: !!state.currentUser
+    authenticated: !!state.currentUser,
+    booked: state.appointments
   };
 }
  

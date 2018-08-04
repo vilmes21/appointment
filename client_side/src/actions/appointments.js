@@ -2,9 +2,16 @@ import {GET_BOOKED, ADD_APPOINTMENT} from './types'
 import axios from 'axios'
 
 export const getList = (drUrlName) => {
+    console.log("entered getList")
+
+    
     return async (dispatch) => {
+
+    console.log("2 entered getList")
+
+
         try {
-            const {data} = await axios.get("availabilities/" + drUrlName); 
+            const {data} = await axios.get("/availabilities/" + drUrlName); 
 
             const clone = [...data];
 
@@ -24,15 +31,21 @@ export const getList = (drUrlName) => {
 }
 
 export const createAppointment = (newAppointment) => {
+    console.log("entered createAppointment, newApp >>> ",newAppointment)
+
     return async (dispatch) => {
         try {
+
+            console.log("2 entered createAppointment, newApp >>> ",newAppointment)
+            
             const res = {
                 success: false,
                 msg: "",
                 id: -1
             }
 
-            const {data} = await axios.post("appointments/create", newAppointment);
+            const {data} = await axios.post("/appointments/create", newAppointment);
+            console.log("data >>> " , data)
 
             if (data.serverBadAuth){
                 res.msg = "Log in first! Server saw that you're not logged in.";
@@ -40,7 +53,11 @@ export const createAppointment = (newAppointment) => {
               }
         
             if (!data.success){
-                res.msg = "ajax good, but performance failed";
+                if (data.msg){
+                    res.msg = data.msg;
+                } else {
+                    res.msg = "ajax good, but performance failed";
+                }
                 return res;
             }
 
