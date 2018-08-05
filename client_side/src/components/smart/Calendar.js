@@ -6,23 +6,54 @@ import axios from "axios";
 import {
   Redirect
 } from 'react-router-dom'
-import {getList, createAppointment} from 'actions/appointments'
+import {getList, createAppointment, updateList} from 'actions/appointments'
 import {connect} from 'react-redux';
 
 BigCalendar.momentLocalizer(moment);
 
 class Calendar extends Component {
   state = {
-    myEventsList: [],
     dayChosen: new Date()
   }
 
-  componentDidMount =() =>{
-    const _this = this;    
+  componentDidMount =async() =>{    
+     const res = await this.props.getList(this.props.match.params.drUrlName);
+     if (!res.success){
+       alert(res.msg)
+     }
+  }
 
-     //  console.log("func componentDidMount of Calendar comp, gonna GET " + "/availabilities/" + _this.props.match.params.drUrlName, "getList func>>>", _this.props.getList);
+  handleOnView = async (param) => {
+
+    console.log("handleOnView func. param>>> ", param)
     
-     this.props.getList(this.props.match.params.drUrlName);
+    if (["agenda", "week"].indexOf(param) === -1){
+      return;
+    }
+    
+    let _filtered;
+
+    const {booked, updateList} = this.props;
+
+    if (param === "week"){
+      _filtered = this.state.allOccupants;
+    } else if (param === "agenda"){
+
+      //first save allOccupants in react state , NOT redux store !!!
+      this.setState({
+        allOccupants: booked
+      }, () => {console.log("after set Occupants>>>", this.state)})
+      
+      _filtered = booked.filter(item => {
+        return item.isMine;
+      })
+    }
+
+    const res  = await updateList(_filtered);
+ 
+      if (!res.success){
+        alert(res.msg)
+      }
   }
 
   handleNavigate =(focusDate, flipUnit, prevOrNext) =>{
@@ -206,7 +237,8 @@ class Calendar extends Component {
             }
           }
 
-        />
+          onView={this.handleOnView}
+        /> 
       </div>
     );
   }
@@ -219,4 +251,4 @@ const mapState = (state) => {
   };
 }
  
-export default connect(mapState, { getList, createAppointment })(Calendar);
+export default connect(mapState, { getList, createAppointment , updateList})(Calendar);

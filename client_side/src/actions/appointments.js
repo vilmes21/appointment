@@ -1,4 +1,4 @@
-import {GET_BOOKED, ADD_APPOINTMENT} from './types'
+import {GET_BOOKED, ADD_APPOINTMENT, UPDATE_BOOKED} from './types'
 import axios from 'axios'
 
 export const getList = (drUrlName) => {
@@ -9,6 +9,10 @@ export const getList = (drUrlName) => {
 
     console.log("2 entered getList")
 
+    const res = {
+        success: false,
+        msg: null
+    }
 
         try {
             const {data} = await axios.get("/availabilities/" + drUrlName); 
@@ -20,12 +24,17 @@ export const getList = (drUrlName) => {
               c.end = new Date(c.end);
             }
 
-            return dispatch({
+            dispatch({
                 type: GET_BOOKED, 
                 payload: clone //[{}, {}]
             })
+
+            res.success = true;
+            return res;
         } catch (error) {
             console.log("actions/appointments.js getList error: ", error)
+            res.msg = error.toString();
+            return res;
         }
     }
 }
@@ -78,6 +87,36 @@ export const createAppointment = (newAppointment) => {
 
         } catch (error) {
             console.log("actions/appointments.js createAppointment error: ", error)
+        }
+    }
+}
+
+export const updateList = newList => {
+
+    console.log("entering updateList. newList>>> ", newList)
+
+    
+    return async (dispatch) => {
+
+        console.log("2 entering updateList. newList>>> ", newList)
+        
+    const res = {
+        success: false,
+        msg: null
+    }
+
+        try {
+            dispatch({
+                type: UPDATE_BOOKED, 
+                payload: newList //[{}, {}]
+            })
+
+            res.success = true;
+            return res;
+        } catch (error) {
+            console.log("actions/appointments.js updateList error: ", error)
+            res.msg = error.toString();
+            return res;
         }
     }
 }
