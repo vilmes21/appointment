@@ -1,3 +1,7 @@
+import initCollectByDay from "./initCollectByDay"
+import getLastMidNight from "./getLastMidNight";
+import getComingMidnight from "./getComingMidnight";
+
 const rootRequire = require.main.require;
 const constants = rootRequire("./config/constants");
 const moment = require("moment");
@@ -43,18 +47,7 @@ export default (availables) => {
      return Promise.reject("db has bad data. Count is odd; expected even.");
    }
  
-   const collectByDay = {};
- 
-   for (let i = 0; i <= constants.USER_PREVIEW_DAYS; i++){
-     const keyStr = moment().add(i.toString(), "days").toDate().toDateString();
-     collectByDay[keyStr] = [];
-   }
- 
-   /* 
-   after all initation. collectByDay>> { 
-                                         'Sat Mar 17 2018': [],
-                                         'Sun Mar 18 2018': [] }
-    */
+   const collectByDay = initCollectByDay(constants.USER_PREVIEW_DAYS);
    
    for (let j = 0; j < cleanedCount; j++){
      const date = new Date(cleaned[j]);
@@ -77,15 +70,9 @@ export default (availables) => {
      }
      
      // as suggested by https://stackoverflow.com/questions/43101278/how-to-handle-deprecation-warning-in-momentjs/43102805, sometimes , might need specify format
-     // const lastMidNight = moment(drDay, moment.ISO_8601).startOf('day').toDate();
-     const lastMidNight = moment(new Date(drDay)).startOf('day').toDate();
-     const thisMidNight = moment(new Date(drDay)).endOf('day').toDate();
  
-     /* lastMidNight >>>  2018-03-04T08:00:00.000Z
- thisMidNight >>>  2018-03-05T07:59:59.999Z */
-     
-     dayOpennings.unshift(lastMidNight);
-     dayOpennings.push(thisMidNight);
+     dayOpennings.unshift(getLastMidNight(drDay));
+     dayOpennings.push(getComingMidnight(drDay));
  
      /* dayOpennings >>>  [ 2018-03-05T08:00:00.000Z,
  2018-03-05T23:30:00.000Z,

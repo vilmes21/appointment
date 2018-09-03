@@ -27,36 +27,36 @@ const constants = rootRequire("./config/constants");
 
 export default(collectByDay) => {
     //BEGIN create out-of-office slots into array of obj
-    const unavailables = [];
+    const busys = [];
+
+    const busy = {
+        title: constants.UNAVAILABLE_SLOT_TITLE,
+        type: constants.slotType.outOfOffice
+    };
 
     for (let drDay in collectByDay) {
         const eachDayArr = collectByDay[drDay];
         const eachDayArrCount = eachDayArr.length;
 
-        const unavailable = {
-            title: constants.UNAVAILABLE_SLOT_TITLE,
-            type: constants.slotType.outOfOffice
-        };
-
         for (let i = 0; i < eachDayArrCount; i++) {
             if (i % 2 === 0) { //ie. even index, then be start_at
-                unavailable.start = eachDayArr[i];
+                busy.start = eachDayArr[i];
             } else { //ie. odd index, then be end_at
-                unavailable.end = eachDayArr[i];
-                unavailables.push({
-                    ...unavailable
+                busy.end = eachDayArr[i];
+                busys.push({
+                    ...busy
                 });
             }
 
         }
     }
 
-    //  console.log("right before return result unavailables human readable>>")  for
-    // (let b in unavailables){    console.log("unavailables[b].start.toString()
-    // >>", unavailables[b].start.toString())
-    // console.log("unavailables[b].end.toString()   >>",
-    // unavailables[b].end.toString())  } END create out-of-office slots into array
+    //  console.log("right before return result busys human readable>>")  for
+    // (let b in busys){    console.log("busys[b].start.toString()
+    // >>", busys[b].start.toString())
+    // console.log("busys[b].end.toString()   >>",
+    // busys[b].end.toString())  } END create out-of-office slots into array
     // of obj
 
-    return unavailables;
+    return busys;
 }
