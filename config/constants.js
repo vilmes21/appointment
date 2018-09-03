@@ -5,7 +5,10 @@ module.exports = {
     }, //TODO: maybe later change to ints
     DEFAULT_APPOINTMENT_STATUS: 304,
     APPOINTMENT_STATUS_BOOKED: 304,
-    ROLE_ADMIN: 201
+    ROLE_ADMIN: 201,
+    //below can change according to business needs
+    USER_PREVIEW_DAYS: 14,
+    UNAVAILABLE_SLOT_TITLE: "Dr does NOT work now"
     // Fake: {
     //     DR_ID: 210 //vic in local db
     // }

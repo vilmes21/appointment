@@ -5,11 +5,29 @@ const constants = require("./config/constants");
 // Use the session middleware
 // router.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }})); //TODO: change secret
 
+const fakeLogin = (req, res, next) => {
+ //338 is test@test.com
+ req.logIn(338, function (err) {
+     console.log("req.isAuthenticated() >>> ", req.isAuthenticated())
+     
+    if (err) {
+      return next(err);
+    }
+
+    return next();
+  });
+}
+
 function requireLogin(req, res, next) {
     // if user is authenticated in the session, carry on
     if (req.isAuthenticated()) {
         return next();
     }
+
+
+
+
+
     // res.send("pls log in first");
     // req.loggedIn = false;
     // const loginUrl = "http://localhost:3000/sign_up";
@@ -110,6 +128,7 @@ const findDrIdByUrlName = (urlName) => {
 } 
 
 const findDrId = (req, res, next) => {
+    
     let idGiven = req.params.id;
   
     if (idGiven == parseInt(idGiven)) {
@@ -275,6 +294,7 @@ const keepUniqueElems = (arr) => {
 
 
 module.exports = {
+    fakeLogin,
     requireLogin: requireLogin,
     requireAdmin: requireAdmin,
     isAdmin: isAdmin,

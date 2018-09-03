@@ -11,7 +11,6 @@ router.get('/index', function (req, res) {
     .join('users', 'doctors.user_id', 'users.id')
     .select('users.firstname', 'users.lastname', 'doctors.id', 'doctors.photo', 'doctors.bio')
     .then((drs) => {
-      console.log("drs >>>", drs, " of type>>>", typeof(drs));
       res.json(drs);
       return true;
     })

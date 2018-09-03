@@ -1,4 +1,4 @@
-const db = require("..//db/knex");
+const db = require("../db/knex");
 
 export default function(username, password, done) {
     db('users').where({

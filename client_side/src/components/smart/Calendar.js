@@ -135,6 +135,8 @@ class Calendar extends Component {
       // // return style1;
       // return {};
   }
+
+  handleOnSelecting = () => {}
   
     render=() =>{
       const _this = this;
@@ -186,6 +188,8 @@ class Calendar extends Component {
           onSelectSlot={(slotInfo) => {
             _this.handleOnSelectSlot(slotInfo);
           }}
+
+          onSelecting = {this.handleOnSelecting}
 
           // eventPropGetter={(event, start, end, isSelected) => {_this.eventStyleGetter(event, start, end, isSelected)}}
 
