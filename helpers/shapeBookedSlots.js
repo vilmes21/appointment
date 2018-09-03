@@ -24,12 +24,12 @@ const constants = rootRequire("./config/constants");
 
 */
 
-export default() => {
+export default(booked, currentUserId) => {
     const cleanBooked = [];
 
     for (let apmt of booked) {
         //login is required for this entire action, if this fails, the library is guilty
-        const isMine = apmt.user_id === req.session.passport.user;
+        const isMine = apmt.user_id === currentUserId;
 
         let title = "";
         if (isMine) {

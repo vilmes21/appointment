@@ -39,16 +39,16 @@ export default async(req, res) => {
 
     let cleanBooked = [];
     if (booked && booked.length > 0) {
-        cleanBooked = shapeBookedSlots(booked);
+        cleanBooked = shapeBookedSlots(booked, req.session.passport.user);
     }
 
     const allBadSlots = unavailables.concat(cleanBooked);
 
-    console.log("right before return result allBadSlots converted>>")
-    for (let b in allBadSlots) {
-        console.log("allBadSlots[b].start.toString() >>", allBadSlots[b].start.toString())
-        console.log("allBadSlots[b].end.toString()   >>", allBadSlots[b].end.toString())
-    }
+    // console.log("right before return result allBadSlots converted>>")
+    // for (let b in allBadSlots) {
+    //     console.log("allBadSlots[b].start.toString() >>", allBadSlots[b].start.toString())
+    //     console.log("allBadSlots[b].end.toString()   >>", allBadSlots[b].end.toString())
+    // }
 
     return res.json(allBadSlots);
 }

@@ -154,12 +154,6 @@ app.get("/auth/now", (req, res) => {
     data.auth = true;
     data.isAdmin = helpers.isAdmin(req);
   }
-
-  // //fake all true. TODO: change
-  // let data = {
-  //   auth: true,
-  //   isAdmin: true
-  // }
   
   res.json(data);
 })
