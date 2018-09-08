@@ -8,14 +8,11 @@ import {
 } from 'react-router-dom'
 
 export default class DoctorList extends React.Component {
-  constructor(){
-    super();
-    this.state = {
-      drs: [],
-      blockNonAdminAuth: false
-    }
+  state = {
+    drs: [],
+    blockNonAdminAuth: false
   }
-
+  
   componentDidMount(){
     const _this = this;
     

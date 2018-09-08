@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-import axios from "axios";
 import {
   Redirect
 } from 'react-router-dom'
 import {getList, createAppointment, updateList} from 'actions/appointments'
 import {connect} from 'react-redux';
+import isAuthed from 'helpers/isAuthed'
 
 BigCalendar.momentLocalizer(moment);
 
@@ -250,7 +250,7 @@ class Calendar extends Component {
 
 const mapState = (state) => {
   return {
-    authenticated: !!state.currentUser,
+    authenticated: isAuthed(state.currentUser),
     booked: state.appointments
   };
 }

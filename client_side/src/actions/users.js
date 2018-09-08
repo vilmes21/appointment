@@ -43,7 +43,7 @@ export const loginVerify = (loginForm) => {
             }
 
             if (data && !data.success) {
-                res.msg =data.Msg? data.Msg : "Login failed";
+                res.msg = data.Msg || "Login failed";
                 return res;
             }
 

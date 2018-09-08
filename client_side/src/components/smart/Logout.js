@@ -3,11 +3,8 @@ import {signout} from "actions/users";
 import {addError} from "actions/errors";
 import {connect} from 'react-redux';
 
-const Logout =({authenticated, signout, addError}) =>{
-  if (!authenticated){
-    return null;
-  }
-  
+const Logout =({signout, addError}) =>{
+
   const handleClick = async () => {
     const res = await signout();
     if (!res.success){
@@ -24,8 +21,4 @@ const Logout =({authenticated, signout, addError}) =>{
   );
 }
 
-const mapState = (state) => {
-  return {authenticated: !!state.currentUser && !!state.currentUser.email};
-}
- 
-export default connect(mapState, { signout, addError })(Logout);
+export default connect(null, { signout, addError })(Logout);

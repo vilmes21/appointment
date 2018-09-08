@@ -1,15 +1,10 @@
 import React from 'react';
-import {Link} from 'react-router-dom'
 import {getList} from 'actions/doctors'
 import {connect} from 'react-redux';
-
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import Doctor from 'components/dumb/Doctor'
 
 class DoctorList extends React.Component {
 
@@ -20,31 +15,13 @@ class DoctorList extends React.Component {
   }
 
   render() {
-    const _this = this;
-    const {drs} = _this.props;
+    const {drs} = this.props;
 
     if (!drs || drs.length === 0) {
       return null;
     }
 
-    const _list = drs.map((dr) => {
-      return (
-
-        <Link key={dr.id} to={"/calendar/" + dr.lastname}>
-
-          <ListItem >
-            <ListItemAvatar>
-              <Avatar>
-                <img
-                  src="https://i.pinimg.com/originals/3a/ff/84/3aff849766b881ebe9640caf996e915a.jpg"/>
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText primary={dr.firstname + " " + dr.lastname} secondary={dr.bio}/>
-          </ListItem>
-        </Link>
-
-      );
-    });
+    const _list = drs.map(dr => <Doctor key={dr.id} dr={dr}/>);
 
     return (
       <Grid container spacing={16}>

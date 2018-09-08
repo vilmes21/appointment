@@ -69,3 +69,4 @@ appkeys.js
 /test
 client_side/cut_out/
 .vscode/
+client_side/src/test/

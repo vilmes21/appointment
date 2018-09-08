@@ -1,9 +1,10 @@
 import React from 'react';
 import {loginVerify} from 'actions/users'
 import {addError} from 'actions/errors'
-import {connect} from 'react-redux';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import {connect} from 'react-redux'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
+import isAuthed from 'helpers/isAuthed'
 
 class Login extends React.Component {
   state = {
@@ -74,7 +75,7 @@ class Login extends React.Component {
 }
 
 const mapState = (state) => {
-  return {authenticated: !!state.currentUser && !!state.currentUser.email};
+  return {authenticated: isAuthed(state.currentUser) };
 }
 
 export default connect(mapState, { loginVerify, addError })(Login);

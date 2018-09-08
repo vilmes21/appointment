@@ -4,7 +4,7 @@ import store from './store'
 import {Provider} from 'react-redux'
 
 // import axios from "axios"; import MyCalendar from "./components/MyCalendar"
-import Layout from "./components/Layout"
+import Layout from "components/smart/Layout"
 
 class App extends Component {
 
