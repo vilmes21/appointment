@@ -7,6 +7,6 @@ const moment = require("moment");
 import getUnavailabilities from '../helpers/getUnavailabilities'
 //====================================================================================
 
-router.get('/:id', helpers.requireLogin, helpers.findDrId, getUnavailabilities);
+router.get('/:id', helpers.findDrId, getUnavailabilities);
 
 module.exports = router

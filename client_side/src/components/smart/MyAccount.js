@@ -12,13 +12,26 @@ class MyAccount extends React.Component {
       return <Redirect to="/login"/>
     }
     
+    const {email, firstname, lastname, phone, id, isAdmin } = currentUser;
+    
     return (
       <div >
+
         <div>
-          my email: {currentUser.email}
+          {isAdmin ? "Is Admin" : "Regular User"}
+        </div>
+        
+        <div>
+          id: {id}
         </div>
         <div>
-          my phone: {currentUser.phone}
+          {firstname} {lastname}
+        </div>
+        <div>
+          email: {email}
+        </div>
+        <div>
+          phone: {phone}
         </div>
       </div>
     );

@@ -17,11 +17,11 @@ export const signup = (user) => {
             }
 
             const {email, firstname, lastname} = user;
-            const id = data.id;
+            const {id, isAdmin} = data;
             
             await dispatch({
                 type: SIGNIN_USER, 
-                payload: {email, firstname, lastname, id}
+                payload: {email, firstname, lastname, id, isAdmin}
             })
 
             res.success = true;
@@ -47,11 +47,11 @@ export const loginVerify = (loginForm) => {
                 return res;
             }
 
-            const {email, firstname, lastname, id} = data;
+            const {email, firstname, lastname, id, isAdmin} = data;
             
             await dispatch({
                 type: SIGNIN_USER, 
-                payload: {email, firstname, lastname, id}
+                payload: {email, firstname, lastname, id, isAdmin}
             })
 
             res.success = true;

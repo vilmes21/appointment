@@ -7,18 +7,11 @@ import {Provider} from 'react-redux'
 import Layout from "components/smart/Layout"
 
 class App extends Component {
-
   
   render() {
     return (
       <Provider store={store}>
-          <div className="App">
-            <header className="App-header">
-              <h1 className="App-title">Welcome to Appointments</h1>
-            </header>
-
-            <Layout/>
-          </div>
+          <Layout/>
       </Provider>
 
     );

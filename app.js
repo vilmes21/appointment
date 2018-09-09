@@ -6,16 +6,14 @@ const helpers = require("./helpers");
 const session = require('express-session');
 var bodyParser = require('body-parser');
 import authStrategy from "./helpers/authStrategy"
+import post_login from './helpers/post_login';
 
-// parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({
   extended: false
 }))
 
-// parse application/json
 app.use(bodyParser.json())
 
-// Use the session middleware
 app.use(session({
   secret: 'keyboard cat',
   resave: false,
@@ -32,13 +30,13 @@ app.use(passport.session());
 
 passport.use(new LocalStrategy(authStrategy));
 
-passport.serializeUser(function (user_id, done) {
+passport.serializeUser( (user_id, done) => {
   if (user_id) {
     done(null, user_id);
   }
 });
 
-passport.deserializeUser(function (user_id, done) {
+passport.deserializeUser( (user_id, done) => {
   const err = null;
   done(err, user_id);
 });
@@ -52,13 +50,6 @@ var morgan = require('morgan');
 // })
 const myMorgan = morgan(":method :url :status :response-time ms - :res[content-length]");
 app.use(myMorgan);
-
-
-//BEGIN testing
-// var tests = require('./controllers/tests');
-// app.use('/tests', tests);
-
-//END testing
 
 var home = require('./controllers/home');
 app.use('/', home);
@@ -160,47 +151,7 @@ app.get("/auth/now", (req, res) => {
 
 //====================================================================================
 
-
-app.post('/login', function (req, res, next) {
-  passport.authenticate('local', function (err, user_id, info) {
-    let loginResult = {
-      success: false,
-      msg: "System Error Occured.",
-      other: null
-    }
-
-    if (err) {
-      loginResult.other = err;
-      res.json(loginResult);
-      next(err);
-    }
-
-    if (!user_id) {
-      loginResult.msg = "db checked. Wrong credentials."
-      res.json(loginResult);
-      res.end();
-    }
-
-    req.logIn(user_id, function (err) {
-      if (err) {
-        return next(err);
-      }
-
-      loginResult.success = req.isAuthenticated(); //should be true by this time
-      loginResult.msg = null;
-
-      if (loginResult.success){
-        const {email, firstname, lastname, id} = info;
-        const userInfo = {email, firstname, lastname, id};
-        loginResult = {...loginResult, ...userInfo};
-      }
-
-      res.json(loginResult);
-      res.end();
-    });
-
-  })(req, res, next);
-});
+app.post('/login', post_login);
 
 //====================================================================================
 

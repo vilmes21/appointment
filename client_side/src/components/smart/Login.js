@@ -25,7 +25,7 @@ class Login extends React.Component {
     const _this = this;
     ev.preventDefault();
     const res = await _this.props.loginVerify(_this.state);
-    if (!res.success){
+    if (!(res && res.success)){
       _this.props.addError(res.msg);
     }
   }

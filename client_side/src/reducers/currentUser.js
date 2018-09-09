@@ -12,3 +12,12 @@ const currentUser = (state = null, action) => {
 }
 
 export default currentUser
+
+/* 
+{
+  email: "test@test.com"
+firstname: "Vic"
+id: 338
+lastname: "Wang"
+}
+ */
