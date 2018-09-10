@@ -28,6 +28,8 @@ export default thisContext => {
             return;
         }
 
+console.log(`_this.props.match.params >>> `, _this.props.match.params)        
+
         let newAppointment = {
             drUrlName: _this.props.match.params.drUrlName,
             wish_start_at: slotInfo.start,

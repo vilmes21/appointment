@@ -43,6 +43,7 @@ class Calendar extends Component {
     render = () => {
         const _this = this;
         const {authenticated, booked} = this.props;
+        const tabs = authenticated? ['week', 'agenda']:['week'];
 
         return (
             <div>
@@ -60,7 +61,7 @@ class Calendar extends Component {
                 <BigCalendar
                     events={booked}
                     defaultView='week'
-                    views={['week', 'agenda']}
+                    views={tabs}
                     selectable
                     step={5}
                     timeslots={1}

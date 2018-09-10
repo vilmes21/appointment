@@ -160,7 +160,7 @@ export default class Availability extends Component {
           return;
         }
       
-        const confirmMsg = "Continue to book appointment? \n" + "start: " + slotInfo.start.toLocaleString() + "\nend: " + slotInfo.end.toLocaleString();
+        const confirmMsg = "start: " + slotInfo.start.toLocaleString() + "\nend: " + slotInfo.end.toLocaleString() + ` Set as working hours?`;
 
         if (!window.confirm(confirmMsg)){
           return;

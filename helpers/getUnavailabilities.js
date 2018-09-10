@@ -39,7 +39,7 @@ export default async(req, res) => {
 
     let cleanBooked = [];
     if (booked && booked.length > 0) {
-        cleanBooked = shapeBookedSlots(booked, req.session.passport.user);
+        cleanBooked = shapeBookedSlots(booked, req.isAuthenticated() ? req.session.passport.user : -1);
     }
 
     const allBadSlots = unavailables.concat(cleanBooked);
