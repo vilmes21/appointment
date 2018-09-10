@@ -6,6 +6,7 @@ import {Redirect} from 'react-router-dom'
 import {getList, createAppointment, updateList} from 'actions/appointments'
 import {connect} from 'react-redux';
 import isAuthed from 'helpers/isAuthed'
+import isAdmin from 'helpers/isAdmin'
 import handleOnView from 'helpers/handleOnView'
 import handleNavigate from 'helpers/handleNavigate'
 import handleOnSelectSlot from 'helpers/handleOnSelectSlot'
@@ -13,11 +14,15 @@ import eventStyleGetter from 'helpers/eventStyleGetter'
 import eventPropGetter from 'helpers/eventPropGetter'
 import onSelectEvent from 'helpers/onSelectEvent'
 import isThePast from 'helpers/isThePast'
+import MyDayWrapper from 'components/dumb/MyDayWrapper'
+import DetailDialog from 'components/dumb/DetailDialog'
 
 BigCalendar.momentLocalizer(moment);
 
 class Calendar extends Component {
     state = {
+        detailOpen: false,
+        detail: {},
         dayChosen: new Date()
     }
 
@@ -31,6 +36,14 @@ class Calendar extends Component {
         }
     }
 
+    showDetail =  (eventObj) => {
+        this.setState({ detail: eventObj, detailOpen: true });
+      }
+    
+      handleCloseDetail = () => {
+        this.setState({ detailOpen: false });
+      };
+
     eventStyleGetter = eventStyleGetter(this)
 
     handleOnSelecting = slot => {
@@ -42,7 +55,8 @@ class Calendar extends Component {
 
     render = () => {
         const _this = this;
-        const {authenticated, booked} = this.props;
+        const {detailOpen, detail} = this.state;
+        const {isAdmin, authenticated, booked} = this.props;
         const tabs = authenticated? ['week', 'agenda']:['week'];
 
         return (
@@ -56,8 +70,14 @@ class Calendar extends Component {
     You are not logged in. To book appointments, please log in.
   </div>
 }
-               
 
+{
+    authenticated && <DetailDialog 
+                        open={detailOpen}
+                        detail={detail}
+                        handleCloseDetail={this.handleCloseDetail}/>
+}
+               
                 <BigCalendar
                     events={booked}
                     defaultView='week'
@@ -83,7 +103,7 @@ class Calendar extends Component {
                 }}
                     onSelecting={this.handleOnSelecting}
                     eventPropGetter={eventPropGetter(this)}
-                    onSelectEvent={onSelectEvent()}
+                    onSelectEvent={onSelectEvent(isAdmin, this.showDetail)}
                     formats={{
                     eventTimeRangeFormat: () => {
                         return ""
@@ -100,6 +120,7 @@ class Calendar extends Component {
 const mapState = (state) => {
     return {
         authenticated: isAuthed(state.currentUser),
+        isAdmin: isAdmin(state.currentUser),
         booked: state.appointments
     };
 }
