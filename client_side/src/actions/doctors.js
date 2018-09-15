@@ -1,4 +1,4 @@
-import {GET_DOCTORS, GET_DOCTOR_URLS} from './types'
+import {GET_DOCTORS, ADMIN_GET_DOCTORS, GET_DOCTOR_URLS} from './types'
 import axios from 'axios'
 
 export const getList = () => {
@@ -22,6 +22,25 @@ export const getList = () => {
             
             return dispatch({
                 type: GET_DOCTORS, 
+                payload: data //[{}, {}]
+            })
+        } catch (error) {
+            console.log("actions/doctor.js getList error: ", error)
+        }
+    }
+}
+
+//=================
+
+
+export const adminGetList = () => {
+    return async (dispatch) => {
+
+        try {
+            const {data} = await axios.get("/admin/doctors/");
+            
+            return dispatch({
+                type: ADMIN_GET_DOCTORS, 
                 payload: data //[{}, {}]
             })
         } catch (error) {

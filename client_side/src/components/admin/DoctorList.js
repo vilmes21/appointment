@@ -1,112 +1,53 @@
 import React from 'react';
-import axios from "axios";
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Redirect
-} from 'react-router-dom'
+import AdminDoctorLi from 'components/admin/dumb/AdminDoctorLi'
+import {Redirect} from 'react-router-dom'
+import {connect} from 'react-redux'
+import isAuthed from 'helpers/isAuthed'
+import isAdmin from 'helpers/isAdmin'
+import {adminGetList} from 'actions/doctors'
 
-export default class DoctorList extends React.Component {
-  state = {
-    drs: [],
-    blockNonAdminAuth: false
-  }
-  
-  componentDidMount(){
-    const _this = this;
-    
-    console.log("did mount fun of admin-DocList comp");
+class DoctorList extends React.Component {
 
-    axios.get("/admin/doctors")
-    .then((res) => {
-      if (!res.data){
-        return false;
-      }
-      console.log(res.data);
+    componentDidMount(){
+        this.props.adminGetList()
+    }
 
-      // if (res.data.nonAdminAuth){
-      //   _this.setState({
-      //     blockNonAdminAuth: true
-      //   })
-      //   return;
-      // }
+    render() {
+        const {isAdmin, authenticated, drs} = this.props;
 
-      if (res.data.serverBadAuth){
-        _this.props.reactLogOut("yow admin pg asks you to log in");
-        return;
-      } 
-      //TODO: re-arrange logic considering:
-      /*
-      auth false;
-      auth true, but admin false;
-      auth true, admin true;
-      */
-
-      _this.setState({
-        drs: res.data
-      })
-      
-      return true;
-    })
-    .catch((err) => {
-      console.log("axios catch block, err >>>", err);
-    })
-  }
-  
-  render(){
-    const _this = this;
-
-    let comp;
-
-    let may_list = null;
-
-    if (_this.state.blockNonAdminAuth){
-      window.alert("You are logged in but not admin");
-      comp = <Redirect to="/my_account" />;
-    } else {
-
-        if (_this.state.drs.length > 0){
-          
-          may_list = 
-          _this.state.drs.map((dr) => {
-
-            let may_public = null;
-            if (!dr.is_public){
-              may_public = <strong>(Not visible to public)</strong>;
-            }
-
-            console.log("is this dr public? >>>", dr.is_public);
-            
-            return (
-              <div key={dr.id}>
-              {dr.firstname} {dr.lastname} {may_public}
-                <Link 
-                    to={"/admin/appointment/" + dr.lastname} >
-                  <button>view bookings</button>
-                </Link>
-
-                <Link 
-                    to={"/admin/availability/" + dr.lastname} >
-                  <button>set availability</button>                  
-                </Link>
-                <hr/>
-              </div>
-            );
-          }); //closing map
+        if (!authenticated){
+          return <Redirect to="/login"/>
         }
-      
-        comp = 
-          <div>
-            <h2>admin, Set availability for </h2>
-            {may_list}
-          </div>
-    } //closing else
+        
+        if (!isAdmin) {
+            return <Redirect to="/"/>
+        }
 
-    return (
-      <div>
-        {comp}
-      </div>
-    );
-  }
+        let may_list = null;
+
+        if (drs && drs.length > 0) {
+            may_list = drs.map(dr => {
+                return <AdminDoctorLi key={dr.id} dr={dr}/>
+            });
+        }
+
+        return (
+            <div>
+                <h2>
+                  admin, Set availability for
+                </h2>
+                {may_list}
+            </div>
+        );
+    }
 }
+
+const mapState = state => {
+    return {
+        authenticated: isAuthed(state.currentUser),
+        isAdmin: isAdmin(state.currentUser),
+        drs: state.doctors
+    };
+}
+
+export default connect(mapState, {adminGetList})(DoctorList);

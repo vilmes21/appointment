@@ -13,8 +13,7 @@ export default class RoutesSummary extends React.Component {
 
         return (
             <div>
-                {isAdmin && <AdminRoutes/>}
-                {/* Todo: admin routes should always exist, even when not logged in. At most they redirect to login */}
+                <AdminRoutes/>
                 <Route exact path="/doctors" component={DoctorList}/>
                 <Route path="/calendar/:drUrlName" component={Calendar}/> 
                 <Route path="/my_account" component={MyAccount}/>
