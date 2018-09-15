@@ -18,3 +18,5 @@ export const SIGNOUT_USER = "SIGNOUT_USER"
 export const NEW_ERROR = "NEW_ERROR"
 export const REMOVE_ERROR = "REMOVE_ERROR"
 
+export const GET_DOCTOR_URLS = "GET_DOCTOR_URLS"
+

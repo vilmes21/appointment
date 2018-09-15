@@ -9,7 +9,7 @@ router.get('/index', function (req, res) {
   // db("doctors") .where("id", ">", "0")
   db('doctors')
     .join('users', 'doctors.user_id', 'users.id')
-    .select('users.firstname', 'users.lastname', 'doctors.id', 'doctors.photo', 'doctors.bio')
+    .select('users.firstname', 'users.lastname', 'doctors.id', 'doctors.photo', 'doctors.bio', 'doctors.url_name')
     .then((drs) => {
       res.json(drs);
       return true;
