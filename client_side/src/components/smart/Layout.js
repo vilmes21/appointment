@@ -6,8 +6,18 @@ import isAuthed from 'helpers/isAuthed'
 import isAdmin from 'helpers/isAdmin'
 import RoutesSummary from '../dumb/RoutesSummary';
 import LinksSummary from 'components/dumb/LinksSummary'
+import {checkAuthNow} from 'actions/users'
 
 class Layout extends React.Component {
+    componentDidMount(){
+        const { authenticated, checkAuthNow } = this.props;
+        if (!authenticated){
+            //question: by the time is gets results back, render func already redirected user to login page. What should I do instead?
+
+            checkAuthNow();
+        }
+    }
+    
     render = () => {
         const {authenticated, isAdmin} = this.props;
 
@@ -40,4 +50,4 @@ const mapState = state => {
     };
 }
 
-export default connect(mapState, {})(Layout);
+export default connect(mapState, {checkAuthNow})(Layout);

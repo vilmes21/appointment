@@ -136,6 +136,8 @@ app.post('/devlogin', function (req, res, next) {
 
 
 app.get("/auth/now", (req, res) => {
+  console.log("should have. +++ req.session.userInfo >>> ", req.session.userInfo);
+  
   let data = {
     auth: false,
     isAdmin: false
@@ -144,6 +146,7 @@ app.get("/auth/now", (req, res) => {
   if (req.isAuthenticated()){
     data.auth = true;
     data.isAdmin = helpers.isAdmin(req);
+    data.userInfo = req.session.userInfo;
   }
   
   res.json(data);
@@ -157,6 +160,9 @@ app.post('/login', post_login);
 
 app.post("/logout", (req, res) =>{
   req.logout();
+
+  console.log(`req.session.userInfo might exist still: `, req.session.userInfo);
+  req.session.userInfo = null;
 
   const result = {
     success: false,

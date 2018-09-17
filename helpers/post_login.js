@@ -31,7 +31,10 @@ const callback = (req, res, next) => {
     
             if (loginResult.success) {
                 const {email, firstname, lastname, id, isAdmin} = info;
-           
+
+                //add basic info into session
+                req.session.userInfo  = {email, firstname, lastname, id, isAdmin};
+                
                 loginResult = {
                     ...loginResult,
                     email,

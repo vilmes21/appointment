@@ -1,4 +1,4 @@
-import {SIGNIN_USER, SIGNOUT_USER} from './types'
+import {GET_CURRENT_USER, SIGNIN_USER, SIGNOUT_USER} from './types'
 import axios from 'axios'
 
 export const signup = (user) => {
@@ -85,6 +85,34 @@ export const signout = () => {
             return res;
         } catch (error) {
             console.log("actions/users.js signout error: ", error)
+        }
+    }
+}
+
+//=============
+
+export const checkAuthNow = () => {
+    return async (dispatch) => {
+        try {
+            const {data} = await axios.get('/auth/now');
+
+            console.log("data} >>", data)
+
+            if (!data) {
+                //pls log error
+                return;
+            }
+
+            if (!data.auth){
+                return; //not error. Simply not logged in.
+            }
+
+            await dispatch({
+                payload: data.userInfo,
+                type: GET_CURRENT_USER
+            })
+        } catch (error) {
+            console.log("actions/users.js checkAuthNow error: ", error)
         }
     }
 }

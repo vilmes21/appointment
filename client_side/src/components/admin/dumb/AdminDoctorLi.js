@@ -6,8 +6,8 @@ export default class AdminDoctorLi extends React.Component {
         const {dr} = this.props;
         return (
             <div key={dr.id}>
-                {dr.firstname}
-                {dr.lastname}
+                {dr.firstname} &nbsp;
+                {dr.lastname} &nbsp;
                 {dr.is_public || <strong>(Not visible to public)</strong>
 }
 foo
