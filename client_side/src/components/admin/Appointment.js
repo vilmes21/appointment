@@ -1,3 +1,5 @@
+//this file is retired. Sept 16, 2018
+
 import React, { Component } from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';

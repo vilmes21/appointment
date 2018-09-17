@@ -5,13 +5,14 @@ export default class AdminDoctorLi extends React.Component {
     render() {
         const {dr} = this.props;
         return (
-            <div key={dr.id}>
-                {dr.firstname} &nbsp;
-                {dr.lastname} &nbsp;
-                {dr.is_public || <strong>(Not visible to public)</strong>
+            <div>
+                {dr.firstname}
+                &nbsp; {dr.lastname}
+                &nbsp; {dr.is_public || <strong>(Not visible to public)</strong>
 }
-foo
-                <Link to={"/admin/appointment/" + dr.lastname}>
+
+                {/* admin/appointment/456 */}
+                <Link to={"/admin/appointment/" + dr.id}>
                     <button>view bookings</button>
                 </Link>
 

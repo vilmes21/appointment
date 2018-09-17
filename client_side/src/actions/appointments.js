@@ -91,6 +91,8 @@ export const createAppointment = (newAppointment) => {
     }
 }
 
+//=============
+
 export const updateList = newList => {
 
     console.log("entering updateList. newList>>> ", newList)
@@ -117,6 +119,26 @@ export const updateList = newList => {
             console.log("actions/appointments.js updateList error: ", error)
             res.msg = error.toString();
             return res;
+        }
+    }
+}
+
+//===========
+
+
+export const getDoctorBooked = drId => {
+
+    return async (dispatch) => {
+        
+        try {
+            const {data} = await axios.get("/admin/appointments/" + drId); 
+
+            dispatch({
+                type: UPDATE_BOOKED, 
+                payload: data //[{}, {}]
+            })
+        } catch (error) {
+            console.log("actions/appointments.js getDoctorBooked error: ", error)
         }
     }
 }
