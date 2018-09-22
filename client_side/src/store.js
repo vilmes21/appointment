@@ -14,9 +14,11 @@ export default store
 store structure:
 
 {
+    isLoading: true,
     appointments: {},
     currentUser: {},
-    doctors: [{}, {}]
+    doctors: [{}, {}],
+    doctorUrls: {}
 }
 
 */

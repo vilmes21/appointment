@@ -1,4 +1,4 @@
-import {GET_CURRENT_USER, SIGNIN_USER, SIGNOUT_USER} from './types'
+import {GET_CURRENT_USER, SIGNIN_USER, SIGNOUT_USER, UPDATE_LOADING_STATUS} from './types'
 import axios from 'axios'
 
 export const signup = (user) => {
@@ -102,15 +102,20 @@ export const checkAuthNow = () => {
                 //pls log error
                 return;
             }
-
-            if (!data.auth){
-                return; //not error. Simply not logged in.
-            }
+            
+            const userInfo = data.auth? data.userInfo : null;
 
             await dispatch({
-                payload: data.userInfo,
+                payload: userInfo,
                 type: GET_CURRENT_USER
             })
+
+            await dispatch({
+                payload: false,
+                type: UPDATE_LOADING_STATUS
+            })
+
+
         } catch (error) {
             console.log("actions/users.js checkAuthNow error: ", error)
         }

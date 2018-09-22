@@ -7,6 +7,7 @@ import isAdmin from 'helpers/isAdmin'
 import RoutesSummary from '../dumb/RoutesSummary';
 import LinksSummary from 'components/dumb/LinksSummary'
 import {checkAuthNow} from 'actions/users'
+import Spinner from 'components/dumb/Spinner'
 
 class Layout extends React.Component {
     componentDidMount(){
@@ -19,7 +20,13 @@ class Layout extends React.Component {
     }
     
     render = () => {
-        const {authenticated, isAdmin} = this.props;
+        const { isLoading } = this.props;
+
+        if (isLoading){
+            return <Spinner />
+        }
+
+        const { authenticated, isAdmin} = this.props;
 
         return (
             <div>
@@ -45,6 +52,7 @@ class Layout extends React.Component {
 
 const mapState = state => {
     return {
+        isLoading: state.isLoading,
         authenticated: isAuthed(state.currentUser),
         isAdmin: isAdmin(state.currentUser)
     };
