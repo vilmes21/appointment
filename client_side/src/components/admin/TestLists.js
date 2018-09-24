@@ -12,7 +12,7 @@ import CommentIcon from '@material-ui/icons/Comment';
 const styles = theme => ({
   root: {
     width: '100%',
-    maxWidth: 360,
+    // maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
   },
 });
@@ -35,7 +35,7 @@ class CheckboxList extends React.Component {
 
     this.setState({
       checked: newChecked,
-    });
+    }, () => {console.log(this.state)});
   };
 
   render() {
@@ -44,7 +44,7 @@ class CheckboxList extends React.Component {
     return (
       <div className={classes.root}>
         <List>
-          {[0, 1, 2, 3].map(value => (
+          {[10, 221, 332, 443].map(value => (
             <ListItem
               key={value}
               role={undefined}
@@ -53,17 +53,18 @@ class CheckboxList extends React.Component {
               onClick={this.handleToggle(value)}
               className={classes.listItem}
             >
-              <Checkbox
+         
+         <Checkbox
                 checked={this.state.checked.indexOf(value) !== -1}
                 tabIndex={-1}
                 disableRipple
+                // disabled={true}
               />
-              <ListItemText primary={`Line item ${value + 1}`} />
-              <ListItemSecondaryAction>
-                <IconButton aria-label="Comments">
-                  <CommentIcon />
-                </IconButton>
-              </ListItemSecondaryAction>
+
+              <ListItemText primary={`Sep 22 2018 11:31:45 ${value + 1}`} />
+              <ListItemText secondary={`Adam Larson ${value + 1}`} />
+              <ListItemText secondary={`ep 22 2018 11:31: ${value + 1}`} />
+
             </ListItem>
           ))}
         </List>

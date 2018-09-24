@@ -8,6 +8,8 @@ import RoutesSummary from '../dumb/RoutesSummary';
 import LinksSummary from 'components/dumb/LinksSummary'
 import {checkAuthNow} from 'actions/users'
 import Spinner from 'components/dumb/Spinner'
+import TestLists from 'components/admin/TestLists.js'
+import CancelBtn from '../admin/CancelBtn';
 
 class Layout extends React.Component {
     componentDidMount(){
@@ -30,6 +32,8 @@ class Layout extends React.Component {
 
         return (
             <div>
+                <CancelBtn />
+                <TestLists />
                 <TopError/>
 
                 <Router>
