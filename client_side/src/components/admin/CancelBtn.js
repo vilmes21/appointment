@@ -7,78 +7,73 @@ import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
-import { withStyles } from '@material-ui/core/styles';
 
-const styles = theme => ({
-  root: {
-    display: 'flex',
-  },
-  paper: {
-    marginRight: theme.spacing.unit * 2,
-  },
-});
+class CancelBtn extends React.Component {
+    state = {
+        open: false
+    };
 
-class MenuListComposition extends React.Component {
-  state = {
-    open: false,
-  };
+    handleToggle = () => {
+        this.setState(state => ({
+            open: !state.open
+        }));
+    };
 
-  handleToggle = () => {
-    this.setState(state => ({ open: !state.open }));
-  };
+    handleClose = event => {
+        if (this.anchorEl.contains(event.target)) {
+            return;
+        }
 
-  handleClose = event => {
-    if (this.anchorEl.contains(event.target)) {
-      return;
+        this.setState({open: false});
+    };
+
+    handleConfirmCancel = () => {
+        alert("confirmed to cancel. send ajax pls")
     }
 
-    this.setState({ open: false });
-  };
+    render() {
+        const {open} = this.state;
+        const {checked, cancelAppts} = this.props;
 
-  render() {
-    const { classes } = this.props;
-    const { open } = this.state;
-
-    return (
-      <div className={classes.root}>
-        <div>
-          <Button
-            buttonRef={node => {
-              this.anchorEl = node;
-            }}
-            aria-owns={open ? 'menu-list-grow' : null}
-            aria-haspopup="true"
-            onClick={this.handleToggle}
-          >
-            Toggle Menu Grow
-          </Button>
-          <Popper open={open} anchorEl={this.anchorEl} transition disablePortal>
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                id="menu-list-grow"
-                style={{ transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom' }}
-              >
-                <Paper>
-                  <ClickAwayListener onClickAway={this.handleClose}>
-                    <MenuList>
-                      <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                      <MenuItem onClick={this.handleClose}>My account</MenuItem>
-                      <MenuItem onClick={this.handleClose}>Logout</MenuItem>
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
-        </div>
-      </div>
-    );
-  }
+        return (
+            <div className="wrapCancelBtn">
+                <Button
+                    buttonRef={node => {
+                    this.anchorEl = node;
+                }}
+                    aria-owns={open
+                    ? 'menu-list-grow'
+                    : null}
+                    aria-haspopup="true"
+                    onClick={this.handleToggle}>
+                    Cancel appointments ({checked.length})
+                </Button>
+                <Popper open={open} anchorEl={this.anchorEl} transition disablePortal>
+                    {({TransitionProps, placement}) => (
+                        <Grow
+                            {...TransitionProps}
+                            id="menu-list-grow"
+                            style={{
+                            transformOrigin: placement === 'bottom'
+                                ? 'center top'
+                                : 'center bottom'
+                        }}>
+                            <Paper>
+                                <ClickAwayListener onClickAway={this.handleClose}>
+                                    <MenuList>
+                                        <MenuItem onClick={this.handleClose}>Never mind</MenuItem>
+                                        <MenuItem onClick={cancelAppts(checked)}>Confirm cancellation</MenuItem>
+                                    </MenuList>
+                                </ClickAwayListener>
+                            </Paper>
+                        </Grow>
+                    )}
+                </Popper>
+            </div>
+        );
+    }
 }
 
-MenuListComposition.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
+CancelBtn.propTypes = {};
 
-export default withStyles(styles)(MenuListComposition);
+export default CancelBtn;

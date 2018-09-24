@@ -5,8 +5,51 @@ import {connect} from 'react-redux';
 import isAdmin from 'helpers/isAdmin'
 import {getDoctorBooked} from "actions/appointments"
 import DoctorAppointmentLi from "components/admin/dumb/DoctorAppointmentLi"
+import PropTypes from 'prop-types';
+import {withStyles} from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
+import CommentIcon from '@material-ui/icons/Comment';
+import CancelBtn from 'components/admin/CancelBtn.js'
+
+const styles = theme => ({
+    root: {
+        width: '100%'
+    }
+});
 
 class DoctorAppointmentList extends Component {
+    state = {
+        checked: []
+    };
+
+    cancelAppts = ids=> {
+        return () => {
+            console.log("gonna cancel >>", ids)
+        }
+    }
+
+    handleToggle = value => () => {
+        const {checked} = this.state;
+        const currentIndex = checked.indexOf(value);
+        const newChecked = [...checked];
+
+        if (currentIndex === -1) {
+            newChecked.push(value);
+        } else {
+            newChecked.splice(currentIndex, 1);
+        }
+
+        this.setState({
+            checked: newChecked
+        }, () => {
+            console.log(this.state)
+        });
+    };
 
     componentDidMount() {
         const {drId} = this.props.match.params;
@@ -27,10 +70,20 @@ class DoctorAppointmentList extends Component {
         }
 
         const {booked} = this.props;
+        const {classes} = this.props;
+        const {checked} = this.state;
 
         let _list = null;
         if (booked && booked.length > 0) {
-            _list = booked.map(appt => <DoctorAppointmentLi key={appt.id} appt={appt}/>)
+            _list = <div className={classes.root}>
+                <List>
+                    {booked.map(appt => <DoctorAppointmentLi
+                        checked={checked}
+                        key={appt.id}
+                        appt={appt}
+                        handleToggle={this.handleToggle}/>)}
+                </List>
+            </div>
         }
 
         return (
@@ -38,6 +91,9 @@ class DoctorAppointmentList extends Component {
                 <h1>
                     Appointments with Dr.
                 </h1>
+                {
+                    checked.length > 0 && <CancelBtn checked={checked} cancelAppts={this.cancelAppts}/>
+                }
                 {_list}
             </div>
         );
@@ -52,4 +108,4 @@ const mapState = (state) => {
     };
 }
 
-export default connect(mapState, {getDoctorBooked})(DoctorAppointmentList);
+export default connect(mapState, {getDoctorBooked})(withStyles(styles)(DoctorAppointmentList));

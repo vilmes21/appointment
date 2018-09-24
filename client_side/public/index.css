@@ -2,3 +2,7 @@
 .rbc-time-header > .rbc-row:nth-of-type(2) {
     display: none !important;
 }
+
+.wrapCancelBtn {
+    padding-bottom: 100px;
+}
