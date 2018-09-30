@@ -8,6 +8,7 @@ const moment = require("moment");
 
 const rootRequire = require.main.require;
 const isTimeAgo = rootRequire("./helpers/isTimeAgo");
+const addLog =  rootRequire("./helpers/addLog");
 
 // url: /admin/appointments/wang
 router.get('/:id', helpers.requireAdmin, helpers.findDrId, function (req, res) {
@@ -44,6 +45,7 @@ router.get('/:id', helpers.requireAdmin, helpers.findDrId, function (req, res) {
 });
 
 router.post("/cancel", helpers.requireAdmin, async(req, res) => {
+
   let toReturn = {
     success: [],
 };
@@ -52,6 +54,10 @@ router.post("/cancel", helpers.requireAdmin, async(req, res) => {
 
         const {ids} = req.body; //[3,6,7]
 
+        if (!Array.isArray(ids)){
+            return res.json(toReturn);
+        }
+        
         console.log("BE post /cancel. ids >>> ", ids)
 
         //https://stackoverflow.com/questions/39598051/array-not-being-passed-to-query-i

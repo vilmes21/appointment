@@ -47,6 +47,8 @@ app.use(myMorgan);
 var home = require('./controllers/home');
 app.use('/', home);
 
+app.use('/log', require('./controllers/log'));
+
 var users = require('./controllers/users');
 app.use('/users', users);
 

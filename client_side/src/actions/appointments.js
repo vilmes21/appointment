@@ -140,7 +140,7 @@ export const cancel = apptIds => {
     return async(dispatch, getState) => {
 
         try {
-            if (apptIds.length === 0) {
+            if (!Array.isArray(apptIds) || apptIds.length === 0) {
                 return;
             }
 
