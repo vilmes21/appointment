@@ -1,6 +1,7 @@
 // const express = require('express');
 import express from 'express'
 const app = express();
+// require('module-alias/register');
 const db = require("./db/knex");
 const helpers = require("./helpers");
 const session = require('express-session');

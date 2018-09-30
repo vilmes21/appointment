@@ -1,32 +1,30 @@
-import {GET_BOOKED, ADD_APPOINTMENT, UPDATE_BOOKED} from './types'
+import {NEW_ERROR, GET_BOOKED, ADD_APPOINTMENT, UPDATE_BOOKED} from './types'
 import axios from 'axios'
 
 export const getList = (drUrlName) => {
     console.log("entered getList")
 
-    
-    return async (dispatch) => {
+    return async(dispatch) => {
 
-    console.log("2 entered getList")
+        console.log("2 entered getList")
 
-    const res = {
-        success: false,
-        msg: null
-    }
+        const res = {
+            success: false,
+            msg: null
+        }
 
         try {
-            const {data} = await axios.get("/availabilities/" + drUrlName); 
+            const {data} = await axios.get("/availabilities/" + drUrlName);
 
             const clone = [...data];
 
-            for (let c of clone){
-              c.start = new Date(c.start);
-              c.end = new Date(c.end);
+            for (let c of clone) {
+                c.start = new Date(c.start);
+                c.end = new Date(c.end);
             }
 
             dispatch({
-                type: GET_BOOKED, 
-                payload: clone //[{}, {}]
+                type: GET_BOOKED, payload: clone //[{}, {}]
             })
 
             res.success = true;
@@ -40,13 +38,13 @@ export const getList = (drUrlName) => {
 }
 
 export const createAppointment = (newAppointment) => {
-    console.log("entered createAppointment, newApp >>> ",newAppointment)
+    console.log("entered createAppointment, newApp >>> ", newAppointment)
 
-    return async (dispatch) => {
+    return async(dispatch) => {
         try {
 
-            console.log("2 entered createAppointment, newApp >>> ",newAppointment)
-            
+            console.log("2 entered createAppointment, newApp >>> ", newAppointment)
+
             const res = {
                 success: false,
                 msg: "",
@@ -54,15 +52,15 @@ export const createAppointment = (newAppointment) => {
             }
 
             const {data} = await axios.post("/appointments/create", newAppointment);
-            console.log("data >>> " , data)
+            console.log("data >>> ", data)
 
-            if (data.serverBadAuth){
+            if (data.serverBadAuth) {
                 res.msg = "Log in first! Server saw that you're not logged in.";
                 return res;
-              }
-        
-            if (!data.success){
-                if (data.msg){
+            }
+
+            if (!data.success) {
+                if (data.msg) {
                     res.msg = data.msg;
                 } else {
                     res.msg = "ajax good, but performance failed";
@@ -75,12 +73,9 @@ export const createAppointment = (newAppointment) => {
                 start: newAppointment.wish_start_at,
                 end: newAppointment.wish_end_at,
                 isMine: true
-              };
+            };
 
-            dispatch({
-                type: ADD_APPOINTMENT, 
-                payload: newAppointmentFrontend
-            })
+            dispatch({type: ADD_APPOINTMENT, payload: newAppointmentFrontend})
 
             res.success = true;
             return res;
@@ -97,20 +92,18 @@ export const updateList = newList => {
 
     console.log("entering updateList. newList>>> ", newList)
 
-    
-    return async (dispatch) => {
+    return async(dispatch) => {
 
         console.log("2 entering updateList. newList>>> ", newList)
-        
-    const res = {
-        success: false,
-        msg: null
-    }
+
+        const res = {
+            success: false,
+            msg: null
+        }
 
         try {
             dispatch({
-                type: UPDATE_BOOKED, 
-                payload: newList //[{}, {}]
+                type: UPDATE_BOOKED, payload: newList //[{}, {}]
             })
 
             res.success = true;
@@ -125,17 +118,15 @@ export const updateList = newList => {
 
 //===========
 
-
 export const getDoctorBooked = drId => {
 
-    return async (dispatch) => {
-        
+    return async(dispatch) => {
+
         try {
-            const {data} = await axios.get("/admin/appointments/" + drId); 
+            const {data} = await axios.get("/admin/appointments/" + drId);
 
             dispatch({
-                type: UPDATE_BOOKED, 
-                payload: data //[{}, {}]
+                type: UPDATE_BOOKED, payload: data //[{}, {}]
             })
         } catch (error) {
             console.log("actions/appointments.js getDoctorBooked error: ", error)
@@ -146,23 +137,31 @@ export const getDoctorBooked = drId => {
 //============
 
 export const cancel = apptIds => {
-    return async (dispatch) => {
+    return async(dispatch, getState) => {
 
-        console.log("enter fn cancel. apptIds>>>", apptIds)
-        
         try {
-            const {data} = await axios.post("/admin/appointments/cancel", {
-                ids: apptIds
-            });
+            if (apptIds.length === 0) {
+                return;
+            }
 
-            console.log("action.js fn cancel. data ???", data)
+            const {data} = await axios.post("/admin/appointments/cancel", {ids: apptIds});
 
-            dispatch({
-                type: UPDATE_BOOKED, 
-                payload: data //[{}, {}]
-            })
+            if (data.success.length > 0) {
+                const currentAppts = [...getState().appointments];
+                /* [{start: "2018-10-05T16:25:00.000Z", end: "2018-10-05T16:30:00.000Z", title: "Joe Doe", id: 211}, {}] */
+
+                const remainingAppts = currentAppts.filter(x => !data.success.includes(x.id));
+
+                dispatch({
+                    type: UPDATE_BOOKED, payload: remainingAppts //[{}, {}]
+                })
+            }
+
+            if (typeof data.msg === "string" && data.msg) {
+                dispatch({type: NEW_ERROR, payload: data.msg});
+            }
         } catch (error) {
-            console.log("actions/appointments.js getDoctorBooked error: ", error)
+            console.log("actions/appointments.js cancel error: ", error)
         }
     }
 }

@@ -4,7 +4,10 @@ const db = require("../../db/knex");
 const helpers = require("../../helpers");
 const constants = require("../../config/constants");
 const moment = require("moment");
-import isTimeAgo from "../../helpers/isTimeAgo";
+// import isTimeAgo from "../../helpers/isTimeAgo";
+
+const rootRequire = require.main.require;
+const isTimeAgo = rootRequire("./helpers/isTimeAgo");
 
 // url: /admin/appointments/wang
 router.get('/:id', helpers.requireAdmin, helpers.findDrId, function (req, res) {
@@ -41,9 +44,10 @@ router.get('/:id', helpers.requireAdmin, helpers.findDrId, function (req, res) {
 });
 
 router.post("/cancel", helpers.requireAdmin, async(req, res) => {
+  let toReturn = {
+    success: [],
+};
 
-  console.log("isTimeAgo requie???", isTimeAgo, "8*****************")
-  
     try {
 
         const {ids} = req.body; //[3,6,7]
@@ -54,7 +58,7 @@ router.post("/cancel", helpers.requireAdmin, async(req, res) => {
         // n-knex in reality, need to check if time has past. If ok, then cancel. If not,
         // don't proceed and specify reason.
 
-        const wantToCancel = await db("appointments").whereIn("id", ids);
+        const wantToCancel = await db("appointments").whereIn("id", ids).select("id", "wish_start_at", "wish_end_at");
         const cancellableIds = [];
         const unCancellableIds = [];
 
@@ -72,7 +76,7 @@ router.post("/cancel", helpers.requireAdmin, async(req, res) => {
             .whereIn("id", cancellableIds)
             .update({status: constants.APPOINTMENT_STATUS_CANCELLED});
 
-        const toReturn = {
+        toReturn = {
             success: cancellableIds,
             fail: unCancellableIds
         };
@@ -83,6 +87,7 @@ router.post("/cancel", helpers.requireAdmin, async(req, res) => {
 
     } catch (e) {
       console.log("catch block of /admin/appt/cancel. e >>>", e)
+      toReturn.msg = `Cancellation failed`;
     }
 
     res.json(toReturn);
