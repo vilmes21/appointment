@@ -3,7 +3,7 @@ import {Redirect} from 'react-router-dom'
 import isAuthed from 'helpers/isAuthed'
 import {connect} from 'react-redux';
 import isAdmin from 'helpers/isAdmin'
-import {getDoctorBooked} from "actions/appointments"
+import {getDoctorBooked, cancel} from "actions/appointments"
 import DoctorAppointmentLi from "components/admin/dumb/DoctorAppointmentLi"
 import PropTypes from 'prop-types';
 import {withStyles} from '@material-ui/core/styles';
@@ -29,7 +29,8 @@ class DoctorAppointmentList extends Component {
 
     cancelAppts = ids=> {
         return () => {
-            console.log("gonna cancel >>", ids)
+            console.log("gonna cancel >>", ids);
+            this.props.cancel(ids);
         }
     }
 
@@ -108,4 +109,4 @@ const mapState = (state) => {
     };
 }
 
-export default connect(mapState, {getDoctorBooked})(withStyles(styles)(DoctorAppointmentList));
+export default connect(mapState, {getDoctorBooked, cancel})(withStyles(styles)(DoctorAppointmentList));

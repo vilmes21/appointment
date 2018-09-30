@@ -142,3 +142,27 @@ export const getDoctorBooked = drId => {
         }
     }
 }
+
+//============
+
+export const cancel = apptIds => {
+    return async (dispatch) => {
+
+        console.log("enter fn cancel. apptIds>>>", apptIds)
+        
+        try {
+            const {data} = await axios.post("/admin/appointments/cancel", {
+                ids: apptIds
+            });
+
+            console.log("action.js fn cancel. data ???", data)
+
+            dispatch({
+                type: UPDATE_BOOKED, 
+                payload: data //[{}, {}]
+            })
+        } catch (error) {
+            console.log("actions/appointments.js getDoctorBooked error: ", error)
+        }
+    }
+}

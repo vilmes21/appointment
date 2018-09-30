@@ -5,10 +5,8 @@ const helpers = require("../../helpers");
 const constants = require("../../config/constants");
 const moment = require("moment");
 
-//================================================================================================
-
 // url: /admin/appointments/wang
-router.get('/:id', helpers.findDrId, function (req, res) {
+router.get('/:id', helpers.requireAdmin, helpers.findDrId, function (req, res) {
   db("appointments")
   .join('users', 'appointments.user_id', 'users.id')
   .select('users.firstname', 'users.lastname', 'appointments.wish_start_at', 'appointments.wish_end_at', 'appointments.id')
@@ -38,5 +36,24 @@ router.get('/:id', helpers.findDrId, function (req, res) {
     })
 
 });
+
+router.post("/cancel", helpers.requireAdmin, async (req, res) => {
+  const {ids } = req.body; //[3,6,7]
+
+  console.log("BE post /cancel. ids >>> ", ids)
+  
+  //https://stackoverflow.com/questions/39598051/array-not-being-passed-to-query-in-knex
+
+  //in reality, need to check if time has past. If ok, then cancel. If not, don't proceed and specify reason.
+  
+  await db("appointments").whereIn("id", ids).update({
+    status: constants.APPOINTMENT_STATUS_CANCELLED
+  });
+
+  res.json({
+    success: ids
+  });
+
+})
 
 module.exports = router

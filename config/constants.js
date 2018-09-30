@@ -5,6 +5,7 @@ module.exports = {
     }, //TODO: maybe later change to ints
     DEFAULT_APPOINTMENT_STATUS: 304,
     APPOINTMENT_STATUS_BOOKED: 304,
+    APPOINTMENT_STATUS_CANCELLED: 301,
     ROLE_ADMIN: 201,
     //below can change according to business needs
     USER_PREVIEW_DAYS: 14,
