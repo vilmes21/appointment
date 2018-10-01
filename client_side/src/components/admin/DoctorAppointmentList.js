@@ -29,7 +29,6 @@ class DoctorAppointmentList extends Component {
 
     cancelAppts = ids=> {
         return () => {
-            console.log("gonna cancel >>", ids);
             this.props.cancel(ids);
         }
     }

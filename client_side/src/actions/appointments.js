@@ -1,19 +1,18 @@
 import {NEW_ERROR, GET_BOOKED, ADD_APPOINTMENT, UPDATE_BOOKED} from './types'
 import axios from 'axios'
+import addLog from "helpers/addLog.js"
 
 export const getList = (drUrlName) => {
-    console.log("entered getList")
-
     return async(dispatch) => {
-
-        console.log("2 entered getList")
-
         const res = {
             success: false,
             msg: null
         }
 
         try {
+            var foobar = null;
+            foobar.fizz();
+
             const {data} = await axios.get("/availabilities/" + drUrlName);
 
             const clone = [...data];
@@ -30,7 +29,7 @@ export const getList = (drUrlName) => {
             res.success = true;
             return res;
         } catch (error) {
-            console.log("actions/appointments.js getList error: ", error)
+            addLog(error, "actions/appointments.js fn getList")
             res.msg = error.toString();
             return res;
         }
@@ -80,8 +79,8 @@ export const createAppointment = (newAppointment) => {
             res.success = true;
             return res;
 
-        } catch (error) {
-            console.log("actions/appointments.js createAppointment error: ", error)
+        } catch (e) {
+            addLog(e, "actions/appointments.js fn createAppointment")
         }
     }
 }
@@ -109,7 +108,7 @@ export const updateList = newList => {
             res.success = true;
             return res;
         } catch (error) {
-            console.log("actions/appointments.js updateList error: ", error)
+            addLog(error, "actions/appointments.js fn updateList");
             res.msg = error.toString();
             return res;
         }
@@ -129,7 +128,7 @@ export const getDoctorBooked = drId => {
                 type: UPDATE_BOOKED, payload: data //[{}, {}]
             })
         } catch (error) {
-            console.log("actions/appointments.js getDoctorBooked error: ", error)
+            addLog(error, "client_side/src/actions/appointments.js fn getDoctorBooked");
         }
     }
 }
@@ -160,8 +159,8 @@ export const cancel = apptIds => {
             if (typeof data.msg === "string" && data.msg) {
                 dispatch({type: NEW_ERROR, payload: data.msg});
             }
-        } catch (error) {
-            console.log("actions/appointments.js cancel error: ", error)
+        } catch (e) {
+            addLog(e, "actions/appointments.js fn cancel");
         }
     }
 }
