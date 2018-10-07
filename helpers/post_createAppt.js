@@ -6,6 +6,8 @@ const isThePast = rootRequire("./helpers/isThePast")
 const db = rootRequire("./db/knex");
 const helpers = require("../helpers");
 const constants = require("../config/constants");
+const toLowerCaseOrUndefined = rootRequire("./helpers/toLowerCaseOrUndefined.js")
+const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js")
 
 export default async(req, res) => {
 
@@ -59,6 +61,8 @@ export default async(req, res) => {
         const doctors = await db("doctors")
             .where({is_public: true})
             .select("url_name", "id");
+
+        console.log("Found doctors >>> ", doctors)
         /*
 [
     {
@@ -72,7 +76,15 @@ export default async(req, res) => {
 ]
  */
 
-        const doctorObj = doctors.find(obj => obj.url_name === req.body.drUrlName);
+        const {drUrlName} = req.body;
+
+        const lowerCaseDrUrlName = toLowerCaseOrUndefined(drUrlName);
+        if (!lowerCaseDrUrlName) {
+            result.msg = "Doctor not found";
+            return res.json(result);
+        }
+
+        const doctorObj = doctors.find(obj => toLowerCaseOrUndefined(obj.url_name) === lowerCaseDrUrlName);
         if (!doctorObj) {
             result.msg = "Failed to find doctor";
             return res.json(result);
@@ -118,17 +130,14 @@ export default async(req, res) => {
 
         //END see if other users already booked slot BEGIN insert appointment
 
-        await db('appointments')
-            .insert({doctor_id: drId, user_id: req.session.passport.user, wish_start_at: req.body.wish_start_at, wish_end_at: req.body.wish_end_at, status: constants.DEFAULT_APPOINTMENT_STATUS})
-            .then(x => {
-                result.success = true;
-                result.msg = "new appointment booked!";
-                return res.json(result);
-            })
+        await db('appointments').insert({doctor_id: drId, user_id: req.session.passport.user, wish_start_at: req.body.wish_start_at, wish_end_at: req.body.wish_end_at, status: constants.DEFAULT_APPOINTMENT_STATUS});
 
+        result.success = true;
+        result.msg = "new appointment booked!";
+        return res.json(result);
         //END insert appointment
 
-    } catch (err) {
-        console.log(`in func post_createAppt. err >>>`, err);
+    } catch (e) {
+        addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);
     }
 }

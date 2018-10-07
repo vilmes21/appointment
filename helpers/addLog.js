@@ -15,7 +15,7 @@ const _caseNum = x => ` SERVER CASE NUMBER: ${x} ; `;
 const addLog = async(userId, err, notes = null) => {
     try {
         const newLog = {
-            userId: typeof userId === "number"
+            user_id: typeof userId === "number"
                 ? userId
                 : null,
             time: (new Date()),

@@ -24,10 +24,6 @@ function requireLogin(req, res, next) {
         return next();
     }
 
-
-
-
-
     // res.send("pls log in first");
     // req.loggedIn = false;
     // const loginUrl = "http://localhost:3000/sign_up";

@@ -70,6 +70,8 @@ class DoctorAppointmentList extends Component {
         }
 
         const {booked} = this.props;
+        console.log("booked FOUND>>>", booked)
+        
         const {classes} = this.props;
         const {checked} = this.state;
 
@@ -78,8 +80,8 @@ class DoctorAppointmentList extends Component {
             _list = <div className={classes.root}>
                 <List>
                     {booked.map(appt => <DoctorAppointmentLi
-                        checked={checked}
                         key={appt.id}
+                        checked={checked}
                         appt={appt}
                         handleToggle={this.handleToggle}/>)}
                 </List>

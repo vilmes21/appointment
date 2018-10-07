@@ -44,9 +44,6 @@ var morgan = require('morgan');
 const myMorgan = morgan(":method :url :status :response-time ms - :res[content-length]");
 app.use(myMorgan);
 
-var home = require('./controllers/home');
-app.use('/', home);
-
 app.use('/log', require('./controllers/log'));
 
 var users = require('./controllers/users');

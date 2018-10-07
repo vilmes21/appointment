@@ -10,9 +10,6 @@ export const getList = (drUrlName) => {
         }
 
         try {
-            var foobar = null;
-            foobar.fizz();
-
             const {data} = await axios.get("/availabilities/" + drUrlName);
 
             const clone = [...data];
