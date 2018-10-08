@@ -24,10 +24,8 @@ class Login extends React.Component {
   handleSubmit = async (ev)=> {
     const _this = this;
     ev.preventDefault();
-    const res = await _this.props.loginVerify(_this.state);
-    if (!(res && res.success)){
-      _this.props.addError(res.msg);
-    }
+    await _this.props.loginVerify(_this.state);
+    
   }
 
   render() {

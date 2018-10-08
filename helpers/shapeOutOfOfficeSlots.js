@@ -1,14 +1,14 @@
 const rootRequire = require.main.require;
 const constants = rootRequire("./config/constants");
-
+const addLog = rootRequire("./helpers/addLog");
 /*
 
-   ({ 
- 'Sun Feb 25 2018': 
+   ({
+ 'Sun Feb 25 2018':
                    [ 2018-02-25T22:00:00.000Z,
-                     2018-02-25T22:30:00.000Z] 
-   }) 
-   
+                     2018-02-25T22:30:00.000Z]
+   })
+
    =>
 
    [
@@ -29,34 +29,36 @@ export default(collectByDay) => {
     //BEGIN create out-of-office slots into array of obj
     const busys = [];
 
-    const busy = {
-        title: constants.UNAVAILABLE_SLOT_TITLE,
-        type: constants.slotType.outOfOffice
-    };
+    try {
 
-    for (let drDay in collectByDay) {
-        const eachDayArr = collectByDay[drDay];
-        const eachDayArrCount = eachDayArr.length;
+        const busy = {
+            title: constants.UNAVAILABLE_SLOT_TITLE,
+            type: constants.slotType.outOfOffice
+        };
 
-        for (let i = 0; i < eachDayArrCount; i++) {
-            if (i % 2 === 0) { //ie. even index, then be start_at
-                busy.start = eachDayArr[i];
-            } else { //ie. odd index, then be end_at
-                busy.end = eachDayArr[i];
-                busys.push({
-                    ...busy
-                });
+        for (let drDay in collectByDay) {
+            const eachDayArr = collectByDay[drDay];
+            const eachDayArrCount = eachDayArr.length;
+
+            for (let i = 0; i < eachDayArrCount; i++) {
+                if (i % 2 === 0) { //ie. even index, then be start_at
+                    busy.start = eachDayArr[i];
+                } else { //ie. odd index, then be end_at
+                    busy.end = eachDayArr[i];
+                    busys.push({
+                        ...busy
+                    });
+                }
+
             }
-
         }
+
+        //  console.log("right before return result busys human readable>>")  for (let b
+        // in busys){    console.log("busys[b].start.toString() >>",
+        // busys[b].start.toString()) console.log("busys[b].end.toString()   >>",
+        // busys[b].end.toString())  } END create out-of-office slots into array of obj
+    } catch (e) {
+        addLog(null, e, `fn helpers/shapeOutOfOfficeSlots.js. param collectByDay>>>${JSON.stringify(collectByDay)}`);
     }
-
-    //  console.log("right before return result busys human readable>>")  for
-    // (let b in busys){    console.log("busys[b].start.toString()
-    // >>", busys[b].start.toString())
-    // console.log("busys[b].end.toString()   >>",
-    // busys[b].end.toString())  } END create out-of-office slots into array
-    // of obj
-
     return busys;
 }

@@ -44,18 +44,16 @@ export const loginVerify = (loginForm) => {
 
             if (data && !data.success) {
                 res.msg = data.Msg || "Login failed";
+                //to test: need to add err FE and BE
                 return res;
             }
 
             const {email, firstname, lastname, id, isAdmin} = data;
             
-            await dispatch({
+            return dispatch({
                 type: SIGNIN_USER, 
                 payload: {email, firstname, lastname, id, isAdmin}
             })
-
-            res.success = true;
-            return res;
         } catch (error) {
             console.log("actions/users.js loginVerify error: ", error)
         }

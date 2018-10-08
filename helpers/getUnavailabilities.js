@@ -33,8 +33,7 @@ export default async(req, res) => {
             .whereBetween("start_at", [now, twoWeeksLater]);
 
         if (availables.length === 0) {
-            res.json(shapeFullOccupancy(constants.USER_PREVIEW_DAYS));
-            return Promise.reject("0 doctor avaiablities. Not to say patient bookings. Halt.");
+            return res.json(shapeFullOccupancy(constants.USER_PREVIEW_DAYS));
         }
 
         const collectByDay = getOutOfOfficeSlots(availables);
@@ -52,7 +51,7 @@ export default async(req, res) => {
 
         let cleanBooked = [];
         if (booked && booked.length > 0) {
-            cleanBooked = shapeBookedSlots(booked, getUserIdByReq(req), isAdmin(req));
+            cleanBooked = shapeBookedSlots(booked, getUserIdByReq(req), await isAdmin(req));
         }
 
         allBadSlots = unavailables.concat(cleanBooked);

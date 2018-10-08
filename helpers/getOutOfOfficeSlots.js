@@ -2,10 +2,12 @@ import initCollectByDay from "./initCollectByDay"
 import getLastMidNight from "./getLastMidNight";
 import getComingMidnight from "./getComingMidnight";
 
-const rootRequire = require.main.require;
-const constants = rootRequire("./config/constants");
 const moment = require("moment");
+const rootRequire = require.main.require;
+const addLog = rootRequire("./helpers/addLog");
+const constants = rootRequire("./config/constants");
 const helpers = rootRequire("./helpers");
+
    /* 
 
    ([], ) => 
@@ -16,11 +18,14 @@ const helpers = rootRequire("./helpers");
    }
    */
 
-export default (availables) => {
+export default availables => {
 
     /*
     logic:
     */
+   let collectByDay={};
+   try {
+   
    const collect = [];
         
    for (let ava of availables){
@@ -47,7 +52,7 @@ export default (availables) => {
      return Promise.reject("db has bad data. Count is odd; expected even.");
    }
  
-   const collectByDay = initCollectByDay(constants.USER_PREVIEW_DAYS);
+    collectByDay = initCollectByDay(constants.USER_PREVIEW_DAYS);
    
    for (let j = 0; j < cleanedCount; j++){
      const date = new Date(cleaned[j]);
@@ -87,6 +92,9 @@ export default (availables) => {
    }
  
    //cleaned looks like [1, 4, 5, 9] meaning 1-4, 5-9 avaialble. Add 2 elems as [last-mid-night, 1, 4, 5, 9, this-mid-night]
+  } catch (e) {
+    addLog(null, e, `fn /helpers/getOutOfOfficeSlots.js. param availables >>> ${JSON.stringify(availables)} `);
+}
 
    return collectByDay;
    /* 

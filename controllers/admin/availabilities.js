@@ -123,8 +123,7 @@ router.post('/create', helpers.requireAdmin, async function (req, res) {
         }
 
         result.msg = "proposed time slot overlaps with other slots, please be careful";
-        res.json(result);
-        return Promise.reject(result.msg);
+        return res.json(result);
 
         await db('availabilities').insert({doctor_id: drIdInt, start_at: want.start_at, end_at: want.end_at});
 

@@ -66,7 +66,7 @@ export default(booked, userId, isAdmin) => {
             });
         }
     } catch (e) {
-        addLog(userId, e, `fn shapeBookedSlots.js`);
+        addLog(userId, e, `fn shapeBookedSlots.js. param isAdmin>>>${isAdmin} ; booked>>>${JSON.stringify(booked)}`);
     }
 
     return cleanBooked;

@@ -5,6 +5,7 @@ import shapeOutOfOfficeSlots from "./shapeOutOfOfficeSlots";
 import getOutOfOfficeWholeDay from "./getOutOfOfficeWholeDay";
 
 const rootRequire = require.main.require;
+const addLog = rootRequire("./helpers/addLog");
 
 /*
 
@@ -26,14 +27,18 @@ const rootRequire = require.main.require;
 
 */
 
-export default (dayCount) => {
-    const collectByDay = initCollectByDay(dayCount);
+export default(dayCount) => {
+    try {
+        const collectByDay = initCollectByDay(dayCount);
 
-    for(let _dayString in collectByDay){
-      collectByDay[_dayString] = getOutOfOfficeWholeDay(_dayString);
+        for (let _dayString in collectByDay) {
+            collectByDay[_dayString] = getOutOfOfficeWholeDay(_dayString);
+        }
+
+        const busys = shapeOutOfOfficeSlots(collectByDay);
+
+        return busys;
+    } catch (e) {
+        addLog(null, e, `fn helpers/shapeFullOccupancy.js. param dayCount>>>${dayCount}`);
     }
-
-    const busys = shapeOutOfOfficeSlots(collectByDay);
-
-    return busys;
 }
