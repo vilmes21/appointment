@@ -23,13 +23,15 @@ export default async(req, res) => {
     */
 
     let allBadSlots = [];
+    const userId = getUserIdByReq(req);
 
     try {
+        const {id} = req.params;
         const now = new Date();
         const twoWeeksLater = moment().add(constants.USER_PREVIEW_DAYS.toString(), "days").toDate();
 
         const availables = await db("availabilities")
-            .where({doctor_id: req.params.id})
+            .where({doctor_id: id})
             .whereBetween("start_at", [now, twoWeeksLater]);
 
         if (availables.length === 0) {
@@ -39,31 +41,41 @@ export default async(req, res) => {
         const collectByDay = getOutOfOfficeSlots(availables);
         const unavailables = shapeOutOfOfficeSlots(collectByDay);
 
-        // const booked = await db("appointments")
-        //     .where({doctor_id: req.params.id, status: constants.APPOINTMENT_STATUS_BOOKED })
-        //     .whereBetween("wish_start_at", [now, twoWeeksLater]);
-
-            const booked = await db("appointments")
+        const booked = await db("appointments")
             .innerJoin('users', 'users.id', 'appointments.user_id')
             .select("users.firstname", "users.lastname", "appointments.id", "appointments.doctor_id", "appointments.status", "appointments.wish_start_at", "appointments.wish_end_at", "appointments.user_id")
-            .where({doctor_id: req.params.id, status: constants.APPOINTMENT_STATUS_BOOKED})
+            .where({doctor_id: id, status: constants.APPOINTMENT_STATUS_BOOKED})
             .whereBetween("wish_start_at", [now, twoWeeksLater]);
+
+    /* 
+    [
+        {
+    firstname: 'Jack',
+    lastname: 'Smithe',
+    id: 254,
+    doctor_id: 205,
+    status: 304,
+    wish_start_at: 2018-10-11T16:35:00.000Z,
+    wish_end_at: 2018-10-11T16:40:00.000Z,
+    user_id: 345 }, 
+    {}
+    ]
+    */
 
         let cleanBooked = [];
         if (booked && booked.length > 0) {
-            cleanBooked = shapeBookedSlots(booked, getUserIdByReq(req), await isAdmin(req));
+            cleanBooked = shapeBookedSlots(booked, userId, await isAdmin(req));
         }
 
         allBadSlots = unavailables.concat(cleanBooked);
 
         // console.log("right before return result allBadSlots converted>>") for (let b
         // in allBadSlots) {     console.log("allBadSlots[b].start.toString() >>",
-        // allBadSlots[b].start.toString())
-        // console.log("allBadSlots[b].end.toString()   >>",
-        // allBadSlots[b].end.toString()) }
+        // allBadSlots[b].start.toString()) console.log("allBadSlots[b].end.toString()
+        // >>", allBadSlots[b].end.toString()) }
 
     } catch (e) {
-        addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl} fn getUnavailabilities.js`);
+        addLog(userId > 0 ? userId : null, e, `${req.method} ${req.originalUrl} fn getUnavailabilities.js`);
     }
 
     return res.json(allBadSlots);

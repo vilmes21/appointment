@@ -8,19 +8,22 @@ const helpers = require("../helpers");
 const constants = require("../config/constants");
 const toLowerCaseOrUndefined = rootRequire("./helpers/toLowerCaseOrUndefined.js")
 const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js")
+const addLog = rootRequire("./helpers/addLog.js")
+const getUserIdByReq = rootRequire("./helpers/getUserIdByReq.js")
+const shapeBookedSlots = rootRequire("./helpers/shapeBookedSlots.js")
 
 export default async(req, res) => {
+    let result = {
+        success: false,
+        msg: ""
+    };
+
+    const userId = getUserIdByReq(req);
 
     try {
-
-        let result = {
-            success: false,
-            msg: ""
-        };
-
         const {wish_start_at, wish_end_at} = req.body;
 
-        if (!(wish_start_at && wish_start_at.length > 0) || !(wish_end_at && wish_end_at.length > 0)) {
+        if (!(typeof wish_start_at === "string" && wish_start_at) || !(typeof wish_end_at === "string" && wish_end_at)) {
             result.msg = "Time formats incorrect";
             return res.json(result);
         }
@@ -49,7 +52,7 @@ export default async(req, res) => {
         // const endOfWantedDay = momentWishEnd.endOf('day');
 
         const userAppmtsThatDay = await db("appointments")
-            .where({user_id: req.session.passport.user, status: constants.APPOINTMENT_STATUS_BOOKED})
+            .where({user_id: userId, status: constants.APPOINTMENT_STATUS_BOOKED})
             .andWhere("wish_start_at", ">=", beginningOfWantedDay)
             .andWhere("wish_end_at", "<=", endOfWantedDay);
 
@@ -62,7 +65,6 @@ export default async(req, res) => {
             .where({is_public: true})
             .select("url_name", "id");
 
-        console.log("Found doctors >>> ", doctors)
         /*
 [
     {
@@ -100,7 +102,7 @@ export default async(req, res) => {
             .andWhere("end_at", "<=", endOfWantedDay);
 
         if (drHoursThatDay.length === 0) {
-            result.msg = "Doctor out of office"
+            result.msg = "Doctor out of office";
             return res.json(result);
         }
 
@@ -128,16 +130,53 @@ export default async(req, res) => {
             }
         }
 
-        //END see if other users already booked slot BEGIN insert appointment
+        //END see if other users already booked slot
 
-        await db('appointments').insert({doctor_id: drId, user_id: req.session.passport.user, wish_start_at: req.body.wish_start_at, wish_end_at: req.body.wish_end_at, status: constants.DEFAULT_APPOINTMENT_STATUS});
+        const newApmtIdArr = await db('appointments')
+            .insert({doctor_id: drId, user_id: userId, wish_start_at: wish_start_at, wish_end_at: wish_end_at, status: constants.DEFAULT_APPOINTMENT_STATUS})
+            .returning("id");
+
+            if (newApmtIdArr.length === 0){
+                return res.json(result);
+            }
 
         result.success = true;
-        result.msg = "new appointment booked!";
-        return res.json(result);
-        //END insert appointment
+        result.msg = "New appointment booked!";
 
+        const newApmtSavedArr = await db("appointments")
+        .innerJoin('users', 'users.id', 'appointments.user_id')
+        .select("users.firstname", "users.lastname", "appointments.id", "appointments.doctor_id", "appointments.status", "appointments.wish_start_at", "appointments.wish_end_at", "appointments.user_id")
+        .where({"appointments.id": newApmtIdArr[0]});
+        
+        /* 
+        [
+{
+firstname: 'Jack',
+lastname: 'Smithe',
+id: 254,
+doctor_id: 205,
+status: 304,
+wish_start_at: 2018-10-11T16:35:00.000Z,
+wish_end_at: 2018-10-11T16:40:00.000Z,
+user_id: 345 }
+]
+*/
+        result.newApmtSaved = shapeBookedSlots(newApmtSavedArr, userId, false)[0];
+/* 
+{
+                id: 445,
+                title: "My appointment",
+                start: 2018-10-11T16:35:00.000Z,
+                end: 2018-10-11T16:40:00.000Z,
+                type: 123,
+                isMine: true,
+                firstname: "Joe",
+                lastname: "Doe"
+            }
+ */
     } catch (e) {
-        addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);
+        addLog(userId, e, `${req.method} ${req.originalUrl} in helpers/post_createAppt.js`);
     }
+
+    return res.json(result);
 }

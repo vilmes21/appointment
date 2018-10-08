@@ -2,80 +2,66 @@ import {NEW_ERROR, GET_BOOKED, ADD_APPOINTMENT, UPDATE_BOOKED} from './types'
 import axios from 'axios'
 import addLog from "helpers/addLog.js"
 
+const buildSlotFrontend = slotObjBackend => {
+    const {start, end} = slotObjBackend;
+
+    return {
+        ...slotObjBackend,
+        start: new Date(start),
+        end: new Date(end)
+    };
+}
+
 export const getList = (drUrlName) => {
     return async(dispatch) => {
-        const res = {
-            success: false,
-            msg: null
-        }
-
         try {
             const {data} = await axios.get("/availabilities/" + drUrlName);
 
-            const clone = [...data];
-
-            for (let c of clone) {
-                c.start = new Date(c.start);
-                c.end = new Date(c.end);
+            if (!Array.isArray(data)) {
+                return;
             }
 
-            dispatch({
-                type: GET_BOOKED, payload: clone //[{}, {}]
-            })
+            const slotsFrontend = [];
 
-            res.success = true;
-            return res;
+            for (let c of data) {
+                slotsFrontend.push(buildSlotFrontend(c));
+            }
+
+            return dispatch({type: GET_BOOKED, payload: slotsFrontend});
         } catch (error) {
             addLog(error, "actions/appointments.js fn getList")
-            res.msg = error.toString();
-            return res;
         }
     }
 }
 
-export const createAppointment = (newAppointment) => {
-    console.log("entered createAppointment, newApp >>> ", newAppointment)
-
+export const createAppointment = proposal => {
     return async(dispatch) => {
         try {
 
-            console.log("2 entered createAppointment, newApp >>> ", newAppointment)
+            let _msg = "Server error";
 
-            const res = {
-                success: false,
-                msg: "",
-                id: -1
+            const {data} = await axios.post("/appointments/create", proposal);
+
+            if (!data) {
+                return dispatch({type: NEW_ERROR, payload: _msg});
             }
 
-            const {data} = await axios.post("/appointments/create", newAppointment);
-            console.log("data >>> ", data)
-
             if (data.serverBadAuth) {
-                res.msg = "Log in first! Server saw that you're not logged in.";
-                return res;
+                return dispatch({type: NEW_ERROR, payload: "Please log in first"});
             }
 
             if (!data.success) {
-                if (data.msg) {
-                    res.msg = data.msg;
-                } else {
-                    res.msg = "ajax good, but performance failed";
+                if (typeof data.msg === "string" && data.msg) {
+                    _msg = data.msg;
                 }
-                return res;
+                return dispatch({type: NEW_ERROR, payload: _msg});
             }
 
-            const newAppointmentFrontend = {
-                title: "My new appointment!",
-                start: newAppointment.wish_start_at,
-                end: newAppointment.wish_end_at,
-                isMine: true
-            };
-
-            dispatch({type: ADD_APPOINTMENT, payload: newAppointmentFrontend})
-
-            res.success = true;
-            return res;
-
+            console.log("FE about to add aptm, data >>>> ", data)
+            dispatch({
+                type: ADD_APPOINTMENT,
+                payload: buildSlotFrontend(data.newApmtSaved)
+            });
         } catch (e) {
             addLog(e, "actions/appointments.js fn createAppointment")
         }
@@ -162,9 +148,8 @@ export const cancel = apptIds => {
     }
 }
 
-//============
-
-//right now basically a clone of `cancelAdminSide`; should only be 1 int in array `apptIds`
+// ============ right now basically a clone of `cancelAdminSide`; should only be
+// 1 int in array `apptIds`
 export const cancelApmtUserSide = apptIds => {
     return async(dispatch, getState) => {
 
@@ -174,6 +159,10 @@ export const cancelApmtUserSide = apptIds => {
             }
 
             const {data} = await axios.post("/appointments/cancel", {ids: apptIds});
+
+            if (!data || !Array.isArray(data.success)) {
+                return;
+            }
 
             if (data.success.length > 0) {
                 const currentAppts = [...getState().appointments];

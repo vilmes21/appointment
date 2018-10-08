@@ -2,7 +2,7 @@ import moment from "moment";
 const rootRequire = require.main.require;
 const addLog = rootRequire("./helpers/addLog");
 
-export default timeString => {
+module.exports= timeString => {
     try {
         return moment() > moment(timeString);
     } catch (e) {

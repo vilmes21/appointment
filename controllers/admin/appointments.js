@@ -66,7 +66,14 @@ router.post("/cancel", helpers.requireAdmin, async(req, res) => {
 
         const wantToCancel = await db("appointments")
             .whereIn("id", ids)
+        .andWhereNot("status", constants.APPOINTMENT_STATUS_CANCELLED)
             .select("id", "wish_start_at", "wish_end_at");
+
+            if (!Array.isArray(wantToCancel) || wantToCancel.length === 0){
+                toReturn.msg = `Appointment(s) not found or already cancelled`;
+                return res.json(toReturn);
+            }
+            
         const cancellableIds = [];
         const unCancellableIds = [];
 

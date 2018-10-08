@@ -45,8 +45,9 @@ class Calendar extends Component {
           console.log("FE fn handleCancelApmt. apmtId >>>", apmtId)
           const {cancelApmtUserSide} = this.props;
           
-          return () => {
-            cancelApmtUserSide([apmtId]);
+          return async () => {
+            await cancelApmtUserSide([apmtId]);
+            this.handleCloseDetail();
           }
       }
 

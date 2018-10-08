@@ -27,7 +27,7 @@ const addLog = rootRequire("./helpers/addLog");
 
 // only give name info when isMine. If admin, you should view these on admin
 // pages instead
-export default(booked, userId, isAdmin) => {
+module.exports = (booked, userId, isAdmin) => {
     const cleanBooked = [];
     try {
         
@@ -55,7 +55,7 @@ export default(booked, userId, isAdmin) => {
                 // patientUserId: apmt.user_id,
                 id,
                 title: isMine
-                    ? "My appm here"
+                    ? "My appointment"
                     : "",
                 start: wish_start_at,
                 end: wish_end_at,
