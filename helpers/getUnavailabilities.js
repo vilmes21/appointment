@@ -7,7 +7,10 @@ const constants = rootRequire("./config/constants");
 const moment = require("moment");
 const db = rootRequire("./db/knex");
 const helpers = rootRequire("./helpers");
+const getUserIdByReq = rootRequire("./helpers/getUserIdByReq.js")
 const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js")
+const addLog = rootRequire("./helpers/addLog");
+const isAdmin = rootRequire("./helpers/isAdmin");
 
 export default async(req, res) => {
 
@@ -37,15 +40,19 @@ export default async(req, res) => {
         const collectByDay = getOutOfOfficeSlots(availables);
         const unavailables = shapeOutOfOfficeSlots(collectByDay);
 
-        const booked = await db("appointments")
-            .where({doctor_id: req.params.id})
+        // const booked = await db("appointments")
+        //     .where({doctor_id: req.params.id, status: constants.APPOINTMENT_STATUS_BOOKED })
+        //     .whereBetween("wish_start_at", [now, twoWeeksLater]);
+
+            const booked = await db("appointments")
+            .innerJoin('users', 'users.id', 'appointments.user_id')
+            .select("users.firstname", "users.lastname", "appointments.id", "appointments.doctor_id", "appointments.status", "appointments.wish_start_at", "appointments.wish_end_at", "appointments.user_id")
+            .where({doctor_id: req.params.id, status: constants.APPOINTMENT_STATUS_BOOKED})
             .whereBetween("wish_start_at", [now, twoWeeksLater]);
 
         let cleanBooked = [];
         if (booked && booked.length > 0) {
-            cleanBooked = shapeBookedSlots(booked, req.isAuthenticated()
-                ? req.session.passport.user
-                : -1);
+            cleanBooked = shapeBookedSlots(booked, getUserIdByReq(req), isAdmin(req));
         }
 
         allBadSlots = unavailables.concat(cleanBooked);
@@ -57,7 +64,7 @@ export default async(req, res) => {
         // allBadSlots[b].end.toString()) }
 
     } catch (e) {
-        addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);
+        addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl} fn getUnavailabilities.js`);
     }
 
     return res.json(allBadSlots);

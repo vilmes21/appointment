@@ -71,42 +71,6 @@ const requireAdmin = (req, res, next) => {
     // })
 }
 
-// const cacheUserAdmins = (req) => {
-//     db("user_roles")
-//     .where({
-//         role_id: constants.ROLE_ADMIN
-//     })
-//     .select("user_id")
-//     .then((admins) => {
-//         let _admins = [];
-
-//         for (let admin of admins){
-//             _admins.push(admin.user_id);
-//         }
-
-//         footprint(56, "should see me BEFORE")
-
-//         req.session.admins = _admins;
-//     })
-// }
-
-const isAdmin = (req) => {
-    // footprint(57 + "func helpers.isAdmin: i am being called ")
-    
-    if (!req.isAuthenticated()){
-        return false;
-    }
-
-    if (req.session.admins){
-        return req.session.admins.indexOf(req.session.passport.user) > -1;
-    }
-
-    return false;
-    // const x = cacheUserAdmins(req);
-    // footprint(56 + " should see me AFTER. req.session.admins >>>" + req.session.admins)
-    
-    // isAdmin(req);
-}
 
 const findDrIdByUrlName = (urlName) => {
     let downcase = null;
@@ -293,7 +257,6 @@ module.exports = {
     fakeLogin,
     requireLogin: requireLogin,
     requireAdmin: requireAdmin,
-    isAdmin: isAdmin,
     footprint: footprint,
     findDrId: findDrId,
     findDrIdByUrlName: findDrIdByUrlName,

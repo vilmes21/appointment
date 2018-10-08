@@ -161,3 +161,36 @@ export const cancel = apptIds => {
         }
     }
 }
+
+//============
+
+//right now basically a clone of `cancelAdminSide`; should only be 1 int in array `apptIds`
+export const cancelApmtUserSide = apptIds => {
+    return async(dispatch, getState) => {
+
+        try {
+            if (!Array.isArray(apptIds) || apptIds.length === 0) {
+                return;
+            }
+
+            const {data} = await axios.post("/appointments/cancel", {ids: apptIds});
+
+            if (data.success.length > 0) {
+                const currentAppts = [...getState().appointments];
+                /* [{start: "2018-10-05T16:25:00.000Z", end: "2018-10-05T16:30:00.000Z", title: "Joe Doe", id: 211}, {}] */
+
+                const remainingAppts = currentAppts.filter(x => !data.success.includes(x.id));
+
+                dispatch({
+                    type: UPDATE_BOOKED, payload: remainingAppts //[{}, {}]
+                })
+            }
+
+            if (typeof data.msg === "string" && data.msg) {
+                dispatch({type: NEW_ERROR, payload: data.msg});
+            }
+        } catch (e) {
+            addLog(e, "actions/appointments.js fn cancelApmtUserSide");
+        }
+    }
+}

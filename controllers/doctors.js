@@ -3,6 +3,7 @@ var express = require('express'),
 const db = require("../db/knex");
 const rootRequire = require.main.require;
 const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js")
+const addLog = rootRequire("./helpers/addLog");
 
 // const helpers = require("../helpers"); const constants =
 // require("../config/constants"); const moment = require("moment");

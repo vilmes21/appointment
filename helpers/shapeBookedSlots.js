@@ -1,13 +1,14 @@
 const rootRequire = require.main.require;
 const constants = rootRequire("./config/constants");
+const addLog = rootRequire("./helpers/addLog");
 
 /*
 
    ([
        {},
        {}
-   ]) 
-   
+   ])
+
    =>
 
    [
@@ -24,23 +25,48 @@ const constants = rootRequire("./config/constants");
 
 */
 
-export default(booked, currentUserId) => {
+// only give name info when isMine. If admin, you should view these on admin
+// pages instead
+export default(booked, userId, isAdmin) => {
     const cleanBooked = [];
+    try {
+        
+        for (let apmt of booked) {
 
-    for (let apmt of booked) {
-        //login is required for this entire action, if this fails, the library is guilty
-        const isMine = apmt.user_id === currentUserId;
+            const {id, user_id, wish_start_at, wish_end_at} = apmt;
 
-        let title = "";
-        if (isMine) {
-            title = "My appm here"
+            const isMine = user_id === userId;
+
+            let firstname;
+            let lastname;
+            if (isAdmin) {
+                firstname = apmt.firstname;
+                lastname = apmt.lastname;
+            } else {
+                firstname = isMine
+                    ? apmt.firstname
+                    : "";
+                lastname = isMine
+                    ? apmt.lastname
+                    : "";
+            }
+
+            cleanBooked.push({
+                // patientUserId: apmt.user_id,
+                id,
+                title: isMine
+                    ? "My appm here"
+                    : "",
+                start: wish_start_at,
+                end: wish_end_at,
+                type: constants.slotType.booked,
+                isMine: isMine,
+                firstname,
+                lastname
+            });
         }
-
-        cleanBooked.push({
-            'title': title, 'start': apmt.wish_start_at, 'end': apmt.wish_end_at, type: constants.slotType.outOfOffice,
-            // 'patient': apmt.user_id,
-            isMine: isMine
-        });
+    } catch (e) {
+        addLog(userId, e, `fn shapeBookedSlots.js`);
     }
 
     return cleanBooked;

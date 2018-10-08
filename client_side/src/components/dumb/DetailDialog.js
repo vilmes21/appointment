@@ -9,8 +9,12 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 export default class DetailDialog extends React.Component {
 
   render() {
-      const {open, handleCloseDetail, detail} = this.props;
-      console.log("detail in DD compo >>> ", detail)
+
+    
+    const {open, handleCloseDetail, detail, handleCancelApmt} = this.props;
+    const {id} = detail;
+    console.log("FE 2 detail >>>", detail)
+    
     return (
       <div>
    
@@ -21,7 +25,7 @@ export default class DetailDialog extends React.Component {
           aria-describedby="alert-dialog-description"
         >
           <DialogTitle id="alert-dialog-title">
-            Patient: {detail.name}
+            Patient: {detail.firstname} {detail.lastname}
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
@@ -30,7 +34,7 @@ export default class DetailDialog extends React.Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDetail} color="primary">
+            <Button onClick={handleCancelApmt(id)} color="primary">
               Cancel Appointment
             </Button>
             <Button onClick={handleCloseDetail} color="primary" autoFocus>

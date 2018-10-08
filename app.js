@@ -4,6 +4,7 @@ const app = express();
 // require('module-alias/register');
 const db = require("./db/knex");
 const helpers = require("./helpers");
+const isAdmin = require("./helpers/isAdmin")
 const session = require('express-session');
 var bodyParser = require('body-parser');
 import authStrategy from "./helpers/authStrategy"
@@ -126,7 +127,7 @@ app.get("/auth/now", (req, res) => {
 
     if (req.isAuthenticated()) {
         data.auth = true;
-        data.isAdmin = helpers.isAdmin(req);
+        data.isAdmin = isAdmin(req);
         data.userInfo = req.session.userInfo;
     }
 

@@ -3,7 +3,7 @@ import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import {Redirect} from 'react-router-dom'
-import {getList, createAppointment, updateList} from 'actions/appointments'
+import {getList, createAppointment, updateList, cancelApmtUserSide} from 'actions/appointments'
 import {connect} from 'react-redux';
 import isAuthed from 'helpers/isAuthed'
 import isAdmin from 'helpers/isAdmin'
@@ -26,17 +26,14 @@ class Calendar extends Component {
         dayChosen: new Date()
     }
 
-    componentDidMount = async() => {
-
-        const res = await this
-            .props
-            .getList(this.props.match.params.drUrlName);
-        if (!res.success) {
-            alert(res.msg)
-        }
+    componentDidMount = () => {
+        this.props.getList(this.props.match.params.drUrlName);
     }
 
-    showDetail =  (eventObj) => {
+    showDetail =  eventObj => {
+
+        console.log("FE eventObj 7777 > ", eventObj)
+        
         this.setState({ detail: eventObj, detailOpen: true });
       }
     
@@ -44,10 +41,18 @@ class Calendar extends Component {
         this.setState({ detailOpen: false });
       };
 
+      handleCancelApmt= apmtId => {
+          console.log("FE fn handleCancelApmt. apmtId >>>", apmtId)
+          const {cancelApmtUserSide} = this.props;
+          
+          return () => {
+            cancelApmtUserSide([apmtId]);
+          }
+      }
+
     eventStyleGetter = eventStyleGetter(this)
 
     handleOnSelecting = slot => {
-      // console.log("ENTER func handleOnSelecting,");
       if (isThePast(slot.start)){
         return false;
       }
@@ -75,6 +80,7 @@ class Calendar extends Component {
     authenticated && <DetailDialog 
                         open={detailOpen}
                         detail={detail}
+                        handleCancelApmt={this.handleCancelApmt}
                         handleCloseDetail={this.handleCloseDetail}/>
 }
                
@@ -125,4 +131,4 @@ const mapState = (state) => {
     };
 }
 
-export default connect(mapState, {getList, createAppointment, updateList})(Calendar);
+export default connect(mapState, {getList, createAppointment, updateList, cancelApmtUserSide})(Calendar);

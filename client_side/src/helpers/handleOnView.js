@@ -19,19 +19,13 @@ export default thisContext => {
             //first save allOccupants in react state , NOT redux store !!!
             _this.setState({
                 allOccupants: booked
-            }, () => {
-                console.log("after set Occupants>>>", _this.state)
-            })
+            });
 
             _filtered = booked.filter(item => {
                 return item.isMine;
-            })
+            });
         }
 
-        const res = await updateList(_filtered);
-
-        if (!res.success) {
-            alert(res.msg)
-        }
+        await updateList(_filtered);
     }
 }

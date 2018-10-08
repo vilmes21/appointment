@@ -3,6 +3,8 @@ var express = require('express'),
 const helpers = require("../helpers");
 const rootRequire = require.main.require;
 import getUnavailabilities from '../helpers/getUnavailabilities'
+const addLog = rootRequire("./helpers/addLog");
+
 
 router.get('/:id', helpers.findDrId, getUnavailabilities);
 
