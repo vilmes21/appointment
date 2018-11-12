@@ -2,10 +2,12 @@ const moment = require("moment");
 const rootRequire = require.main.require;
 const addLog = rootRequire("./helpers/addLog");
 
-//"Sun Mar 04 2018" => Date_obj
+//ISO_date_string => Date_obj
 export default dayString => {
     try {
-        return moment(new Date(dayString))
+        // console.log("fn getLastMid dayString:", dayString)
+        
+        return moment(dayString)
             .startOf('day')
             .toDate();
 

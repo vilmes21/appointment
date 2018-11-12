@@ -11,24 +11,26 @@ const addLog = rootRequire("./helpers/addLog");
 
    =>
 
-   [
-     { title: 'Dr does NOT work now',
-     type: 'OUT_OF_OFFICE',
-     start: 2018-02-25T08:00:00.000Z,
-     end: 2018-02-26T07:59:59.999Z },
-
-     { title: 'Dr does NOT work now',
-     type: 'OUT_OF_OFFICE',
-     start: 2018-02-25T08:00:00.000Z,
-     end: 2018-02-26T07:59:59.999Z },
-   ]
+[ 
+    { 
+        id: 301,
+        title: '',
+        start: 2018-11-13T17:15:00.000Z,
+        end: 2018-11-13T17:20:00.000Z,
+        type: 'BOOKED',
+        isMine: false,
+        firstname: '',
+        lastname: '' 
+    },
+    {}
+]
 
 */
 
-// only give name info when isMine. If admin, you should view these on admin
-// pages instead
+// only give name info when isMine. Admins should view on admin pages instead
 module.exports = (booked, userId, isAdmin) => {
     const cleanBooked = [];
+
     try {
         
         for (let apmt of booked) {

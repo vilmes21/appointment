@@ -5,7 +5,9 @@ const addLog = rootRequire("./helpers/addLog");
 //"Sun Mar 04 2018" => Date_obj
 export default dayString => {
     try {
-        return moment(new Date(dayString))
+        // console.log("fn getComingMid dayString:", dayString)
+
+        return moment(dayString)
             .endOf('day')
             .toDate();
     } catch (e) {

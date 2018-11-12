@@ -27,38 +27,45 @@ export default async(req, res) => {
 
     try {
         const {id} = req.params;
-        const now = new Date();
-        const twoWeeksLater = moment().add(constants.USER_PREVIEW_DAYS.toString(), "days").toDate();
+        const now = moment().toJSON();
+        const endOfRange = moment().add(constants.USER_PREVIEW_DAYS.toString(), "days").toJSON();
 
         const availables = await db("availabilities")
             .where({doctor_id: id})
-            .whereBetween("start_at", [now, twoWeeksLater]);
+            .whereBetween("start_at", [now, endOfRange]);
 
         if (availables.length === 0) {
             return res.json(shapeFullOccupancy(constants.USER_PREVIEW_DAYS));
         }
 
         const collectByDay = getOutOfOfficeSlots(availables);
+        if (!collectByDay){
+            //errored in getOutOfOfficeSlots
+            return res.json(false);
+        }
+
         const unavailables = shapeOutOfOfficeSlots(collectByDay);
+
+        // console.log("unavailables:999 unavailables: ", unavailables)
 
         const booked = await db("appointments")
             .innerJoin('users', 'users.id', 'appointments.user_id')
             .select("users.firstname", "users.lastname", "appointments.id", "appointments.doctor_id", "appointments.status", "appointments.wish_start_at", "appointments.wish_end_at", "appointments.user_id")
             .where({doctor_id: id, status: constants.APPOINTMENT_STATUS_BOOKED})
-            .whereBetween("wish_start_at", [now, twoWeeksLater]);
+            .whereBetween("wish_start_at", [now, endOfRange]);
 
     /* 
     [
         {
-    firstname: 'Jack',
-    lastname: 'Smithe',
-    id: 254,
-    doctor_id: 205,
-    status: 304,
-    wish_start_at: 2018-10-11T16:35:00.000Z,
-    wish_end_at: 2018-10-11T16:40:00.000Z,
-    user_id: 345 }, 
-    {}
+            firstname: 'Jack',
+            lastname: 'Smithe',
+            id: 254,
+            doctor_id: 205,
+            status: 304,
+            wish_start_at: 2018-10-11T16:35:00.000Z,
+            wish_end_at: 2018-10-11T16:40:00.000Z,
+            user_id: 345 
+        }
     ]
     */
 

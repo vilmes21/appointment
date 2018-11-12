@@ -94,8 +94,8 @@ class Calendar extends Component {
                     timeslots={1}
                     messages={{
                     allDay: "",
-                    week: "calendar",
-                    agenda: "my appointments"
+                    week: "Calendar",
+                    agenda: "My agenda"
                 }}
                     min={new Date("2017-12-27 09:00:00")}
                     max={moment(new Date("2017-12-27 09:00:00"))
@@ -114,8 +114,7 @@ class Calendar extends Component {
                     formats={{
                     eventTimeRangeFormat: () => {
                         return ""
-                    },
-                    foo: "bar"
+                    }
                 }}
                 selectable={'ignoreEvents'}
                     onView={handleOnView(this)}/>

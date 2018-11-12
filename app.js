@@ -156,8 +156,6 @@ app.post('/login', post_login);
 
 app.post("/logout", (req, res) => {
     req.logout();
-
-    console.log(`req.session.userInfo might exist still: `, req.session.userInfo);
     req.session.userInfo = null;
 
     const result = {

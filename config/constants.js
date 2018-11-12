@@ -10,7 +10,8 @@ module.exports = {
     //below can change according to business needs
     USER_PREVIEW_DAYS: 14,
     UNAVAILABLE_SLOT_TITLE: "Dr does NOT work now",
-    MAX_APPTS_PER_DAY: 3
+    MAX_APPTS_PER_DAY: 333, /* fake 30, make it 3 or something */
+    KEY_DAY_FORMAT : 'YYYY-MM-DD'
     // Fake: {
     //     DR_ID: 210 //vic in local db
     // }

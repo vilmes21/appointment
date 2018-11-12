@@ -41,7 +41,7 @@ export default class Availability extends Component {
 
         let clone = [
             ...this.state.openSlots, {
-                title: "My new available slot!",
+                title: "Dr works now!",
                 start: new Date(newAvailability.start_at),
                 end: new Date(newAvailability.end_at),
                 isMine: true

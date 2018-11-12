@@ -1,10 +1,12 @@
 const rootRequire = require.main.require;
 const constants = rootRequire("./config/constants");
 const addLog = rootRequire("./helpers/addLog");
+const moment = require("moment");
+
 /*
 
    ({
- 'Sun Feb 25 2018':
+        '2018-11-14':
                    [ 2018-02-25T22:00:00.000Z,
                      2018-02-25T22:30:00.000Z]
    })
@@ -26,11 +28,12 @@ const addLog = rootRequire("./helpers/addLog");
 */
 
 export default(collectByDay) => {
-    //BEGIN create out-of-office slots into array of obj
-    const busys = [];
+
+    // console.log("arg collectByDay:", collectByDay)
+    
+    const busyArr = [];
 
     try {
-
         const busy = {
             title: constants.UNAVAILABLE_SLOT_TITLE,
             type: constants.slotType.outOfOffice
@@ -45,7 +48,7 @@ export default(collectByDay) => {
                     busy.start = eachDayArr[i];
                 } else { //ie. odd index, then be end_at
                     busy.end = eachDayArr[i];
-                    busys.push({
+                    busyArr.push({
                         ...busy
                     });
                 }
@@ -53,12 +56,9 @@ export default(collectByDay) => {
             }
         }
 
-        //  console.log("right before return result busys human readable>>")  for (let b
-        // in busys){    console.log("busys[b].start.toString() >>",
-        // busys[b].start.toString()) console.log("busys[b].end.toString()   >>",
-        // busys[b].end.toString())  } END create out-of-office slots into array of obj
     } catch (e) {
         addLog(null, e, `fn helpers/shapeOutOfOfficeSlots.js. param collectByDay>>>${JSON.stringify(collectByDay)}`);
     }
-    return busys;
+
+    return busyArr;
 }

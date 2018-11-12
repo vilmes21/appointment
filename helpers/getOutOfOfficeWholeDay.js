@@ -15,5 +15,6 @@ import getComingMidnight from "./getComingMidnight";
 */
 
 export default (dayString) => {
+  console.log("fn getOUtOfofficeWholeDay expect ISO. dayString:", dayString)
     return [getLastMidNight(dayString), getComingMidnight(dayString)];
 }
