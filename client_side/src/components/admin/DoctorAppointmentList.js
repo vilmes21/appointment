@@ -46,8 +46,6 @@ class DoctorAppointmentList extends Component {
 
         this.setState({
             checked: newChecked
-        }, () => {
-            console.log(this.state)
         });
     };
 
@@ -69,10 +67,7 @@ class DoctorAppointmentList extends Component {
             return <Redirect to="/"/>;
         }
 
-        const {booked} = this.props;
-        console.log("booked FOUND>>>", booked)
-        
-        const {classes} = this.props;
+        const {booked, classes} = this.props;
         const {checked} = this.state;
 
         let _list = null;

@@ -9,7 +9,6 @@ import RoutesSummary from '../dumb/RoutesSummary';
 import LinksSummary from 'components/dumb/LinksSummary'
 import {checkAuthNow} from 'actions/users'
 import Spinner from 'components/dumb/Spinner'
-import TestLists from 'components/admin/TestLists.js'
 import CancelBtn from '../admin/CancelBtn';
 
 

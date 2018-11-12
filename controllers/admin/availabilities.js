@@ -6,7 +6,13 @@ const constants = require("../../config/constants");
 const moment = require("moment");
 const rootRequire = require.main.require;
 
+const addLog = rootRequire("./helpers/addLog");
 const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js")
+const areInSameDay = rootRequire("./helpers/areInSameDay.js")
+const findDrIdByUrlName = rootRequire("./helpers/findDrIdByUrlName.js")
+const isThePast = rootRequire("./helpers/isThePast.js")
+const isSlotOpen = rootRequire("./helpers/isSlotOpen.js")
+
 
 // url: /admin/availablity/wang
 router.get('/:id', helpers.findDrId, async function (req, res) {
@@ -84,48 +90,46 @@ router.post('/create', helpers.requireAdmin, async function (req, res) {
     }
 
     try {
-        const drIdInt = helpers.findDrIdByUrlName(req.body.drUrlName);
-        if (drIdInt === undefined) {
-            result.msg = "dr doesn;t exist";
-            console.log(result.msg);
+        const {drUrlName, start_at, end_at} = req.body;
+
+        if (!drUrlName || !start_at || !end_at){
+            result.msg = "Data missing";
+            return res.json(result);
+        }
+        
+        const drIdInt = findDrIdByUrlName(drUrlName);
+        if (!drIdInt) {
+            result.msg = "dr does not exist";
             return res.json(result);
         }
 
-        let want = req.body;
-        want.start_at = new Date(want.start_at);
-        want.end_at = new Date(want.end_at);
+        const start_at_DATE = new Date(start_at);
+        const end_at_DATE = new Date(end_at);
 
-        if (helpers.isSlotInPast(want)) {
-            console.log("cannot things in the past");
-            result.msg = "cannot things in the past";
+        if (isThePast(end_at)) {
+            result.msg = "Cannot travel to the past";
             return res.json(result);
         }
 
-        if (!helpers.isWithinOneDay(want)) {
+        if (!areInSameDay(start_at_DATE, end_at_DATE)) {
             result.msg = "spanning over > 1 day. halt early";
-            console.log(result.msg);
             return res.json(result);
         }
 
-        const beginningOfWantedDay = moment(want.start_at).startOf('day');
-        const endOfWantedDay = moment(want.end_at).endOf('day');
+        const beginningOfWantedDay = moment(start_at).startOf('day').toJSON();
+        const endOfWantedDay = moment(end_at).endOf('day').toJSON();
 
         const existingOpenSlots = await db("availabilities")
-        // .where({doctor_id: req.body.doctor_id, user_id: req.session.passport.user,
-        // wish_start_at: req.body.wish_start_at, wish_end_at: req.body.wish_end_at,
-        // status: constants.DEFAULT_APPOINTMENT_STATUS}) //TODO: write real one
             .where({doctor_id: drIdInt})
             .andWhere("start_at", ">=", beginningOfWantedDay)
             .andWhere("end_at", "<=", endOfWantedDay);
 
-        if (helpers.isSlotOpen(existingOpenSlots, want)) {
-            return true;
+        if (!isSlotOpen(existingOpenSlots, start_at_DATE, end_at_DATE)) {
+            result.msg = "proposed time slot overlaps with other slots, please be careful";
+            return res.json(result);
         }
 
-        result.msg = "proposed time slot overlaps with other slots, please be careful";
-        return res.json(result);
-
-        await db('availabilities').insert({doctor_id: drIdInt, start_at: want.start_at, end_at: want.end_at});
+        await db('availabilities').insert({doctor_id: drIdInt, start_at: start_at, end_at: end_at});
 
         result.success = true;
         result.msg = "New open slot added yow!";

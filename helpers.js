@@ -72,20 +72,7 @@ const requireAdmin = (req, res, next) => {
 }
 
 
-const findDrIdByUrlName = (urlName) => {
-    let downcase = null;
-    if (typeof(urlName) === "string"){
-        downcase = urlName.toLowerCase();
-    }
-    
-    const drs = { //TODO: go into db grab and then cache in session
-        hermann: 205,
-        a_last: 211,
-        b_last: 212,
-        wang: 210
-      };
-    return drs[downcase]; //may return undefined
-} 
+
 
 const findDrId = (req, res, next) => {
     
@@ -208,11 +195,6 @@ const turnStringToDate = (arrayOfObj) => {
       return converted;
 }
 
-const isWithinOneDay = (want) => {
-    // console.log("In fn helpers.isWithinOneDay ", "want.start_at >>> ", want.start_at, "want.end_at >>> ", want.end_at, "want.start_at.getDate() >>> ", want.start_at.getDate());
-    return want.start_at.getDate() === want.end_at.getDate();
-}
-
 const keepUniqueElems = (arr) => {
     // console.log("fn keepUniqueElems. arr >> ", arr)
     
@@ -259,12 +241,10 @@ module.exports = {
     requireAdmin: requireAdmin,
     footprint: footprint,
     findDrId: findDrId,
-    findDrIdByUrlName: findDrIdByUrlName,
     isDuringDrHour: isDuringDrHour,
     isSlotOpen: isSlotOpen,
     isSlotValid: isSlotValid,
     isSlotInPast: isSlotInPast,
     turnStringToDate: turnStringToDate,
-    isWithinOneDay: isWithinOneDay,
     keepUniqueElems: keepUniqueElems
 }
