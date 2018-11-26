@@ -71,5 +71,6 @@ module.exports = (booked, userId, isAdmin) => {
         addLog(userId, e, `fn shapeBookedSlots.js. param isAdmin>>>${isAdmin} ; booked>>>${JSON.stringify(booked)}`);
     }
 
+    
     return cleanBooked;
 }

@@ -12,11 +12,11 @@ const addLog = rootRequire("./helpers/addLog.js")
 const getUserIdByReq = rootRequire("./helpers/getUserIdByReq.js")
 const shapeBookedSlots = rootRequire("./helpers/shapeBookedSlots.js")
 
-const buildNewApmtSavedForFrontend = async (userId, isAdmin) => {
+const buildNewApmtSavedForFrontend = async(userId, isAdmin, newApmtId) => {
     const newApmtSavedArr = await db("appointments")
         .innerJoin('users', 'users.id', 'appointments.user_id')
         .select("users.firstname", "users.lastname", "appointments.id", "appointments.doctor_id", "appointments.status", "appointments.wish_start_at", "appointments.wish_end_at", "appointments.user_id")
-        .where({"appointments.id": newApmtIdArr[0]});
+        .where({"appointments.id": newApmtId});
 
     /*
 [
@@ -31,7 +31,9 @@ const buildNewApmtSavedForFrontend = async (userId, isAdmin) => {
     user_id: 345 }
 ]
 */
-    return shapeBookedSlots(newApmtSavedArr, userId, false)[0];
+    const shaped = shapeBookedSlots(newApmtSavedArr, userId, false)[0];
+
+    return shaped;
     /*
 {
         id: 445,
@@ -55,29 +57,53 @@ const isSlotOpen = (badHrArr, wish_start_at, wish_end_at) => {
     -for every `bad` slot, if
      */
 
+    console.log("fn isSlotOpen")
+    console.log({badHrArr, wish_start_at, wish_end_at})
+
     const wish_start_at_DATE = new Date(wish_start_at);
     const wish_end_at_DATE = new Date(wish_end_at);
 
     for (const bad of badHrArr) {
-        const badStart_DATE = new Date(bad.start_at);
-        const badEnd_DATE = new Date(bad.end_at);
+        const badStart_DATE = new Date(bad.wish_start_at);
+        const badEnd_DATE = new Date(bad.wish_end_at);
 
-        //if not "proposed-slot is entirely before current bad-slot"
-        if (!(wish_start_at_DATE < badStart_DATE && wish_end_at_DATE <= badStart_DATE)) {
+        console.log({
+            wish_start_at_DATE,
+            wish_end_at_DATE,
+            badStart_DATE,
+            badEnd_DATE
+        })
+
+/*
+logic:
+-bad if start in btw a booked one
+-bad if end in btw a booked one
+-bad if spans too long and completely covers a booked one
+-bad if propsed is exactly same as booked one (check by JSON string)
+
+Note: equal time points must use JSON string to compare because objects are hard to compare
+*/
+
+        if (wish_start_at_DATE > badStart_DATE && wish_start_at_DATE < badEnd_DATE) {
             return false;
-
-            //if not "proposed-slot is entirely after current bad-slot"
-        } else if (!(wish_start_at_DATE >= badEnd_DATE)) {
-            return false
+        } else if (wish_end_at_DATE > badStart_DATE && wish_end_at_DATE < badEnd_DATE) {
+            return false;
+        } else if (wish_start_at_DATE < badStart_DATE && wish_end_at > badEnd_DATE) {
+            return false;
+        } else if (
+            wish_start_at_DATE.toJSON() === badStart_DATE.toJSON() ||
+            wish_end_at_DATE.toJSON() === badEnd_DATE.toJSON()
+        ){
+            return false;
         }
     }
 
     return true;
 }
 
-const isProposedSlotStillOpen = async (wish_start_at, wish_end_at, drId) => {
+const isProposedSlotStillOpen = async(wish_start_at, wish_end_at, drId) => {
     const dayMorning = getLastMidnight(wish_start_at);
-    const dayEve = getLastMidnight(wish_end_at);
+    const dayEve = getComingMidnight(wish_end_at);
 
     let drBookedThatDay = await db("appointments")
         .where({doctor_id: drId, status: constants.APPOINTMENT_STATUS_BOOKED})
@@ -113,10 +139,11 @@ const isDuringDrHour = (goodHrArr, wish_start_at, wish_end_at) => {
     return false;
 }
 
-const isProposalDuringDrWorkHours = async (wish_start_at, wish_end_at, drId) => {
+//(stringISO, stringISO)
+const isProposalDuringDrWorkHours = async(wish_start_at, wish_end_at, drId) => {
 
     const dayMorning = getLastMidnight(wish_start_at);
-    const dayEve = getLastMidnight(wish_end_at);
+    const dayEve = getComingMidnight(wish_end_at);
 
     let drHoursThatDay = await db("availabilities")
         .where({doctor_id: drId})
@@ -126,6 +153,8 @@ const isProposalDuringDrWorkHours = async (wish_start_at, wish_end_at, drId) => 
     if (drHoursThatDay.length === 0) {
         return false;
     }
+
+    console.log({dayMorning, dayEve, drHoursThatDay})
 
     if (!isDuringDrHour(drHoursThatDay, wish_start_at, wish_end_at)) {
         return false;
@@ -140,7 +169,6 @@ const areStartEndParamsValid = (wish_start_at, wish_end_at) => {
         return false;
     }
 
-
     const momentWishStart = new Date(wish_start_at);
     const momentWishEnd = new Date(wish_end_at);
 
@@ -148,18 +176,14 @@ const areStartEndParamsValid = (wish_start_at, wish_end_at) => {
         return false;
     }
 
-
-
     if (momentWishEnd < new Date()) {
         return false;
     }
 
-
-
     return true;
 }
 
-const isAtDailyMax = async (userId, wish_start_at, wish_end_at) => {
+const isAtDailyMax = async(userId, wish_start_at, wish_end_at) => {
     const dayMorning = getLastMidnight(wish_start_at);
     const dayEve = getLastMidnight(wish_end_at);
 
@@ -168,8 +192,10 @@ const isAtDailyMax = async (userId, wish_start_at, wish_end_at) => {
         .andWhere("wish_start_at", ">=", dayMorning)
         .andWhere("wish_end_at", "<=", dayEve);
 
-        // console.log(`userAppmtsThatDay.length (${userAppmtsThatDay.length}) >= constants.MAX_APPTS_PER_DAY (${constants.MAX_APPTS_PER_DAY})`, "of type: ", typeof constants.MAX_APPTS_PER_DAY)
-        
+    // console.log(`userAppmtsThatDay.length (${userAppmtsThatDay.length}) >=
+    // constants.MAX_APPTS_PER_DAY (${constants.MAX_APPTS_PER_DAY})`, "of type: ",
+    // typeof constants.MAX_APPTS_PER_DAY)
+
     if (userAppmtsThatDay.length >= constants.MAX_APPTS_PER_DAY) {
         return true;
     }
@@ -177,7 +203,7 @@ const isAtDailyMax = async (userId, wish_start_at, wish_end_at) => {
     return false;
 }
 
-const getDoctorFromDB = async (drUrlName) => {
+const getDoctorFromDB = async(drUrlName) => {
     const lowerCaseDrUrlName = toLowerCaseOrUndefined(drUrlName);
     if (!lowerCaseDrUrlName) {
         return false;
@@ -268,10 +294,12 @@ export default async(req, res) => {
 
         result.success = true;
         result.msg = "New appointment booked!";
-        result.newApmtSaved = await buildNewApmtSavedForFrontend(userId, false);
+        result.newApmtSaved = await buildNewApmtSavedForFrontend(userId, false, newApmtIdArr[0]);
     } catch (e) {
         addLog(userId, e, `${req.method} ${req.originalUrl} in helpers/post_createAppt.js`);
     }
+
+    console.log("result to returN:", result)
 
     return res.json(result);
 }
