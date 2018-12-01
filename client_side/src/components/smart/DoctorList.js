@@ -24,6 +24,7 @@ class DoctorList extends React.Component {
     const _list = drs.map(dr => <Doctor key={dr.id} dr={dr}/>);
 
     return (
+      <div className="drlistcontandch">
       <Grid container spacing={16}>
         <Grid item xs={12} md={6}>
           <Typography variant="title">
@@ -38,6 +39,7 @@ class DoctorList extends React.Component {
           </div>
         </Grid>
       </Grid>
+      </div>
     );
   }
 }

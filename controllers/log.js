@@ -2,10 +2,11 @@ var express = require('express'),
     router = express.Router();
 const db = require("../db/knex");
 const helpers = require("../helpers");
+const moment = require("moment")
 
 const rootRequire = require.main.require;
 const addLog = rootRequire("./helpers/addLog");
-const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js")
+const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js");
 
 router.get("/index", helpers.requireAdmin, async(req, res) => {
     let logs = [];
@@ -14,6 +15,10 @@ router.get("/index", helpers.requireAdmin, async(req, res) => {
         logs = await db("log")
             .orderBy('time', 'desc')
             .limit(50);
+
+        for (const log of logs) {
+            log.humanTime = moment(log.time).format('MMM D, YYYY k:mm');
+        }    
 
     } catch (e) {
         addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);
