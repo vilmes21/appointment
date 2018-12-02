@@ -85,8 +85,7 @@ app.get('/devlogin', function (req, res, next) {
         res.end();
     });
 
-    // passport.authenticate('local', function (err, user_id, info) { })(req, res,
-    // next);
+   
 });
 
 //==============================================================================
@@ -112,22 +111,34 @@ app.post('/devlogin', function (req, res, next) {
         res.end();
     });
 
-    // passport.authenticate('local', function (err, user_id, info) { })(req, res,
-    // next);
+ 
 });
 
 // end DEV mess
 // ==============================================================================
 
-app.get("/auth/now", (req, res) => {
-    let data = {
+app.get("/auth/now", async (req, res) => {
+    const data = {
         auth: false,
-        isAdmin: false
+        isAdmin: false,
+        userInfo: null
     }
+
+    console.log("/auth/now, req.session>>>", req.session)
+    /*
+    {
+  cookie: 
+   { path: '/',
+     _expires: null,
+     originalMaxAge: null,
+     httpOnly: true },
+  passport: { user: 361 } 
+}
+    */
 
     if (req.isAuthenticated()) {
         data.auth = true;
-        data.isAdmin = isAdmin(req);
+        data.isAdmin = await isAdmin(req);
         data.userInfo = req.session.userInfo;
     }
 
@@ -143,16 +154,11 @@ app.get("/auth/now", (req, res) => {
      isAdmin: true } }
 
  */
-
+    console.log("GET /auth/now data: ", data)
     res.json(data);
 })
 
-//==============================================================================
-
 app.post('/login', post_login);
-
-//==============================================================================
-//======
 
 app.post("/logout", (req, res) => {
     req.logout();
@@ -175,9 +181,6 @@ app.post("/logout", (req, res) => {
 
     return res.json(result);
 })
-
-//==============================================================================
-//======
 
 const DOMAIN = 'localhost';
 const PORT = '3001';

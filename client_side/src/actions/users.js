@@ -44,7 +44,6 @@ export const loginVerify = (loginForm) => {
 
             if (data && !data.success) {
                 res.msg = data.Msg || "Login failed";
-                //to test: need to add err FE and BE
                 return res;
             }
 

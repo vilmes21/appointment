@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import isAuthed from 'helpers/isAuthed'
 import Redirect from 'react-router-dom/Redirect';
 
+
 class MyAccount extends React.Component {
 
   render() {

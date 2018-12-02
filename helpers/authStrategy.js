@@ -5,12 +5,10 @@ const constants = rootRequire("./config/constants");
 
 export default async(username, password, done) => {
     try {
-
         const users = await db('users').where({email: username});
 
         if (users.length < 1) {
-            // what if there's multiple emails? no good, must ensure db level email unique
-            return done(null, false, {message: 'Incorrect email.'});
+            return done(null, false, {message: 'Wrong credentials'});
         }
 
         const user = users[0];
@@ -55,4 +53,4 @@ export default async(username, password, done) => {
         return done(e);
     }
 
-} //close LocalStra func
+}

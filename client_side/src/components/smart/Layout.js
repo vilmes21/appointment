@@ -41,7 +41,7 @@ class Layout extends React.Component {
             return <Spinner/>
         }
 
-        const {authenticated, isAdmin} = this.props;
+        const {authenticated, isAdmin, firstname} = this.props;
 
         return (
             <div>
@@ -62,38 +62,42 @@ class Layout extends React.Component {
                                 <Link to="/my_account">MyAccount</Link>
                             </span>}
 
-                            {authenticated && <Logout/>}
+                            {authenticated
+                                ? <span>
+                                        <span className="floatRight welcome2">Welcome, {firstname}</span>
+                                        <Logout/>
+                                        </span>
+                                : <span>
+                                    <span className="navitemdx floatRight">
+                                        <Link to="/login">Login</Link>
+                                    </span>
+                                    <span className="navitemdx floatRight">
+                                        <Link to="/sign_up">Signup</Link>
+                                    </span>
 
-                            {authenticated || <span>
-                                <span className="navitemdx floatRight">
-                                    <Link to="/login">Login</Link>
                                 </span>
-                                <span className="navitemdx floatRight">
-                                    <Link to="/sign_up">Signup</Link>
-                                </span>
-
-                            </span>
 }
 
                         </div>
 
                         <hr/>
-<div className="belowNavxk">
-                        <Switch>
-                            <Route exact path="/my_account" component={MyAccount}/>
-                            <Route exact path="/sign_up" component={Signup}/>
-                            <Route exact path="/login" component={Login}/>
-                            <Route exact path="/doctors" component={DoctorList}/>
-                            <Route path="/calendar/:drUrlName" component={Calendar}/>
-                            <Route path="/my_account" component={MyAccount}/>
+                        <div className="belowNavxk">
+                            <Switch>
+                                <Route exact path="/" component={DoctorList}/>
+                                <Route exact path="/my_account" component={MyAccount}/>
+                                <Route exact path="/sign_up" component={Signup}/>
+                                <Route exact path="/login" component={Login}/>
+                                <Route exact path="/doctors" component={DoctorList}/>
+                                <Route path="/calendar/:drUrlName" component={Calendar}/>
+                                <Route path="/my_account" component={MyAccount}/>
 
-                            <Route exact path="/admin/doctors" component={AdminDoctorList}/>
-                            <Route path="/admin/availability/:drUrlName" component={AdminAvailability}/>
-                            <Route path="/admin/appointment/:drId" component={DoctorAppointmentList2}/>
+                                <Route exact path="/admin/doctors" component={AdminDoctorList}/>
+                                <Route path="/admin/availability/:drUrlName" component={AdminAvailability}/>
+                                <Route path="/admin/appointment/:drId" component={DoctorAppointmentList2}/>
 
-                            <Route path="*" component={NoMatch}/>
-                        </Switch>
-                    </div>
+                                <Route path="*" component={NoMatch}/>
+                            </Switch>
+                        </div>
                     </div>
                 </Router>
 
@@ -106,7 +110,10 @@ const mapState = state => {
     return {
         isLoading: state.isLoading,
         authenticated: isAuthed(state.currentUser),
-        isAdmin: isAdmin(state.currentUser)
+        isAdmin: isAdmin(state.currentUser),
+        firstname: state.currentUser
+            ? state.currentUser.firstname
+            : null
     };
 }
 

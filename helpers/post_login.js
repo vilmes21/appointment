@@ -7,9 +7,11 @@ const getUserIdForLog = rootRequire("./helpers/getUserIdForLog");
 const callback = (req, res, next) => {
     return (err, user_id, info) => {
 
+        console.log("fn callback. info :", info)
+
         let loginResult = {
             success: false,
-            msg: "System Error Occured.",
+            msg: "System Error",
             other: null
         }
 
@@ -20,7 +22,7 @@ const callback = (req, res, next) => {
         }
 
         if (!user_id) {
-            loginResult.msg = "db checked. Wrong credentials."
+            loginResult.msg = "Wrong credentials."
             res.json(loginResult);
             res.end();
         }
@@ -56,7 +58,6 @@ const callback = (req, res, next) => {
             }
 
             res.json(loginResult);
-            res.end();
         });
 
     }

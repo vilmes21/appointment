@@ -5,7 +5,8 @@ import {connect} from 'react-redux'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import isAuthed from 'helpers/isAuthed'
-import { Link } from 'react-router-dom'
+import {Link} from 'react-router-dom'
+import Redirect from 'react-router-dom/Redirect';
 
 class Login extends React.Component {
     state = {
@@ -13,43 +14,45 @@ class Login extends React.Component {
         password: ""
     }
 
+    clearSensitive = () => {
+        this.setState({password: ""})
+    }
+
     handleChange = (ev) => {
-        const _this = this;
         const obj = {};
         const _name = ev.target.name;
         obj[_name] = ev.target.value;
 
-        _this.setState(obj);
+        this.setState(obj);
     }
 
     handleSubmit = async(ev) => {
-        const _this = this;
         ev.preventDefault();
-        await _this
+        const toSend = {...this.state};
+        this.clearSensitive();
+        await this
             .props
-            .loginVerify(_this.state);
-
+            .loginVerify(toSend);
     }
 
     render() {
-        const _this = this;
-        const {authenticated} = _this.props;
+        const {authenticated} = this.props;
 
         if (authenticated) {
-            return <h2>Already logged in</h2>;
+            return <Redirect to="/"/>
         }
 
         return (
             <div className="wrapLoginformxc">
-                <form onSubmit={_this.handleSubmit} action="/login" method="post">
+                <form onSubmit={this.handleSubmit} action="/login" method="post">
 
                     <div className="fieldeachhx">
                         <TextField
                             required
                             fullWidth={true}
                             label="Email"
-                            value={_this.state.username}
-                            onChange={_this.handleChange}
+                            value={this.state.username}
+                            onChange={this.handleChange}
                             name="username"/>
                     </div>
 
@@ -58,8 +61,8 @@ class Login extends React.Component {
                             required
                             fullWidth={true}
                             label="Password"
-                            value={_this.state.password}
-                            onChange={_this.handleChange}
+                            value={this.state.password}
+                            onChange={this.handleChange}
                             type="password"
                             name="password"/>
                     </div>
@@ -72,9 +75,9 @@ class Login extends React.Component {
 
                 </form>
 
-          <div className="noaccYetdu">
-          <Link to="/sign_up">No account yet?</Link>
-          </div>
+                <div className="noaccYetdu">
+                    <Link to="/sign_up">No account yet?</Link>
+                </div>
             </div>
         );
     }

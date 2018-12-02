@@ -5,6 +5,8 @@ import {addError} from 'actions/errors';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import {Link} from 'react-router-dom'
+import isAuthed from 'helpers/isAuthed'
+import Redirect from 'react-router-dom/Redirect';
 
 class Signup extends React.Component {
     state = {
@@ -15,37 +17,38 @@ class Signup extends React.Component {
         password: ""
     }
 
+    clearSensitive = () => {
+        this.setState({password: ""})
+    }
+
     handleChange = (ev) => {
-        const _this = this;
         const obj = {};
         const _name = ev.target.name;
         obj[_name] = ev.target.value;
 
-        _this.setState(obj);
+        this.setState(obj);
     }
 
     handleSubmit = async(ev) => {
-        const _this = this;
-
         ev.preventDefault();
+        const toSend = {...this.state}
+        this.clearSensitive();
 
-        const res = await this
+        await this
             .props
-            .signup(_this.state);
-
-        if (!res.success) {
-            _this
-                .props
-                .addError(res.msg)
-        }
+            .signup(toSend);
     }
 
     render = () => {
-        const _this = this;
+        const {authenticated} = this.props;
 
+        if (authenticated) {
+            return <Redirect to="/"/>
+        }
+        
         return (
             <div className="wrapLoginformxc">
-                <form action="" method="post" onSubmit={_this.handleSubmit}>
+                <form action="" method="post" onSubmit={this.handleSubmit}>
 
                     <div className="fieldeachhx">
                         <TextField
@@ -53,8 +56,8 @@ class Signup extends React.Component {
                             fullWidth={true}
                             label="First name"
                             name="firstname"
-                            onChange={_this.handleChange}
-                            value={_this.state.firstname}/>
+                            onChange={this.handleChange}
+                            value={this.state.firstname}/>
                     </div>
 
                     <div className="fieldeachhx">
@@ -63,8 +66,8 @@ class Signup extends React.Component {
                             fullWidth={true}
                             label="Last name"
                             name="lastname"
-                            onChange={_this.handleChange}
-                            value={_this.state.lastname}/>
+                            onChange={this.handleChange}
+                            value={this.state.lastname}/>
                     </div>
 
                     <div className="fieldeachhx">
@@ -74,8 +77,8 @@ class Signup extends React.Component {
                             type="email"
                             label="Email"
                             name="email"
-                            onChange={_this.handleChange}
-                            value={_this.state.email}/>
+                            onChange={this.handleChange}
+                            value={this.state.email}/>
                     </div>
 
                     <div className="fieldeachhx">
@@ -84,8 +87,8 @@ class Signup extends React.Component {
                             fullWidth={true}
                             label="Phone"
                             name="phone"
-                            onChange={_this.handleChange}
-                            value={_this.state.phone}/>
+                            onChange={this.handleChange}
+                            value={this.state.phone}/>
                     </div>
 
                     <div >
@@ -95,8 +98,8 @@ class Signup extends React.Component {
                             label="Create a password"
                             type="password"
                             name="password"
-                            onChange={_this.handleChange}
-                            value={_this.state.password}/>
+                            onChange={this.handleChange}
+                            value={this.state.password}/>
                     </div>
 
                     <div className="subformbtnParenxg">
@@ -114,4 +117,10 @@ class Signup extends React.Component {
     }
 }
 
-export default connect(null, {signup, addError})(Signup)
+const mapState = (state) => {
+    return {
+        authenticated: isAuthed(state.currentUser)
+    };
+}
+
+export default connect(mapState, {signup, addError})(Signup)
