@@ -17,7 +17,8 @@ import isThePast from 'helpers/isThePast'
 import MyDayWrapper from 'components/dumb/MyDayWrapper'
 import DetailDialog from 'components/dumb/DetailDialog'
 
-BigCalendar.momentLocalizer(moment);
+const localizer =BigCalendar.momentLocalizer(moment);
+
 
 class Calendar extends Component {
     state = {
@@ -86,6 +87,7 @@ class Calendar extends Component {
 }
                
                 <BigCalendar
+                localizer={localizer}
                     events={booked}
                     defaultView='week'
                     views={tabs}

@@ -1,3 +1,5 @@
+import consts from "../consts";
+
 export default thisContext => {
     return (event, start, end, isSelected) => {
         // console.log("what params?"); console.log(   "\nevent >>>\n",   event,
@@ -5,7 +7,7 @@ export default thisContext => {
         // isSelected );
 
         let newStyle = {
-            backgroundColor: "lightgrey",
+            backgroundColor: consts.disabledColor,
             color: 'black',
             borderRadius: "0px",
             border: "none"

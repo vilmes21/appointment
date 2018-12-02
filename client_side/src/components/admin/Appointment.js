@@ -9,7 +9,7 @@ import {
   Redirect
 } from 'react-router-dom'
 import Slot from './Slot';
-
+import consts from "/consts"
 import helpers from '../../helpers'
 
 BigCalendar.momentLocalizer(moment);
@@ -148,7 +148,7 @@ cancelAppointment(id){
           eventPropGetter = {(event, start, end, isSelected)=>{
             
             let newStyle = {
-              backgroundColor: "lightgrey",
+              backgroundColor: consts.disabledColor,
               color: 'black',
               borderRadius: "0px",
               border: "none"

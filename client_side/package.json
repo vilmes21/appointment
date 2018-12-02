@@ -12,7 +12,7 @@
     "axios": "0.18.0",
     "moment": "2.22.2",
     "react": "16.4.1",
-    "react-big-calendar": "0.19.2",
+    "react-big-calendar": "0.20.2",
     "react-dom": "16.4.1",
     "react-popper": "1.0.2",
     "react-redux": "5.0.7",
