@@ -26,7 +26,7 @@ export default class DoctorAppointmentLi2 extends React.Component {
         return (
 
             <tr onClick={handleToggle(id)}>
-                <td>
+                <td className="textAlignCenter">
                     <input type="checkbox" disabled={uncancellable} checked={checked.indexOf(id) !== -1} />
                 </td>
                 <td>

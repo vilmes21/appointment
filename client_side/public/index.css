@@ -6,3 +6,37 @@
 .wrapCancelBtn {
     padding-bottom: 100px;
 }
+
+.rbc-day-slot .rbc-events-container{
+    margin-right: 0 !important;
+}
+
+.bookedAppAdminTable {
+    width: 100%;
+    cursor: pointer;
+}
+
+.bookedAppAdminTable tr:hover {
+    background-color: lightgrey;
+}
+
+.bookedAppAdminTable td {
+    padding: 10px 5px;
+}
+
+.textAlignCenter {
+    text-align: center;
+}
+
+.textAlignLeft {
+    text-align: left;
+}
+
+.myaccJD {
+    max-width: 400px;
+    margin:auto;
+}
+
+.dangerRed {
+    color: red;
+}

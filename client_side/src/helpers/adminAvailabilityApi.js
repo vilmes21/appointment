@@ -24,7 +24,6 @@ const create = async newAvailability => {
         newAvailability.start_at = newAvailability.start_at.toJSON();
         newAvailability.end_at = newAvailability.end_at.toJSON();
         const toSend = queryString.stringify(newAvailability);
-        console.log("to send toSend:", toSend)
    
         const {data} = await axios.post(baseUrl + "/create", toSend);
 

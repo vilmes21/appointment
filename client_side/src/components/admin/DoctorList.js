@@ -7,36 +7,41 @@ import isAdmin from 'helpers/isAdmin'
 import {adminGetList} from 'actions/doctors'
 
 class DoctorList extends React.Component {
+    componentDidMount() {
+        const {drs, adminGetList} = this.props;
 
-    componentDidMount(){
-        this.props.adminGetList()
+        if (!(Array.isArray(drs) && drs.length > 0)){
+            adminGetList();
+        } 
+    }
+
+    renderList = drs => {
+        if (!drs || drs.length === 0) {
+            return null;
+        }
+
+        return drs.map(dr => {
+            return <AdminDoctorLi key={dr.id} dr={dr}/>
+        });
     }
 
     render() {
         const {isAdmin, authenticated, drs} = this.props;
 
-        if (!authenticated){
-          return <Redirect to="/login"/>
+        if (!authenticated) {
+            return <Redirect to="/login"/>
         }
-        
+
         if (!isAdmin) {
             return <Redirect to="/"/>
-        }
-
-        let may_list = null;
-
-        if (drs && drs.length > 0) {
-            may_list = drs.map(dr => {
-                return <AdminDoctorLi key={dr.id} dr={dr}/>
-            });
         }
 
         return (
             <div>
                 <h2>
-                  admin, Set availability for
+                    Manage
                 </h2>
-                {may_list}
+                {this.renderList(drs)}
             </div>
         );
     }

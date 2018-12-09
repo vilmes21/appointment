@@ -11,9 +11,9 @@ import Spinner from 'components/dumb/Spinner'
 import DoctorList from 'components/smart/DoctorList'
 import Calendar from 'components/smart/Calendar';
 import UnauthedRoutes from 'components/dumb/UnauthedRoutes'
-import AdminRoutes from 'components/dumb/AdminRoutes'
 import NoMatch from 'components/dumb/NoMatch';
 import MyAccount from 'components/smart/MyAccount'
+import ChangePassword from 'components/dumb/ChangePassword'
 
 import AdminLinks from 'components/dumb/AdminLinks'
 import ToAuthLinks from 'components/dumb/ToAuthLinks'
@@ -85,12 +85,11 @@ class Layout extends React.Component {
                             <Switch>
                                 <Route exact path="/" component={DoctorList}/>
                                 <Route exact path="/my_account" component={MyAccount}/>
+                                <Route exact path="/account/password" component={ChangePassword}/>
                                 <Route exact path="/sign_up" component={Signup}/>
                                 <Route exact path="/login" component={Login}/>
                                 <Route exact path="/doctors" component={DoctorList}/>
                                 <Route path="/calendar/:drUrlName" component={Calendar}/>
-                                <Route path="/my_account" component={MyAccount}/>
-
                                 <Route exact path="/admin/doctors" component={AdminDoctorList}/>
                                 <Route path="/admin/availability/:drUrlName" component={AdminAvailability}/>
                                 <Route path="/admin/appointment/:drId" component={DoctorAppointmentList2}/>

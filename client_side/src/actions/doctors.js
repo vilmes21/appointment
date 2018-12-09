@@ -38,11 +38,13 @@ export const adminGetList = () => {
 
         try {
             const {data} = await axios.get("/admin/doctors/");
-            
-            return dispatch({
-                type: ADMIN_GET_DOCTORS, 
-                payload: data //[{}, {}]
-            })
+
+            if (Array.isArray(data)){
+                return dispatch({
+                    type: ADMIN_GET_DOCTORS, 
+                    payload: data //[{}, {}]
+                })
+            }
         } catch (error) {
             console.log("actions/doctor.js getList error: ", error)
         }

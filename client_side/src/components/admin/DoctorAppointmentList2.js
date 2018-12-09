@@ -15,19 +15,21 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import CommentIcon from '@material-ui/icons/Comment';
 import CancelBtn2 from 'components/admin/CancelBtn2.js'
-
+import {adminGetList} from "actions/doctors.js"
 
 class DoctorAppointmentList2 extends Component {
     state = {
         checked: []
     };
 
-    clearChecked = ()=> {
+    clearChecked = () => {
         this.setState({checked: []})
     }
 
-    cancelAppts = ids=> {
-            this.props.cancel(ids);
+    cancelAppts = ids => {
+        this
+            .props
+            .cancel(ids);
     }
 
     handleToggle = value => () => {
@@ -41,9 +43,7 @@ class DoctorAppointmentList2 extends Component {
             newChecked.splice(currentIndex, 1);
         }
 
-        this.setState({
-            checked: newChecked
-        });
+        this.setState({checked: newChecked});
     };
 
     componentDidMount() {
@@ -53,8 +53,57 @@ class DoctorAppointmentList2 extends Component {
             .getDoctorBooked(drId);
     }
 
+    getDoctorLastname = doctorArr => {
+        if (!doctorArr || doctorArr.length === 0){
+            this.props.adminGetList();
+            return "";
+        }
+
+        const {drId} = this.props.match.params;
+        const drIdInt = parseInt(drId);
+        const dr = doctorArr.find(x => x.id === drIdInt);
+
+        return dr ? dr.lastname : "Error";
+    }
+
+    renderList = booked => {
+        if (!booked || booked.length === 0) {
+            return <div>No upcoming appointments</div>;
+        }
+
+        const {checked} = this.state;
+
+        return (
+            <div>
+                <CancelBtn2
+                    checked={checked}
+                    cancelAppts={this.cancelAppts}
+                    clearChecked={this.clearChecked}/>
+
+                <table className="bookedAppAdminTable">
+                    <thead>
+                        <tr>
+                            <th className="textAlignLeft">Select</th>
+                            <th className="textAlignLeft">Start</th>
+                            <th className="textAlignLeft">Patient</th>
+                            <th className="textAlignLeft">End</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {booked.map(appt => <DoctorAppointmentLi2
+                            key={appt.id}
+                            checked={checked}
+                            appt={appt}
+                            handleToggle={this.handleToggle}/>)}
+                    </tbody>
+                </table>
+            </div>
+        );
+    }
+
     render() {
-        const {authenticated, isAdmin} = this.props;
+        const {authenticated, isAdmin, booked, doctors} = this.props;
 
         if (!authenticated) {
             return <Redirect to="/login"/>;
@@ -64,51 +113,27 @@ class DoctorAppointmentList2 extends Component {
             return <Redirect to="/"/>;
         }
 
-        const {booked} = this.props;
-        const {checked} = this.state;
-
-        let _list = null;
-        if (booked && booked.length > 0) {
-            _list = <div>
-                <table>
-                    <thead>
-                        <tr>
-                        <th>Select</th>
-                        <th>Start</th>
-                        <th>Patient</th>
-                        <th>End</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                    {booked.map(appt => <DoctorAppointmentLi2
-                        key={appt.id}
-                        checked={checked}
-                        appt={appt}
-                        handleToggle={this.handleToggle}/>)}
-                    </tbody>
-                </table>
-            </div>
-        }
-
         return (
             <div>
                 <h1>
-                    Appointments with Dr.
+                    Appointments with Dr. {this.getDoctorLastname(doctors)}
                 </h1>
-                <CancelBtn2 checked={checked} cancelAppts={this.cancelAppts} clearChecked={this.clearChecked}/>
-                {_list}
+
+                {this.renderList(booked)}
             </div>
         );
     }
 }
 
 const mapState = (state) => {
+    console.log("mapstate of list2 comp. state:", state)
+
     return {
         authenticated: isAuthed(state.currentUser),
         isAdmin: isAdmin(state.currentUser),
-        booked: state.appointments
+        booked: state.appointments,
+        doctors: state.doctors || []
     };
 }
 
-export default connect(mapState, {getDoctorBooked, cancel})(DoctorAppointmentList2);
+export default connect(mapState, {getDoctorBooked, cancel, adminGetList})(DoctorAppointmentList2);

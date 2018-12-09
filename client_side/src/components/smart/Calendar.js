@@ -19,7 +19,6 @@ import DetailDialog from 'components/dumb/DetailDialog'
 
 const localizer =BigCalendar.momentLocalizer(moment);
 
-
 class Calendar extends Component {
     state = {
         detailOpen: false,
@@ -32,9 +31,6 @@ class Calendar extends Component {
     }
 
     showDetail =  eventObj => {
-
-        console.log("FE eventObj 7777 > ", eventObj)
-        
         this.setState({ detail: eventObj, detailOpen: true });
       }
     
@@ -43,7 +39,6 @@ class Calendar extends Component {
       };
 
       handleCancelApmt= apmtId => {
-          console.log("FE fn handleCancelApmt. apmtId >>>", apmtId)
           const {cancelApmtUserSide} = this.props;
           
           return async () => {
