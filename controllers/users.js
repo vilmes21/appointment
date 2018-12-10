@@ -2,8 +2,11 @@ var express = require('express'),
     router = express.Router();
 const db = require("../db/knex");
 const helpers = require("../helpers");
+const bcrypt = require('bcrypt');
 const rootRequire = require.main.require;
-const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js")
+const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js");
+const addLog = rootRequire("./helpers/addLog");
+const saltRounds = 10;
 
 router.get("/me", helpers.requireLogin, (req, res) => {
     const userId = req.session.passport.user;
@@ -30,7 +33,6 @@ router.get("/me", helpers.requireLogin, (req, res) => {
 
 router.post('/new', async(req, res) => {
     try {
-
         const existingUsers = await db("users").where({email: req.body.email});
 
         if (existingUsers.length > 0) {
@@ -39,12 +41,16 @@ router.post('/new', async(req, res) => {
 
         const {firstname, lastname, email, phone, password} = req.body;
 
+        const hash = await bcrypt.hash(password, saltRounds);
+
+        console.log("password plain: ", password, " hash: ", hash)
+
         const newIdArr = await db('users').insert({
             firstname,
             lastname,
             email,
             phone,
-            password, //TODO: later hash it
+            password: hash,
             created_at: new Date(),
             updated_at: new Date()
         }).returning('id');
@@ -68,13 +74,50 @@ router.post('/new', async(req, res) => {
                 authenticated: req.isAuthenticated(),
                 msg: "Welcome, new user!",
                 id: newIdArr[0]
-            })
+            });
+
         })
     } catch (e) {
         addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);
     }
-    return res.json({success: false, msg: "Error"})
+});
 
+router.post('/updatePassword', helpers.requireLogin, async(req, res) => {
+    const _out = {
+        success: false,
+        msg: "Error"
+    }
+
+    try {
+        const {current, neww} = req.body;
+
+        if (current === neww){
+            _out.msg = "Current and new passwords cannot be same";
+            return res.json(_out);
+        }
+
+        const userId = req.session.passport.user;
+
+        const userArr = await db("users").where({id: userId});
+        const isCurrentCorrect = await bcrypt.compare(current, userArr[0].password);
+
+        if (!isCurrentCorrect) {
+            _out.msg = "Current password incorrect";
+            return res.json(_out);
+        }
+
+        const newHash = await bcrypt.hash(neww, saltRounds);
+
+        await db('users')
+            .where({id: userId})
+            .update({password: newHash});
+
+        _out.success = true;
+    } catch (e) {
+        addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);
+    }
+
+    return res.json(_out)
 });
 
 module.exports = router

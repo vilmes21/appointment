@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {removeError} from 'actions/errors'
+import Snackbarr from "components/smart/Snackbarr.js"
 
 const TopError = ({errors, removeError}) => {
     if (!errors) {
@@ -12,13 +13,15 @@ const TopError = ({errors, removeError}) => {
     }
 
     return errors.map((e, i) => {
-        return <div key={i}>
-            Error: {e}
+        // return <div key={i}>
+        //     Error: {e}
 
-            <button onClick={() => {removeError(e)}}>
-                got it
-            </button>
-        </div>;
+        //     <button onClick={() => {removeError(e)}}>
+        //         got it
+        //     </button>
+        // </div>;
+
+        return <Snackbarr msgShown={e} handleParentClose={() => {removeError(e)}}/>
     })
 }
 

@@ -17,7 +17,7 @@ import isThePast from 'helpers/isThePast'
 import MyDayWrapper from 'components/dumb/MyDayWrapper'
 import DetailDialog from 'components/dumb/DetailDialog'
 
-const localizer =BigCalendar.momentLocalizer(moment);
+const localizer = BigCalendar.momentLocalizer(moment);
 
 class Calendar extends Component {
     state = {
@@ -27,62 +27,65 @@ class Calendar extends Component {
     }
 
     componentDidMount = () => {
-        this.props.getList(this.props.match.params.drUrlName);
+        this
+            .props
+            .getList(this.props.match.params.drUrlName);
     }
 
-    showDetail =  eventObj => {
-        this.setState({ detail: eventObj, detailOpen: true });
-      }
-    
-      handleCloseDetail = () => {
-        this.setState({ detailOpen: false });
-      };
+    showDetail = eventObj => {
+        this.setState({detail: eventObj, detailOpen: true});
+    }
 
-      handleCancelApmt= apmtId => {
-          const {cancelApmtUserSide} = this.props;
-          
-          return async () => {
+    handleCloseDetail = () => {
+        this.setState({detailOpen: false});
+    };
+
+    handleCancelApmt = apmtId => {
+        const {cancelApmtUserSide} = this.props;
+
+        return async() => {
             await cancelApmtUserSide([apmtId]);
             this.handleCloseDetail();
-          }
-      }
+        }
+    }
 
     eventStyleGetter = eventStyleGetter(this)
 
     handleOnSelecting = slot => {
-      if (isThePast(slot.start)){
-        return false;
-      }
+        if (isThePast(slot.start)) {
+            return false;
+        }
     }
 
     render = () => {
         const _this = this;
         const {detailOpen, detail} = this.state;
         const {isAdmin, authenticated, booked} = this.props;
-        const tabs = authenticated? ['week', 'agenda']:['week'];
+        const tabs = authenticated
+            ? ['week', 'agenda']
+            : ['week'];
 
         return (
             <div>
                 <h1>
-                    Dr. {_this.props.match.params.drUrlName}
-                    - Schedule
+                    Dr. {_this.props.match.params.drUrlName}'s Schedule
                 </h1>
-{
-  authenticated ||  <div>
-    You are not logged in. To book appointments, please log in.
-  </div>
+                {authenticated || <div className="notlogdk">
+                    <div className="alertBoxGeneral alertInfoo">
+                        To book appointments, please log in first.
+                    </div>
+                </div>
 }
 
-{
-    authenticated && <DetailDialog 
-                        open={detailOpen}
-                        detail={detail}
-                        handleCancelApmt={this.handleCancelApmt}
-                        handleCloseDetail={this.handleCloseDetail}/>
+                {authenticated && <DetailDialog
+                    open={detailOpen}
+                    detail={detail}
+                    handleCancelApmt={this.handleCancelApmt}
+                    handleCloseDetail={this.handleCloseDetail}/>
 }
-               
+
                 <BigCalendar
-                localizer={localizer}
+                    localizer={localizer}
                     events={booked}
                     defaultView='week'
                     views={tabs}
@@ -113,7 +116,7 @@ class Calendar extends Component {
                         return ""
                     }
                 }}
-                selectable={'ignoreEvents'}
+                    selectable={'ignoreEvents'}
                     onView={handleOnView(this)}/>
             </div>
         );

@@ -13,11 +13,11 @@ export default class AdminDoctorLi extends React.Component {
 
                 {/* admin/appointment/456 */}
                 <Link to={"/admin/appointment/" + dr.id}>
-                    <button>view bookings</button>
+                    <button className="btn1">view bookings</button>
                 </Link>
 
                 <Link to={"/admin/availability/" + dr.lastname}>
-                    <button>set availability</button>
+                    <button className="btn1">set availability</button>
                 </Link>
                 <hr/>
             </div>

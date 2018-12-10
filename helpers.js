@@ -29,7 +29,9 @@ function requireLogin(req, res, next) {
     // const loginUrl = "http://localhost:3000/sign_up";
     // return res.redirect(loginUrl);
     return res.json({
-        serverBadAuth: true
+        success: false,
+        serverBadAuth: true,
+        msg: "Please log in"
     })
 }
 

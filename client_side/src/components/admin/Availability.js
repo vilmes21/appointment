@@ -83,10 +83,16 @@ class Availability extends Component {
     }
 
     render() {
-        const {authenticated, isAdmin} = this.props;
+        const {authenticated, isAdmin, location} = this.props;
 
-        if (!authenticated){
-            return <Redirect to="/login" />;
+        if (!authenticated) {
+            return <Redirect
+                to={{
+                pathname: "/login",
+                state: {
+                    from: location
+                }
+            }}/>
         }
 
         if (!isAdmin){

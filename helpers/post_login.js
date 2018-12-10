@@ -6,9 +6,6 @@ const getUserIdForLog = rootRequire("./helpers/getUserIdForLog");
 
 const callback = (req, res, next) => {
     return (err, user_id, info) => {
-
-        console.log("fn callback. info :", info)
-
         let loginResult = {
             success: false,
             msg: "System Error",

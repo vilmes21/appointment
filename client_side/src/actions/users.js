@@ -1,4 +1,4 @@
-import {GET_CURRENT_USER, SIGNIN_USER, SIGNOUT_USER, UPDATE_LOADING_STATUS} from './types'
+import {NEW_ERROR, GET_CURRENT_USER, SIGNIN_USER, SIGNOUT_USER, UPDATE_LOADING_STATUS} from './types'
 import axios from 'axios'
 
 export const signup = (user) => {
@@ -43,8 +43,8 @@ export const loginVerify = (loginForm) => {
             }
 
             if (data && !data.success) {
-                res.msg = data.Msg || "Login failed";
-                return res;
+                res.msg = data.msg || "Login failed";
+                return dispatch({type: NEW_ERROR, payload: res.msg});
             }
 
             const {email, firstname, lastname, id, isAdmin} = data;

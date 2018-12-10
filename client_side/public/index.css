@@ -3,19 +3,26 @@
     display: none !important;
 }
 
-.wrapCancelBtn {
-    padding-bottom: 100px;
+.rbc-time-view .rbc-allday-cell {
+    display: none;
 }
 
-.rbc-day-slot .rbc-events-container{
+.rbc-day-slot .rbc-events-container {
     margin-right: 0 !important;
+}
+
+body {
+    font-family: sans-serif;
+}
+
+.wrapCancelBtn {
+    padding-bottom: 100px;
 }
 
 .bookedAppAdminTable {
     width: 100%;
     cursor: pointer;
 }
-
 .bookedAppAdminTable tr:hover {
     background-color: lightgrey;
 }
@@ -34,9 +41,110 @@
 
 .myaccJD {
     max-width: 400px;
-    margin:auto;
+    margin: auto;
 }
 
 .dangerRed {
     color: red;
+}
+
+/* button,
+input.button {
+    padding: 20px 40px !important;
+    cursor: pointer;
+} */
+
+.navbarr {
+    padding: 10px 0;
+}
+.navitemdx {
+    padding: 0 20px;
+    cursor: pointer;
+}
+.floatRight {
+    float: right;
+}
+.wrapLoginformxc {
+    max-width: 400px;
+    margin: auto;
+    text-align: center;
+}
+.belowNavxk {
+    padding: 40px 0;
+}
+.subformbtnParenxg {
+    padding-top: 50px;
+}
+.fieldeachhx {
+    padding-bottom: 20px;
+}
+.noaccYetdu {
+    padding-top: 20px;
+}
+.drlistcontandch {
+    max-width: 600px;
+    margin: auto;
+    background-color: rgba(220,220,220,0.1);
+    padding: 30px;
+}
+.welcome2 {
+    padding-right: 20px;
+}
+
+.wrappwformxcx {
+    max-width: 400px;
+    margin: auto;
+    text-align: center;
+}
+
+.notmatchdf {
+    padding-top: 10px;
+}
+
+.wrappwupdatedc {
+    padding-top: 20px;
+}
+
+.alertBoxGeneral {
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.25rem;
+    border: 1px solid transparent;
+}
+
+.pwupdatedc {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.pwdUpdateFaild {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.alertInfoo {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.notlogdk {
+    padding: 20px 0;
+}
+
+.btn1 {
+    padding: 13px 20px;
+    border: 1px lightgrey solid;
+    border-radius: 5px;
+    font-size: 1.01em;
+    cursor: pointer;
+}
+.btn1:hover {
+    background-color: rgba(220,220,220, 0.4);
+}
+.btn1:disabled {
+    color: rgba(220,220,220, 0.7);
+    background-color: transparent;
+    cursor: not-allowed;
 }

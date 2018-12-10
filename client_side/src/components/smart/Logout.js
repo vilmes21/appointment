@@ -14,7 +14,7 @@ const Logout = ({signout, addError}) => {
 
     return (
         <span className="navitemdx floatRight" onClick={handleClick}>
-            Log out!
+            <a href="javascript:void(0)">Log out</a>
         </span>
     );
 }

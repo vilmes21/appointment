@@ -34,13 +34,13 @@ class CancelBtn extends React.Component {
         return (
             <div className="wrapCancelBtn">
 
-                <button disabled={checked.length === 0} onClick={this.handleToggle}>
+                <button className="btn1" disabled={checked.length === 0} onClick={this.handleToggle}>
                     {askConfirm
                         ? "Forget it"
                         : `Cancel appointments (${checked.length})`}
                 </button>
 
-                {askConfirm && <button onClick={this.handleConfirmCancel}>
+                {askConfirm && <button className="btn1" onClick={this.handleConfirmCancel}>
                     Confirm Cancel ({checked.length})
                 </button>
 }

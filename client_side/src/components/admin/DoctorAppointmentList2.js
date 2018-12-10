@@ -54,8 +54,10 @@ class DoctorAppointmentList2 extends Component {
     }
 
     getDoctorLastname = doctorArr => {
-        if (!doctorArr || doctorArr.length === 0){
-            this.props.adminGetList();
+        if (!doctorArr || doctorArr.length === 0) {
+            this
+                .props
+                .adminGetList();
             return "";
         }
 
@@ -63,7 +65,9 @@ class DoctorAppointmentList2 extends Component {
         const drIdInt = parseInt(drId);
         const dr = doctorArr.find(x => x.id === drIdInt);
 
-        return dr ? dr.lastname : "Error";
+        return dr
+            ? dr.lastname
+            : "Error";
     }
 
     renderList = booked => {
@@ -103,10 +107,16 @@ class DoctorAppointmentList2 extends Component {
     }
 
     render() {
-        const {authenticated, isAdmin, booked, doctors} = this.props;
+        const {authenticated, isAdmin, booked, doctors, location} = this.props;
 
         if (!authenticated) {
-            return <Redirect to="/login"/>;
+            return <Redirect
+                to={{
+                pathname: "/login",
+                state: {
+                    from: location
+                }
+            }}/>
         }
 
         if (!isAdmin) {
@@ -126,8 +136,6 @@ class DoctorAppointmentList2 extends Component {
 }
 
 const mapState = (state) => {
-    console.log("mapstate of list2 comp. state:", state)
-
     return {
         authenticated: isAuthed(state.currentUser),
         isAdmin: isAdmin(state.currentUser),

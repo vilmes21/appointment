@@ -2,6 +2,7 @@ const db = require("../db/knex");
 const rootRequire = require.main.require;
 const addLog = rootRequire("./helpers/addLog");
 const constants = rootRequire("./config/constants");
+const bcrypt = require('bcrypt');
 
 export default async(username, password, done) => {
     try {
@@ -13,10 +14,9 @@ export default async(username, password, done) => {
 
         const user = users[0];
 
-        // if (!users.validPassword(password)) { for now fake everyone to be
-        // authenticated:
-        if (user.password !== password) {
-            // return done(null, false, {   message: 'Incorrect password.' });
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) {
+            return done(null, false, {message: 'Wrong credentials'});
         }
 
         const {email, firstname, lastname, id} = user;
