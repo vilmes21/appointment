@@ -33,13 +33,17 @@ router.get("/me", helpers.requireLogin, (req, res) => {
 
 router.post('/new', async(req, res) => {
     try {
-        const existingUsers = await db("users").where({email: req.body.email});
+        const {firstname, lastname, email, phone, password} = req.body;
+
+        const existingUsers = await db("users").where({email});
 
         if (existingUsers.length > 0) {
+            if (existingUsers.length > 1) {
+                addLog(null, null, `Bad data integrity! ${req.method} ${req.originalUrl} multiple users (${existingUsers.length}) with email ${email}`);
+            }
             return res.json({success: false, msg: "Same email already registered."});
         }
 
-        const {firstname, lastname, email, phone, password} = req.body;
 
         const hash = await bcrypt.hash(password, saltRounds);
 

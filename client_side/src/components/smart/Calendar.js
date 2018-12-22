@@ -16,6 +16,7 @@ import onSelectEvent from 'helpers/onSelectEvent'
 import isThePast from 'helpers/isThePast'
 import MyDayWrapper from 'components/dumb/MyDayWrapper'
 import DetailDialog from 'components/dumb/DetailDialog'
+import {Link} from 'react-router-dom'
 
 const localizer = BigCalendar.momentLocalizer(moment);
 
@@ -72,7 +73,7 @@ class Calendar extends Component {
                 </h1>
                 {authenticated || <div className="notlogdk">
                     <div className="alertBoxGeneral alertInfoo">
-                        To book appointments, please log in first.
+                        To book appointments, please&nbsp;<Link to="/login">log in</Link>&nbsp; first.
                     </div>
                 </div>
 }

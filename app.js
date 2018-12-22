@@ -1,4 +1,3 @@
-// const express = require('express');
 import express from 'express'
 const app = express();
 // require('module-alias/register');
@@ -20,8 +19,9 @@ app.use(session({
 }))
 
 //BEGIN passport config
-var passport = require('passport'),
-    LocalStrategy = require('passport-local').Strategy;
+
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -38,7 +38,9 @@ passport.deserializeUser((user_id, done) => {
     const err = null;
     done(err, user_id);
 });
-//END passport config morgan is a logger for development
+//END passport config 
+
+//morgan is a logger for development
 var morgan = require('morgan');
 // const myMorgan = morgan("dev"); const myMorgan =morgan('combined', {   skip:
 // function (req, res) { return res.statusCode < 400 } })
@@ -60,62 +62,6 @@ var availabilities = require('./controllers/availabilities');
 app.use('/availabilities', availabilities);
 
 app.use("/admin", require("./controllers/admin/index"))
-
-// begin DEV mess
-// ==============================================================================
-// ====== simply a copy of .post devlogin - for browser direct dev requests
-app.get('/devlogin', function (req, res, next) {
-
-    let loginResult = {
-        success: false,
-        msg: "System Error Occured.",
-        other: null
-    }
-
-    //338 is test@test.com
-    req.logIn(338, function (err) {
-        if (err) {
-            return next(err);
-        }
-
-        loginResult.success = req.isAuthenticated(); //should be true by this time
-        loginResult.msg = null;
-
-        res.json(loginResult);
-        res.end();
-    });
-
-   
-});
-
-//==============================================================================
-
-app.post('/devlogin', function (req, res, next) {
-
-    let loginResult = {
-        success: false,
-        msg: "System Error Occured.",
-        other: null
-    }
-
-    //338 is test@test.com
-    req.logIn(335, function (err) {
-        if (err) {
-            return next(err);
-        }
-
-        loginResult.success = req.isAuthenticated(); //should be true by this time
-        loginResult.msg = null;
-
-        res.json(loginResult);
-        res.end();
-    });
-
- 
-});
-
-// end DEV mess
-// ==============================================================================
 
 app.get("/auth/now", async (req, res) => {
     const data = {
