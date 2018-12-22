@@ -43,10 +43,6 @@ router.post('/new', async(req, res) => {
         const existingUsers = await db("users").where({email});
 
         if (existingUsers.length > 0) {
-            if (existingUsers.length > 1) {
-                addLog(null, null, `Bad data integrity! ${req.method} ${req.originalUrl} multiple users (${existingUsers.length}) with email ${email}`);
-            }
-
             _out.msg = "Same email already registered";
             return res.json(_out);
         }
