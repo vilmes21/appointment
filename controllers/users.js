@@ -32,6 +32,11 @@ router.get("/me", helpers.requireLogin, (req, res) => {
 })
 
 router.post('/new', async(req, res) => {
+    const _out = {
+        success: false,
+        msg: "Server error"
+    };
+    
     try {
         const {firstname, lastname, email, phone, password} = req.body;
 
@@ -41,9 +46,10 @@ router.post('/new', async(req, res) => {
             if (existingUsers.length > 1) {
                 addLog(null, null, `Bad data integrity! ${req.method} ${req.originalUrl} multiple users (${existingUsers.length}) with email ${email}`);
             }
-            return res.json({success: false, msg: "Same email already registered."});
-        }
 
+            _out.msg = "Same email already registered";
+            return res.json(_out);
+        }
 
         const hash = await bcrypt.hash(password, saltRounds);
 
@@ -62,7 +68,9 @@ router.post('/new', async(req, res) => {
         //now log the new user in
         req.logIn(newIdArr[0], err => {
             if (err) {
-                return res.json({success: false, msg: "New user created but failed to auto-login."})
+                _out.msg = "New user created. Please try log in.";
+                addLog(null, null, `${_out.msg}; ${req.method} ${req.originalUrl}`);
+                return res.json(_out);
             }
 
             req.session.userInfo = {
@@ -73,17 +81,16 @@ router.post('/new', async(req, res) => {
                 isAdmin: false
             };
 
-            return res.json({
-                success: true,
-                authenticated: req.isAuthenticated(),
-                msg: "Welcome, new user!",
-                id: newIdArr[0]
-            });
-
+            _out.success = true;
+            _out.authenticated = req.isAuthenticated();
+            _out.id = newIdArr[0]
+            return res.json(_out);
         })
     } catch (e) {
         addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);
     }
+
+    return res.json(_out);
 });
 
 router.post('/updatePassword', helpers.requireLogin, async(req, res) => {

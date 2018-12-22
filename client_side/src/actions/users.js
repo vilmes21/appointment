@@ -6,26 +6,25 @@ export const signup = (user) => {
         try {
             const {data} = await axios.post("/users/new", user);
 
-            const res = {
-                success: false,
-                msg: ""
+            let _msg = "Server error: sign up";
+            if (!data){
+                return dispatch({type: NEW_ERROR, payload: _msg});
             }
             
             if (!data.success){
-                res.msg = data.Msg ? data.Msg : "sign up faild";
-                return res;
+                if (data.msg){
+                    _msg = data.msg;
+                }
+                return dispatch({type: NEW_ERROR, payload: _msg});
             }
 
             const {email, firstname, lastname} = user;
-            const {id, isAdmin} = data;
+            const {id} = data;
             
-            await dispatch({
+            dispatch({
                 type: SIGNIN_USER, 
-                payload: {email, firstname, lastname, id, isAdmin}
+                payload: {email, firstname, lastname, id, isAdmin: false}
             })
-
-            res.success = true;
-            return res;
         } catch (error) {
             console.log("actions/users.js signup error: ", error)
         }
