@@ -18,10 +18,12 @@
         "express-session": "1.15.6",
         "knex": "0.13.0",
         "moment": "2.20.1",
+        "nodemailer": "4.7.0",
         "passport": "0.4.0",
         "passport-local": "1.0.0",
         "pg": "^7.3.0",
-        "pug": "^2.0.0-rc.2"
+        "pug": "^2.0.0-rc.2",
+        "uuid": "3.3.2"
     },
     "devDependencies": {
         "@babel/preset-es2015": "7.0.0-beta.53",

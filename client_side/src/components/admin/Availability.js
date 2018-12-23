@@ -60,7 +60,7 @@ class Availability extends Component {
 
         if (!helpers.isSlotOpen(this.state.openSlots, want)) {
             alert("New proposal must not overlap with existing ones");
-            return;
+            return false;
         }
 
         const confirmMsg = "start: " + slotInfo

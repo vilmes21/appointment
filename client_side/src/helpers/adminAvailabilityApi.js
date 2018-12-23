@@ -7,7 +7,6 @@ const baseUrl = "/admin/availabilities";
 
 const getAvailabilitiesList = async drUrlName => {
     try {
-
         const {data} = await axios.get(baseUrl + "/" + drUrlName);
         if (Array.isArray(data)) {
             return data;
@@ -20,20 +19,20 @@ const getAvailabilitiesList = async drUrlName => {
 
 const create = async newAvailability => {
     try {
-
         newAvailability.start_at = newAvailability.start_at.toJSON();
         newAvailability.end_at = newAvailability.end_at.toJSON();
         const toSend = queryString.stringify(newAvailability);
    
         const {data} = await axios.post(baseUrl + "/create", toSend);
-
+        const genericErr = "Server error";
+        
         if (!data) {
-            window.alert("Internal server err");
+            window.alert(genericErr);
             return false;
         }
 
         if (!data.success) {
-            window.alert("Failed db insert. Server msg:" + data.msg);
+            window.alert(data.msg || genericErr);
             return false;
         }
 
