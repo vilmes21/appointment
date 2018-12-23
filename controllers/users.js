@@ -1,16 +1,16 @@
+const rootRequire = require.main.require;
 var express = require('express'),
     router = express.Router();
 const db = require("../db/knex");
-const isLocalHost =rootRequire("./helpers/isLocalHost");
 const helpers = require("../helpers");
 const bcrypt = require('bcrypt');
-const rootRequire = require.main.require;
+const isLocalHost = rootRequire("./helpers/isLocalHost");
 const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js");
 const addLog = rootRequire("./helpers/addLog");
 const saltRounds = 10;
 const emailer = rootRequire("./helpers/emailer.js");
-const appkeys = rootRequire("./appkeys.js")
 const uuidv1 = require('uuid/v1');
+const constantsNotDb = rootRequire("./config/constantsNotDb.js");
 
 router.get("/me", helpers.requireLogin, (req, res) => {
     const userId = req.session.passport.user;
@@ -65,25 +65,25 @@ router.post('/new', async(req, res) => {
             email_confirmed: false
         }).returning(['id', 'guid_id']);
 
-        /* 
+        /*
         [{ id: 398, guid_id: 'a85c6690-067c-11e9-9ea4-3930ef97bd80' }]
         */
-        
+
         const insertedObj = insertedReturnArr[0];
         const userNewId = insertedObj.id;
         const userGuidId = insertedObj.guid_id;
         _out.id = userNewId;
 
         //email user email-confirmation link
-        const {rootUrl, companyName} = appkeys;
+        const {clientSideRootUrl, companyName} = constantsNotDb;
         const mailOptions = {
             from: companyName,
             to: email,
             subject: 'Please confirm your email address',
-            html: `<h1>Thanks for signing up!</h1><div>Please <a href="${rootUrl}/users/confirmEmail/${userGuidId}">click here </a> to confirm your email.</div><br/><div>Regards,</div><div>${companyName}</div>`
+            html: `<h1>Thanks for signing up, ${firstname}!</h1><div>Please <a href="${clientSideRootUrl}/email/confirm/${userGuidId}">click here </a> to confirm your email.</div><br/><div>Regards,</div><div>${companyName}</div>`
         };
 
-        if (isLocalHost(req)){
+        if (isLocalHost(req)) {
             mailOptions.isLocalHost = true;
         }
 
@@ -93,7 +93,7 @@ router.post('/new', async(req, res) => {
         }
 
         //now log the new user in
-        const err = await req.logIn(userNewId, ()=>{});
+        const err = await req.logIn(userNewId, () => {});
 
         if (err) {
             _out.msg = "New user created. Please try log in.";
@@ -158,5 +158,54 @@ router.post('/updatePassword', helpers.requireLogin, async(req, res) => {
 
     return res.json(_out)
 });
+
+router.post("/confirmEmail", async(req, res) => {
+    const _out = {
+        success: false,
+        msg: null
+    }
+
+    try {
+        const {userGuid} = req.body;
+
+        if (!userGuid || typeof userGuid !== "string") {
+            _out.msg = "Invalid token";
+            return res.json(_out);
+        }
+
+        const usersArr = await db('users')
+            .where({guid_id: userGuid})
+            .select("id", "email_confirmed");
+            
+        if (usersArr.length === 0) {
+            _out.msg = "Invalid token";
+            return res.json(_out);
+        }
+
+        if (usersArr.length > 1) {
+            addLog(getUserIdForLog(req), null, `BAD data! Multiple users (${usersArr.length}) with same guid_id: ${userGuid}. ${req.method} ${req.originalUrl}`);
+
+            _out.msg = "Server error: ID collision";
+            return res.json(_out);
+        }
+
+        const _user = usersArr[0];
+        if (_user.email_confirmed) {
+            _out.success = true;
+            _out.msg = "Email confirmed already";
+            return res.json(_out);
+        }
+
+        await db('users')
+            .where({id: _user.id})
+            .update({email_confirmed: true});
+
+        _out.success = true;
+    } catch (e) {
+        addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);
+    }
+
+    return res.json(_out);
+})
 
 module.exports = router

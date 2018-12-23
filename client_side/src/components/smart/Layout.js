@@ -12,6 +12,7 @@ import Calendar from 'components/smart/Calendar';
 import NoMatch from 'components/dumb/NoMatch';
 import MyAccount from 'components/smart/MyAccount'
 import ChangePassword from 'components/dumb/ChangePassword'
+import ConfirmEmail from 'components/dumb/ConfirmEmail'
 import Logout from "components/smart/Logout"
 import Signup from 'components/smart/Signup';
 import Login from "components/smart/Login"
@@ -81,6 +82,9 @@ class Layout extends React.Component {
                                 <Route exact path="/login" component={Login}/>
                                 <Route exact path="/doctors" component={DoctorList}/>
                                 <Route path="/calendar/:drUrlName" component={Calendar}/>
+
+                                {/* /email/confirm/0700ef50-06e5-11e9-b6e9-4f31c135b5fd */}
+                                <Route path="/email/confirm/:userGuid" component={ConfirmEmail}/>
                                 <Route exact path="/admin/doctors" component={AdminDoctorList}/>
                                 <Route path="/admin/availability/:drUrlName" component={AdminAvailability}/>
                                 <Route path="/admin/appointment/:drId" component={DoctorAppointmentList2}/>

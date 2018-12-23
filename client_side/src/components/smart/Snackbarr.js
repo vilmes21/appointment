@@ -95,7 +95,7 @@ const styles2 = theme => ({
 
 class Snackbarr extends React.Component {
   state = {
-    open: false,
+    open: true,
   };
 
   handleClick = () => {
@@ -111,7 +111,13 @@ class Snackbarr extends React.Component {
   };
 
   render() {
-    const { classes, isShown, msgShown, handleParentClose } = this.props;
+    const { msgShown, handleParentClose = this.handleClose, myVariant = "error"} = this.props;
+
+    const {open}=this.state;
+    
+    if (!open){
+      return null;
+    }
 
     return (
       <div>
@@ -126,7 +132,7 @@ class Snackbarr extends React.Component {
         >
           <MySnackbarContentWrapper
             onClose={handleParentClose}
-            variant="error"
+            variant={myVariant}
             message={msgShown}
           />
         </Snackbar>

@@ -1,3 +1,4 @@
+const addLog = require("./addLog");
 
 module.exports = req => {
     try {
