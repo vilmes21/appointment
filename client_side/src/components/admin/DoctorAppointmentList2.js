@@ -95,11 +95,14 @@ class DoctorAppointmentList2 extends Component {
                     </thead>
 
                     <tbody>
-                        {booked.map(appt => <DoctorAppointmentLi2
-                            key={appt.id}
-                            checked={checked}
-                            appt={appt}
-                            handleToggle={this.handleToggle}/>)}
+                        {booked.map(appt => {
+                            console.log("KKDJKFKJFF-ds. appt.id: ", appt.id);
+                            return <DoctorAppointmentLi2
+                                key={`${appt.id}`}
+                                checked={checked}
+                                appt={appt}
+                                handleToggle={this.handleToggle}/>
+                        })}
                     </tbody>
                 </table>
             </div>
@@ -139,7 +142,7 @@ const mapState = (state) => {
     return {
         authenticated: isAuthed(state.currentUser),
         isAdmin: isAdmin(state.currentUser),
-        booked: state.appointments,
+        booked: state.drBookedArr,
         doctors: state.doctors || []
     };
 }

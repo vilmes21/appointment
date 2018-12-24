@@ -266,7 +266,7 @@ export default async(req, res) => {
         const doctorObj = await getDoctorFromDB(drUrlName);
 
         if (!doctorObj) {
-            result.msg = "Failed to find doctor";
+            result.msg = "Failed to find doctor 2";
             return res.json(result);
         }
 

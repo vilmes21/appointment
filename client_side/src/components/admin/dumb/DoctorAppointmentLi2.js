@@ -23,9 +23,10 @@ export default class DoctorAppointmentLi2 extends React.Component {
         const {id, title, start, end} = this.props.appt;
         const uncancellable = isTimeAgo(end, consts.minutesAgoCancellationAllowed);
 
+        // console.log("test grandchild with addition key: " + `${id}`)
+        
         return (
-
-            <tr onClick={handleToggle(id)}>
+            <tr key={`${id}`} onClick={handleToggle(id)}>
                 <td className="textAlignCenter">
                     <input type="checkbox" disabled={uncancellable} checked={checked.indexOf(id) !== -1} />
                 </td>

@@ -1,9 +1,5 @@
-// const types = {
-//     ADD_APPOINTMENT: "ADD_APPOINTMENT", 
-//     REMOVE_APPOINTMENT: "REMOVE_APPOINTMENT"
-// }
-
-// export default types
+// const types = {     ADD_APPOINTMENT: "ADD_APPOINTMENT",
+// REMOVE_APPOINTMENT: "REMOVE_APPOINTMENT" } export default types
 
 export const ADD_APPOINTMENT = "ADD_APPOINTMENT"
 export const REMOVE_APPOINTMENT = "REMOVE_APPOINTMENT"
@@ -20,6 +16,7 @@ export const NEW_ERROR = "NEW_ERROR"
 export const REMOVE_ERROR = "REMOVE_ERROR"
 
 export const GET_DOCTOR_URLS = "GET_DOCTOR_URLS"
+export const UPDATE_DR_BOOKED = "UPDATE_DR_BOOKED"
 export const ADMIN_GET_DOCTORS = "ADMIN_GET_DOCTORS"
 
 export const UPDATE_LOADING_STATUS = "UPDATE_LOADING_STATUS"

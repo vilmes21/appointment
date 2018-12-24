@@ -1,4 +1,4 @@
-import {NEW_ERROR, GET_BOOKED, ADD_APPOINTMENT, UPDATE_BOOKED} from './types'
+import {UPDATE_DR_BOOKED, NEW_ERROR, GET_BOOKED, ADD_APPOINTMENT, UPDATE_BOOKED} from './types'
 import axios from 'axios'
 import addLog from "helpers/addLog.js"
 
@@ -16,6 +16,8 @@ export const getList = (drUrlName) => {
     return async(dispatch) => {
         try {
             const {data} = await axios.get("/availabilities/" + drUrlName);
+
+            // console.log("Ooooooooop: data has id? no \n:", data)
 
             if (!Array.isArray(data)) {
                 return;
@@ -108,7 +110,7 @@ export const getDoctorBooked = drId => {
             const {data} = await axios.get("/admin/appointments/" + drId);
 
             dispatch({
-                type: UPDATE_BOOKED, payload: data //[{}, {}]
+                type: UPDATE_DR_BOOKED, payload: data //[{}, {}]
             })
         } catch (error) {
             addLog(error, "client_side/src/actions/appointments.js fn getDoctorBooked");

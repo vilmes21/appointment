@@ -61,7 +61,8 @@ class Calendar extends Component {
     render = () => {
         const _this = this;
         const {detailOpen, detail} = this.state;
-        const {isAdmin, authenticated, booked} = this.props;
+        const {isAdmin, authenticated, booked, match} = this.props;
+        const {drUrlName} = match.params;
         const tabs = authenticated
             ? ['week', 'agenda']
             : ['week'];
@@ -69,7 +70,7 @@ class Calendar extends Component {
         return (
             <div>
                 <h1>
-                    Dr. {_this.props.match.params.drUrlName}'s Schedule
+                    Dr. {drUrlName}'s Schedule
                 </h1>
                 {authenticated || <div className="notlogdk">
                     <div className="alertBoxGeneral alertInfoo">
@@ -126,8 +127,7 @@ class Calendar extends Component {
 
 const mapState = (state) => {
     return {
-        authenticated: isAuthed(state.currentUser),
-        isAdmin: isAdmin(state.currentUser),
+        // isAdmin: isAdmin(state.currentUser),
         booked: state.appointments
     };
 }

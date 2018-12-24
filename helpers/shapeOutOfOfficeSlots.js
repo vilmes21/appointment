@@ -39,6 +39,7 @@ export default(collectByDay) => {
             type: constants.slotType.outOfOffice
         };
 
+        let counter = 1;
         for (let drDay in collectByDay) {
             const eachDayArr = collectByDay[drDay];
             const eachDayArrCount = eachDayArr.length;
@@ -49,7 +50,9 @@ export default(collectByDay) => {
                 } else { //ie. odd index, then be end_at
                     busy.end = eachDayArr[i];
                     busyArr.push({
-                        ...busy
+                        ...busy,
+                        id: `bad_${counter++}`
+                        //id might be helpful for React Calendar
                     });
                 }
 

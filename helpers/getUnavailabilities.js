@@ -76,10 +76,7 @@ export default async(req, res) => {
 
         allBadSlots = unavailables.concat(cleanBooked);
 
-        // console.log("right before return result allBadSlots converted>>") for (let b
-        // in allBadSlots) {     console.log("allBadSlots[b].start.toString() >>",
-        // allBadSlots[b].start.toString()) console.log("allBadSlots[b].end.toString()
-        // >>", allBadSlots[b].end.toString()) }
+        console.log("66666 allBadSlots: ", allBadSlots)
 
     } catch (e) {
         addLog(userId > 0 ? userId : null, e, `${req.method} ${req.originalUrl} fn getUnavailabilities.js`);

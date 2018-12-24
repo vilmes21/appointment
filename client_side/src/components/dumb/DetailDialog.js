@@ -9,8 +9,6 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 export default class DetailDialog extends React.Component {
 
   render() {
-
-    
     const {open, handleCloseDetail, detail, handleCancelApmt} = this.props;
     const {id} = detail;
     console.log("FE 2 detail >>>", detail)
