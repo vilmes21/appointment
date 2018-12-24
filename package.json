@@ -43,5 +43,6 @@
     "engines": {
         "node": "8.11.3",
         "npm": "5.6.0"
-    }
+    },
+    "heroku-postbuild": "npm install && knex migrate:rollback && knex migrate:latest && node index.js && cd client_side && npm install --only-dev && npm install && npm run build"
 }
