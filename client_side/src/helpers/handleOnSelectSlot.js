@@ -10,20 +10,20 @@ export default thisContext => {
 
             const _this = thisContext;
 
+            const {createAppointment, match} = _this.props;
+            const {drUrlName} = match.params;
+
             var wish_end_at = moment(slotInfo.start)
                 .add(5, 'minutes')
                 .toDate();;
 
-            const confirmMsg = "Continue to book appointment? \nstart: " + slotInfo
+            const confirmMsg = `Book appointment with Dr. ${drUrlName}? \nstart: ` + slotInfo
                 .start
                 .toLocaleString() + "\nend: " + wish_end_at.toLocaleString();
 
             if (!window.confirm(confirmMsg)) {
                 return;
             }
-
-            const {createAppointment, match} = _this.props;
-            const {drUrlName} = match.params;
 
             createAppointment({drUrlName: drUrlName, wish_start_at: slotInfo.start, wish_end_at: wish_end_at});
         } catch (e) {

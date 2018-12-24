@@ -14,7 +14,7 @@ router.get('/index', async function (req, res) {
     try {
         drs = await db('doctors')
             .join('users', 'doctors.user_id', 'users.id')
-            .select('users.firstname', 'users.lastname', 'doctors.id', 'doctors.photo', 'doctors.bio', 'doctors.url_name');
+            .select('users.firstname', 'users.lastname', 'doctors.id', 'doctors.photo', 'doctors.bio', 'doctors.url_name', 'doctors.is_public');
 
     } catch (e) {
         addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);

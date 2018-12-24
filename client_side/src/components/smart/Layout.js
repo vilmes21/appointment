@@ -13,6 +13,7 @@ import NoMatch from 'components/dumb/NoMatch';
 import MyAccount from 'components/smart/MyAccount'
 import ChangePassword from 'components/dumb/ChangePassword'
 import ConfirmEmail from 'components/dumb/ConfirmEmail'
+import MyBookings from 'components/dumb/MyBookings'
 import Logout from "components/smart/Logout"
 import Signup from 'components/smart/Signup';
 import Login from "components/smart/Login"
@@ -20,6 +21,8 @@ import AdminDoctorList from "components/admin/DoctorList"
 import AdminAvailability from "components/admin/Availability"
 import DoctorAppointmentList2 from "components/admin/DoctorAppointmentList2"
 import Snackbarr from "components/smart/Snackbarr.js"
+
+const myBookingsUrl = "/my-bookings";
 
 class Layout extends React.Component {
     componentDidMount() {
@@ -59,6 +62,9 @@ class Layout extends React.Component {
 
                             {authenticated
                                 ? <span>
+                                    <span className="floatRight">
+                                      <Link to={myBookingsUrl}>My bookings</Link>
+                                    </span>
                                         <span className="floatRight welcome2">Welcome, {firstname}</span>
                                         <Logout/>
                                     </span>
@@ -91,7 +97,8 @@ class Layout extends React.Component {
                                     isAdmin={isAdmin}
                                     match={match}/>}/> {/* /email/confirm/0700ef50-06e5-11e9-b6e9-4f31c135b5fd */}
                                 <Route path="/email/confirm/:userGuid" component={ConfirmEmail}/>
-                                <Route exact path="/admin/doctors" component={AdminDoctorList}/>
+
+                                <Route path={myBookingsUrl} component={MyBookings}/>                                <Route exact path="/admin/doctors" component={AdminDoctorList}/>
                                 <Route path="/admin/availability/:drUrlName" component={AdminAvailability}/>
                                 <Route path="/admin/appointment/:drId" component={DoctorAppointmentList2}/>
 
