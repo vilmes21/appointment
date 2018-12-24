@@ -1,3 +1,3 @@
 export default userObj => {
-    return !!userObj && !!userObj.email && userObj.id > 0
+    return !!userObj && !!userObj.firstname && userObj.id > 0
 }

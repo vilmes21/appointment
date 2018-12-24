@@ -33,7 +33,6 @@ const isAdmin = async req => {
         const userId = passport.user;
 
         if (adminUserIds) {
-         
             return adminUserIds.indexOf(userId) > -1;
         }
 

@@ -1,6 +1,6 @@
 import addLog from "./addLog"
 import axios from "axios";
-import queryString from "querystring"
+import queryString from "qs"
 
 const filenameNow = "src/helpers/accountApi.js";
 
@@ -34,7 +34,21 @@ const confirmEmail = async toSend => {
     return false;
 }
 
+
+const getMe = async () => {
+    try {
+        const {data} = await axios.get("/users/me/false");
+        if (data && data.success) {
+            return data;
+        }
+    } catch (e) {
+        addLog(e, `${filenameNow} confirmEmail`);
+    }
+    return false;
+}
+
 export default {
     updatePassword,
-    confirmEmail
+    confirmEmail,
+    getMe
 }

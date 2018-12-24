@@ -6,22 +6,21 @@ const getUserIdForLog = rootRequire("./helpers/getUserIdForLog");
 
 const callback = (req, res, next) => {
     return (err, user_id, info) => {
-        let loginResult = {
+        let _out = {
             success: false,
-            msg: "System Error",
+            msg: null,
             other: null
         }
 
         if (err) {
-            loginResult.other = err;
-            res.json(loginResult);
-            next(err);
+            _out.other = err;
+            _out.msg = "Server error";
+            return next(err);
         }
 
         if (!user_id) {
-            loginResult.msg = "Wrong credentials."
-            res.json(loginResult);
-            res.end();
+            _out.msg = "Wrong credentials"
+            res.json(_out);
         }
 
         req.logIn(user_id, err => {
@@ -29,11 +28,10 @@ const callback = (req, res, next) => {
                 return next(err);
             }
 
-            loginResult.success = req.isAuthenticated(); //should be true by this time
-            loginResult.msg = null;
+            _out.success = req.isAuthenticated(); //should be true by this time
 
-            if (loginResult.success) {
-                const {email, firstname, lastname, id, isAdmin} = info;
+            if (_out.success) {
+                const {email, firstname, lastname, id, isAdmin, emailConfirmed} = info;
 
                 //add basic info into session
                 req.session.userInfo = {
@@ -44,17 +42,18 @@ const callback = (req, res, next) => {
                     isAdmin
                 };
 
-                loginResult = {
-                    ...loginResult,
+                _out = {
+                    ..._out,
                     email,
                     firstname,
                     lastname,
                     id,
-                    isAdmin
+                    isAdmin,
+                    emailConfirmed
                 };
             }
 
-            res.json(loginResult);
+            res.json(_out);
         });
 
     }

@@ -15,17 +15,18 @@ export default async(username, password, done) => {
         const user = users[0];
 
         const isPasswordCorrect = true;
-        // const isPasswordCorrect = await bcrypt.compare(password, user.password);
-        // if (!isPasswordCorrect) {
-        //     return done(null, false, {message: 'Wrong credentials'});
-        // }
+        // const isPasswordCorrect = await bcrypt.compare(password, user.password); if
+        // (!isPasswordCorrect) {     return done(null, false, {message: 'Wrong
+        // credentials'}); }
 
-        const {email, firstname, lastname, id} = user;
+        const {email, firstname, lastname, id, email_confirmed} = user;
         const userInfo = {
             email,
             firstname,
             lastname,
-            id
+            id,
+            isAdmin: false,
+            emailConfirmed: email_confirmed
         };
 
         const userRoles = await db

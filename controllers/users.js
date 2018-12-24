@@ -7,32 +7,63 @@ const bcrypt = require('bcrypt');
 const isLocalHost = rootRequire("./helpers/isLocalHost");
 const getUserIdForLog = rootRequire("./helpers/getUserIdForLog.js");
 const addLog = rootRequire("./helpers/addLog");
+const isAdmin = rootRequire("./helpers/isAdmin");
 const saltRounds = 10;
 const emailer = rootRequire("./helpers/emailer.js");
 const uuidv1 = require('uuid/v1');
 const constantsNotDb = rootRequire("./config/constantsNotDb.js");
 
-router.get("/me", helpers.requireLogin, (req, res) => {
-    const userId = req.session.passport.user;
-    console.log("userId >>>", userId);
-    if (!userId || userId < 0) {
-        res.json("you hack!");
-        res.end();
-    }
-    db("users")
-        .where({id: userId})
-        .then((user) => {
-            if (user.length < 1) {
-                res.json("you hack fake userId!");
-                res.end();
-                return;
-            }
-            res.json({email: user[0].email, phone: user[0].phone})
+router.get("/me/:isMinimal", async (req, res) => {
+    const _out = {
+        id: 0,
+        firstname: "",
+        isAdmin: false,
+        success: false
+    };
 
-        })
-        .catch((err) => {
-            console.log(err);
-        })
+    try {
+        const isMinimal = req.params.isMinimal.toLowerCase() === "true"? true:false;
+
+        if (!req.isAuthenticated()){
+            if (isMinimal){
+                return res.json(_out);
+            } 
+            _out.msg = "Please log in";
+            return res.json(_out);
+        }
+        
+        const userId = req.session.passport.user;
+        const userArr = await db("users").where({id: userId});
+        const user = userArr[0];
+
+        //if isMinimal, only needs 3 props
+        _out.id = user.id;
+        _out.firstname = user.firstname;
+        _out.isAdmin = await isAdmin(req);
+
+        if (!isMinimal){
+            _out.email = user.email;
+            _out.lastname = user.lastname;
+            _out.phone = user.phone;
+            _out.emailConfirmed=user.email_confirmed;
+        }
+
+        _out.success = true;
+        /*
+        NEED:
+        id: 0,
+         email: "",
+        firstname: "",
+        lastname: "",
+        phone: "",
+        isAdmin: false,
+        emailConfirmed: false
+        */
+    } catch (e) {
+        addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);
+    }
+
+    res.json(_out);
 })
 
 router.post('/new', async(req, res) => {
@@ -176,7 +207,7 @@ router.post("/confirmEmail", async(req, res) => {
         const usersArr = await db('users')
             .where({guid_id: userGuid})
             .select("id", "email_confirmed");
-            
+
         if (usersArr.length === 0) {
             _out.msg = "Invalid token";
             return res.json(_out);

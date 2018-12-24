@@ -63,46 +63,6 @@ app.use('/availabilities', availabilities);
 
 app.use("/admin", require("./controllers/admin/index"))
 
-app.get("/auth/now", async (req, res) => {
-    const data = {
-        auth: false,
-        isAdmin: false,
-        userInfo: null
-    }
-
-    console.log("/auth/now, req.session>>>", req.session)
-    /*
-    {
-  cookie: 
-   { path: '/',
-     _expires: null,
-     originalMaxAge: null,
-     httpOnly: true },
-  passport: { user: 361 } 
-}
-    */
-
-    if (req.isAuthenticated()) {
-        data.auth = true;
-        data.isAdmin = await isAdmin(req);
-        data.userInfo = req.session.userInfo;
-    }
-
-    /* data sample:
-
-{ auth: true,
-  isAdmin: false,
-  userInfo:
-   { email: 'test@test.com',
-     firstname: 'Vic',
-     lastname: 'Wang',
-     id: 338,
-     isAdmin: true } }
-
- */
-    console.log("GET /auth/now data: ", data)
-    res.json(data);
-})
 
 app.post('/login', post_login);
 

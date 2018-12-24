@@ -73,7 +73,10 @@ class Layout extends React.Component {
                         <div className="belowNavxk">
                             <Switch>
                                 <Route exact path="/" component={DoctorList}/>
-                                <Route exact path="/account/me" component={MyAccount}/>
+                                <Route
+                                    exact
+                                    path="/account/me"
+                                    render={({location}) => <MyAccount authenticated={authenticated} location={location}/>}/>
                                 <Route
                                     exact
                                     path="/account/password"
@@ -81,9 +84,7 @@ class Layout extends React.Component {
                                 <Route exact path="/sign_up" component={Signup}/>
                                 <Route exact path="/login" component={Login}/>
                                 <Route exact path="/doctors" component={DoctorList}/>
-                                <Route path="/calendar/:drUrlName" component={Calendar}/>
-
-                                {/* /email/confirm/0700ef50-06e5-11e9-b6e9-4f31c135b5fd */}
+                                <Route path="/calendar/:drUrlName" component={Calendar}/> {/* /email/confirm/0700ef50-06e5-11e9-b6e9-4f31c135b5fd */}
                                 <Route path="/email/confirm/:userGuid" component={ConfirmEmail}/>
                                 <Route exact path="/admin/doctors" component={AdminDoctorList}/>
                                 <Route path="/admin/availability/:drUrlName" component={AdminAvailability}/>
