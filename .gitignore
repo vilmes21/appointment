@@ -65,7 +65,6 @@ typings/
 client_side/src/components/TEMPLATE.js
 /controllers/tests.js
 test.js
-appkeys.js
 /test
 client_side/cut_out/
 .vscode/
