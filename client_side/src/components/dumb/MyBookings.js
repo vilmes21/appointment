@@ -11,7 +11,7 @@ export default class MyBookings extends React.Component {
     }
  
     componentDidMount = async() => {
-        const booked = 
+        const booked = []
     }
 
     remove = id => {
