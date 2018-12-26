@@ -96,7 +96,6 @@ class DoctorAppointmentList2 extends Component {
 
                     <tbody>
                         {booked.map(appt => {
-                            console.log("KKDJKFKJFF-ds. appt.id: ", appt.id);
                             return <DoctorAppointmentLi2
                                 key={`${appt.id}`}
                                 checked={checked}

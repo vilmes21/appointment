@@ -131,13 +131,14 @@ export const cancel = apptIds => {
             const {data} = await axios.post("/admin/appointments/cancel", {ids: apptIds});
 
             if (data.success.length > 0) {
-                const currentAppts = [...getState().appointments];
+                const currentAppts = [...getState().drBookedArr];
                 /* [{start: "2018-10-05T16:25:00.000Z", end: "2018-10-05T16:30:00.000Z", title: "Joe Doe", id: 211}, {}] */
 
+                console.log("currentAppts HHHHH: ",currentAppts)
                 const remainingAppts = currentAppts.filter(x => !data.success.includes(x.id));
 
                 dispatch({
-                    type: UPDATE_BOOKED, payload: remainingAppts //[{}, {}]
+                    type: UPDATE_DR_BOOKED, payload: remainingAppts //[{}, {}]
                 })
             }
 
