@@ -163,7 +163,7 @@ export const cancelApmtUserSide = apptIds => {
 
             const {data} = await axios.post("/appointments/cancel", {ids: apptIds});
 
-            if (!data || !Array.isArray(data.success)) {
+            if (!Array.isArray(data.success)) {
                 return;
             }
 

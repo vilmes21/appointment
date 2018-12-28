@@ -16,6 +16,17 @@ const getMyBookings = async toSend => {
     return false;
 }
 
+const cancel = async idArr => {
+    try {
+        const {data} = await axios.post("/appointments/cancel", {ids: idArr});
+        return data;
+    } catch (e) {
+        addLog(e, `${filenameNow} cancel`);
+    }
+    return false;
+}
+
 export default {
-    getMyBookings
+    getMyBookings,
+    cancel
 }

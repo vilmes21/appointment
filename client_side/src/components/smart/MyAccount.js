@@ -69,9 +69,9 @@ class MyAccount extends React.Component {
                         : ""}
                 </div>
 
-                {/* <div>
-                    id: {id}
-                </div> */}
+                <div>
+                    User ID: {id}
+                </div>
                 <div>
                     {firstname}&nbsp; {lastname}
                 </div>

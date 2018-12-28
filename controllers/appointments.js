@@ -13,6 +13,7 @@ const addLog = rootRequire("./helpers/addLog");
 const getUserBookingsByRange = rootRequire("./helpers/getUserBookingsByRange");
 const isTimeAgo = rootRequire("./helpers/isTimeAgo");
 const isNearlyOrPastTime = rootRequire("./helpers/isNearlyOrPastTime");
+const {cancellableSpanMinute} = rootRequire("./config/constantsNotDb.js")
 
 //test method to be removed OR at least admin-only
 router.get('/index/:drId', async(req, res) => {
@@ -56,7 +57,9 @@ router.post('/cancel', helpers.requireLogin, async(req, res) => {
     console.log("JUST ENTERED user-side post /cancel.  ")
 
     let toReturn = {
-        success: []
+        success: [],
+        fail: [],
+        msg: null
     };
 
     try {
@@ -64,6 +67,7 @@ router.post('/cancel', helpers.requireLogin, async(req, res) => {
         console.log("BE user-side post /cancel. ids >>> ", ids)
 
         if (!Array.isArray(ids)) {
+            toReturn.msg = "Missing id";
             return res.json(toReturn);
         }
 
@@ -80,7 +84,7 @@ router.post('/cancel', helpers.requireLogin, async(req, res) => {
     user_id: 345 } ]
          */
 
-        if (!Array.isArray(wantToCancel) || wantToCancel.length === 0) {
+        if (wantToCancel.length === 0) {
             toReturn.msg = `Appointment not found or already cancelled`;
             return res.json(toReturn);
         }
@@ -92,11 +96,11 @@ router.post('/cancel', helpers.requireLogin, async(req, res) => {
         const currentUserId = getUserIdByReq(req);
         for (const appt of wantToCancel) {
             const {id, wish_start_at} = appt;
-            const spanInMinute = 60;
+            const spanInMinute = cancellableSpanMinute;
 
             if (appt.user_id !== currentUserId) {
                 unCancellableIds.push(id);
-                _msgs.push("It is not your appointment.")
+                _msgs.push("Not your own appointment.")
             } else {
                 if (isNearlyOrPastTime(wish_start_at, spanInMinute)) {
                     unCancellableIds.push(id);
@@ -138,15 +142,27 @@ router.get("/mine", helpers.requireLogin, async(req, res) => {
     }
 
     try {
+        // const userId=345
         const userId = getUserIdByReq(req);
         let {start, end} = req.body;
         if (!start) {
             start = (new Date()).toJSON();
             //if start is unspecified, then no range. So query upcoming ones
-            end = "";
+            end = moment()
+                .add(2, "months")
+                .toJSON();
         }
 
-        _out.info = await getUserBookingsByRange(userId, start, end);
+        const unsortedArr = await getUserBookingsByRange(userId, start, end);
+
+        //create a new pro in each obj for sorting
+        for (const slot of unsortedArr) {
+            slot.forSort = moment(slot.start).valueOf();
+        }
+
+        _out.info = unsortedArr.sort((a, b) => {
+            return a.forSort - b.forSort;
+        })
         _out.success = true;
     } catch (e) {
         addLog(getUserIdForLog(req), e, `${req.method} ${req.originalUrl}`);

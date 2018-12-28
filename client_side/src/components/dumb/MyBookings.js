@@ -1,19 +1,23 @@
 import React from 'react';
-import accountApi from "helpers/accountApi.js"
 import {Redirect} from 'react-router-dom';
 import Spinner from "./Spinner"
 import MyBooking from "./MyBooking"
 import Snackbarr from "components/smart/Snackbarr.js"
 import bookingApi from '../../helpers/bookingApi';
+import mybookingData from 'fakeData/mybookingData'
 
 export default class MyBookings extends React.Component {
     state = {
         isLoading: true,
-        booked: []
+        booked: [],
+        msg: ""
+        // booked: mybookingData, isLoading: false
     }
 
     componentDidMount = async() => {
         const booked = await bookingApi.getMyBookings();
+        console.log("didmount, booked:", booked)
+        
         if (Array.isArray(booked)) {
             this.setState({booked, isLoading: false})
         }
@@ -24,6 +28,14 @@ export default class MyBookings extends React.Component {
         this.setState({
             booked: booked.filter(x => x.id !== id)
         })
+    }
+
+    showErr = msg => {
+        this.setState({msg})
+    }
+
+    clearErr = () => {
+        this.setState({msg: ""})
     }
 
     renderList = bookedArr => {
@@ -42,7 +54,7 @@ export default class MyBookings extends React.Component {
             </thead>
             <tbody>
                 {bookedArr.map(x => {
-                    return <MyBooking data={x} key={x.id} remove={this.remove}/>
+                    return <MyBooking data={x} key={x.id} remove={this.remove} showErr={this.showErr}/>
                 })}
             </tbody>
         </table>
@@ -62,14 +74,16 @@ export default class MyBookings extends React.Component {
             }}/>
         }
 
-        const {isLoading, booked} = this.state;
+        const {isLoading, booked, msg} = this.state;
 
         if (isLoading) {
             return <Spinner/>
         }
         return <div>
-            <h1>My upcoming bookings</h1>
+            <h1 className="textAlignCenter">My upcoming bookings</h1>
             {this.renderList(booked)}
+            {msg && <Snackbarr msgShown={msg} handleParentClose={this.clearErr}/>
+}
         </div>
     }
 }

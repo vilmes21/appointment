@@ -148,3 +148,19 @@ input.button {
     background-color: transparent;
     cursor: not-allowed;
 }
+
+.fullWidth {
+    width: 100%;
+}
+
+.dangerBtn {
+    background-color: rgba(255,0,0,0.8);
+    color: white;
+}
+.dangerBtn:hover {
+    background-color: rgba(255,0,0,1);
+}
+
+.d360Tdcxk {
+    min-width: 360px;
+}
