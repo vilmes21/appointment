@@ -131,7 +131,9 @@ router.post('/cancel', helpers.requireLogin, async(req, res) => {
     res.json(toReturn);
 })
 
-router.get("/mine", helpers.requireLogin, async (req, res) => {
+router.get("/mine", 
+//helpers.requireLogin, 
+async (req, res) => {
     const _out = {
         success: false,
         msg: null,
@@ -139,7 +141,8 @@ router.get("/mine", helpers.requireLogin, async (req, res) => {
     }
 
     try {
-        const userId = getUserIdByReq(req);
+        const userId =338;
+        // const userId = getUserIdByReq(req);
         let {start, end} = req.body;
         if (!start){
             start = (new Date()).toJSON();

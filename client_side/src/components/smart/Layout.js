@@ -62,9 +62,9 @@ class Layout extends React.Component {
 
                             {authenticated
                                 ? <span>
-                                    {/* <span className="floatRight">
+                                    <span className="floatRight">
                                       <Link to={myBookingsUrl}>My bookings</Link>
-                                    </span> */}
+                                    </span>
                                         <span className="floatRight welcome2">Welcome, {firstname}</span>
                                         <Logout/>
                                     </span>

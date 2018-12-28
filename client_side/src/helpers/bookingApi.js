@@ -6,7 +6,7 @@ const filenameNow = "src/helpers/bookingApi.js";
 
 const getMyBookings = async toSend => {
     try {
-        const {data} = await axios.get("/users/getMyBookings", queryString.stringify(toSend));
+        const {data} = await axios.get("/appointments/mine", queryString.stringify(toSend));
         if (data) {
             return data;
         }
