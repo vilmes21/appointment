@@ -32,7 +32,7 @@ router.get('/index/:drId', async(req, res) => {
     return res.json(booked);
 
     /* shape:
-    
+
     [
   {
     "firstname": "Jack",
@@ -46,7 +46,7 @@ router.get('/index/:drId', async(req, res) => {
   },
 ]
   */
-    
+
 })
 
 router.post('/create', helpers.requireLogin, post_createAppt);
@@ -62,18 +62,17 @@ router.post('/cancel', helpers.requireLogin, async(req, res) => {
     try {
         const {ids} = req.body; //[3,6,7]
         console.log("BE user-side post /cancel. ids >>> ", ids)
-        
-        
+
         if (!Array.isArray(ids)) {
             return res.json(toReturn);
         }
-        
-        const wantToCancel = await db("appointments")
-        .whereIn("id", ids)
-        .andWhereNot("status", constants.APPOINTMENT_STATUS_CANCELLED)
-        .select("id", "wish_start_at", "wish_end_at", "user_id");
 
-        /* 
+        const wantToCancel = await db("appointments")
+            .whereIn("id", ids)
+            .andWhereNot("status", constants.APPOINTMENT_STATUS_CANCELLED)
+            .select("id", "wish_start_at", "wish_end_at", "user_id");
+
+        /*
         [ {
     id: 242,
     wish_start_at: 2018-10-09T16:40:00.000Z,
@@ -81,15 +80,15 @@ router.post('/cancel', helpers.requireLogin, async(req, res) => {
     user_id: 345 } ]
          */
 
-        if (!Array.isArray(wantToCancel) || wantToCancel.length === 0){
+        if (!Array.isArray(wantToCancel) || wantToCancel.length === 0) {
             toReturn.msg = `Appointment not found or already cancelled`;
             return res.json(toReturn);
         }
-        
+
         const cancellableIds = [];
         const unCancellableIds = [];
         const _msgs = [];
-        
+
         const currentUserId = getUserIdByReq(req);
         for (const appt of wantToCancel) {
             const {id, wish_start_at} = appt;
@@ -127,13 +126,11 @@ router.post('/cancel', helpers.requireLogin, async(req, res) => {
     }
 
     console.log("44444 toReturn >>", toReturn)
-    
+
     res.json(toReturn);
 })
 
-router.get("/mine", 
-//helpers.requireLogin, 
-async (req, res) => {
+router.get("/mine", helpers.requireLogin, async(req, res) => {
     const _out = {
         success: false,
         msg: null,
@@ -141,14 +138,13 @@ async (req, res) => {
     }
 
     try {
-        const userId =338;
-        // const userId = getUserIdByReq(req);
+        const userId = getUserIdByReq(req);
         let {start, end} = req.body;
-        if (!start){
+        if (!start) {
             start = (new Date()).toJSON();
             //if start is unspecified, then no range. So query upcoming ones
             end = "";
-        } 
+        }
 
         _out.info = await getUserBookingsByRange(userId, start, end);
         _out.success = true;

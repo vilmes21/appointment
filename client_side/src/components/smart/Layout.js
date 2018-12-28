@@ -62,9 +62,9 @@ class Layout extends React.Component {
 
                             {authenticated
                                 ? <span>
-                                    <span className="floatRight">
-                                      <Link to={myBookingsUrl}>My bookings</Link>
-                                    </span>
+                                        <span className="floatRight">
+                                            <Link to={myBookingsUrl}>My bookings</Link>
+                                        </span>
                                         <span className="floatRight welcome2">Welcome, {firstname}</span>
                                         <Logout/>
                                     </span>
@@ -92,13 +92,16 @@ class Layout extends React.Component {
                                 <Route exact path="/doctors" component={DoctorList}/>
                                 <Route
                                     path="/calendar/:drUrlName"
-                                    render={({match}) => <Calendar 
-                                    authenticated={authenticated} 
-                                    isAdmin={isAdmin}
-                                    match={match}/>}/> {/* /email/confirm/0700ef50-06e5-11e9-b6e9-4f31c135b5fd */}
+                                    render={({match}) => <Calendar authenticated={authenticated} isAdmin={isAdmin} match={match}/>}/> {/* /email/confirm/0700ef50-06e5-11e9-b6e9-4f31c135b5fd */}
                                 <Route path="/email/confirm/:userGuid" component={ConfirmEmail}/>
 
-                                <Route path={myBookingsUrl} component={MyBookings}/>                                <Route exact path="/admin/doctors" component={AdminDoctorList}/>
+                                <Route
+                                    exact
+                                    path={myBookingsUrl}
+                                    render={({location}) => {
+                                    return <MyBookings location={location} authenticated={authenticated}/>
+                                }}/>
+                                <Route exact path="/admin/doctors" component={AdminDoctorList}/>
                                 <Route path="/admin/availability/:drUrlName" component={AdminAvailability}/>
                                 <Route path="/admin/appointment/:drId" component={DoctorAppointmentList2}/>
 

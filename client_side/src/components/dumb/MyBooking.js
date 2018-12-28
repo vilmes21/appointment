@@ -1,8 +1,4 @@
 import React from 'react';
-import accountApi from "helpers/accountApi.js"
-import {Redirect} from 'react-router-dom';
-import Spinner from "./Spinner"
-import Snackbarr from "components/smart/Snackbarr.js"
 
 export default class MyBooking extends React.Component {
     render() {
@@ -11,18 +7,20 @@ export default class MyBooking extends React.Component {
             drFullName,
             start,
             end,
-            canBeCancelled,
-            remove
+            canBeCancelled
         } = this.props.data;
+
+        const {remove}=this.props;
         
-        return <div>
-            <div>id: {id}</div>
-            <div>doctor: {drFullName}</div>
-            <div>start: {start}</div>
-            <div>end: {end}</div>
-            <div>
+        return <tr>
+            {/* <div>id: {id}</div> */}
+            <td>{drFullName}</td>
+            <td>{start}</td>
+            <td>{end}</td>
+            <td>
                 <button
                     disabled={!canBeCancelled}
+                    className={"btn1 " + canBeCancelled? "": "disabled"}
                     title={canBeCancelled
                     ? ""
                     : "Too late to cancel this appointment"}
@@ -30,7 +28,7 @@ export default class MyBooking extends React.Component {
                     { () => { remove(id) } }>
                     Cancel
                 </button>
-            </div>
-        </div>
+            </td>
+        </tr>
     }
 }
